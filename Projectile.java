@@ -3,12 +3,7 @@
  * This makes it easier for the server to access a specific bullet and move it.
  * 
  */
-public interface Projectile {
-
-    /**
-     * Draws the projectile's sprite based on x and y.
-     */
-    void draw();
+public interface Projectile{
 
     /**
      * Sets both the x and y positions of the projectile.

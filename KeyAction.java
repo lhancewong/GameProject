@@ -6,6 +6,11 @@ import java.awt.event.*;
 public class KeyAction extends KeyAdapter {
     private Player playerShip;
 
+    /**
+     * Initializes KeyActions.
+     * 
+     * @param p the player object that will move based on the keyboard inputs
+     */
     public KeyAction(Player p) {
         playerShip = p;
     }
