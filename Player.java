@@ -80,7 +80,7 @@ public class Player {
                     break;
                 default:
                     g2d.setColor(Color.PINK);
-                    g2d.fillRect(xPos,yPos,size,size);
+                    /* g2d.fillRect(xPos,yPos,size,size); */
             }
 
     }

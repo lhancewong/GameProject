@@ -15,16 +15,19 @@ public class GameFrame {
     //Player stuff
     private Player p1;
     private Player p2;
+    private KeyAction ka1;
+    private KeyAction ka2;
 
     public GameFrame() {
         gameCanvas = new GameCanvas();
-
+        p1 = new Player(100, 100, 20, 2);
     }
 
     /**
      * Sets up the GUI.
      */
-    private void setUpGUI() {
+    public void setUpGUI() {
+        
         mainPanel = window.getContentPane();
         window.setTitle("Shoot and Scoot");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
