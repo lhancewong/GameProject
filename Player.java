@@ -79,7 +79,7 @@ public class Player {
                     defensiveShip();
                     break;
                 default:
-                    g2d.setColor(Color.PINK);
+                    //g2d.setColor(Color.PINK);
                     /* g2d.fillRect(xPos,yPos,size,size); */
             }
 
