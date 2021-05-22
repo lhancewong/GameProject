@@ -9,6 +9,7 @@ public class Player {
 
     //appearance related
     private double xPos, yPos;
+    private double size;
     private int shipType;
 
     //game related
@@ -26,9 +27,10 @@ public class Player {
      * @param yPos y coordinate of ship
      * @param shipType 1 for offense, 2 for balance, 3 for defense
      */
-    public Player(double xPos, double yPos ,int shipType) {
+    public Player(double xPos, double yPos, double size, int shipType) {
         this.xPos = xPos;
         this.yPos = yPos;
+        this.size = size;
         this.shipType = shipType;
 
         //ship stats
@@ -76,6 +78,9 @@ public class Player {
                 case 3: //defensive
                     defensiveShip();
                     break;
+                default:
+                    g2d.setColor(Color.PINK);
+                    g2d.fillRect(xPos,yPos,size,size);
             }
 
     }

@@ -2,26 +2,29 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.geom.*;
 import java.awt.event.*;
+import java.io.*;
+import java.net.*;
 
 /**
  * This class extends JComponent and overrides the paintComponent method in
  * order to create the custom drawing.
  */
 public class GameCanvas extends JComponent {
-    private Player p1, p2;
+    //Graphics
     private Graphics2D g2d;
     private int width, height;
-
     //temp
     private Rectangle2D.Double bg;
 
     //Threads
-    private GameLoop gameLoop;
+    private GameClient gameLoop;
     private WriteToServer wtsLoop;
     private ReadFromServer rfsLoop;
 
     //Game Stuff
-    private boolean isRunning;
+    private Player p1, p2;
+    private int pNum;
+    private boolean isRunning, isServer;
     private static final int FPS_CAP = 60;
     
     /**
@@ -40,7 +43,7 @@ public class GameCanvas extends JComponent {
         initMenuSelection();
 
         //loops
-        gameLoop = new GameLoop(20);
+        gameLoop = new GameClient(20);
 
 
         //variables for the loops
@@ -87,9 +90,42 @@ public class GameCanvas extends JComponent {
     }
 
     /**
+     * Returns the number of the player.
+     * 
+     * @return The player's number
+     */
+    public int getPlayerNumber() {
+        return pNum;
+    }
+
+    //====================== Game Stuff ============================//
+
+
+    /**
+     * This method will display the server connection menu.
+     */
+    public void startConnectionMenu() {
+
+    }
+
+    /**
+     * This method will display the class selection menu.
+     */
+    public void startClassSelect() {
+
+    }
+
+    /**
+     * This method will display the boss fight.
+     */
+    public void startGame() {
+
+    }
+
+    /**
      * A private class that updates and displays the game.
      */
-    private class GameLoop implements Runnable {
+    private class GameClient implements Runnable {
         private Thread logicLoop;
         private Timer drawTimer;
         private long sleepTime;
@@ -99,7 +135,7 @@ public class GameCanvas extends JComponent {
          * 
          * @param sleepTime delay between loops in milliseconds
          */
-        public GameLoop(int sleepTime) {
+        public GameClient(int sleepTime) {
             logicLoop = new Thread(this);
             this.sleepTime = sleepTime;
         }
@@ -109,7 +145,9 @@ public class GameCanvas extends JComponent {
          */
         public void startThread() {
             logicLoop.start();
-            drawTimer.start();
+            if (isServer) {
+                drawTimer.start();
+            }
         }
 
         /**
@@ -131,7 +169,7 @@ public class GameCanvas extends JComponent {
          * The display thread. It calculates fps and calls repaint to ideally
          * reach the FPS_CAP;
          */
-        public void startDrawLoop() {
+        public void drawLoop() {
             ActionListener displayAnimation = new ActionListener() {
                 long previousTime = System.currentTimeMillis()-1;
                 int frames = 0;
@@ -162,19 +200,58 @@ public class GameCanvas extends JComponent {
         }
     }
 
+    //==================== Networking ================================//
+
+
+    /**
+     * Method to connect to the server
+     */
+    public void connectToServer() {
+        //TODO make it so that the ip and port is taken from a jtextfield or something
+        try {
+            System.out.print("Please input the server's IP Address: ");
+            String ipAddress = "192.168.1.152";
+
+            System.out.print("Please input the port number: ");
+            int portNum = Integer.parseInt("25570");
+            System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
+            Socket clientSocket = new Socket(ipAddress, portNum);
+            System.out.println("CONNECTION SUCCESSFUL!");
+            wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 20);
+            rfsLoop = new ReadFromServer(new DataInputStream(clientSocket.getInputStream()), 20);
+            wtsLoop.startThread();
+            rfsLoop.startThread();
+        } catch(IOException ex) {
+          System.out.println("IOException from connectToServer() method.");
+        }
+      }
     /**
      * A private class that writes information to the server.
      */
     private class WriteToServer implements Runnable {
+        private DataOutputStream dataOut;
         private long sleepTime;
         private Thread WTSloop;
+
+         /**
+         * The thread that continuously sends data to the server.
+         */
+        @Override
+        public void run() {
+
+            try { Thread.sleep(sleepTime); }
+            catch(InterruptedException ex) {
+                System.out.println("InterruptedException at WTS run()\n\n" + ex);
+            }
+        }
 
         /**
          * Initializes the WriteToServer class
          */
-        public WriteToServer(int sleepTime) {
+        public WriteToServer(DataOutputStream dataOut, int sleepTime) {
             WTSloop = new Thread(this);
             this.sleepTime = sleepTime;
+            this.dataOut = dataOut;
         }
 
         /**
@@ -184,33 +261,43 @@ public class GameCanvas extends JComponent {
             WTSloop.start();
         }
 
-        /**
-         * The thread that continuously sends data to the server.
-         */
-        @Override
-        public void run() {
-
-            try { Thread.sleep(sleepTime); }
-                catch(InterruptedException ex) {
-                    System.out.println("InterruptedException at WTS run()\n\n" + ex);
-                }
-        }
-
     }
 
     /**
      * A private class that reads data from the server
      */
     private class ReadFromServer implements Runnable {
+        private DataInputStream dataIn;
         private long sleepTime;
         private Thread RFSloop;
 
         /**
+         * The thread that continously recieves data from the server.
+         */
+        @Override
+        public void run() {
+            try {
+                try { pNum = dataIn.readInt(); } 
+                catch(IOException ex) {
+                    System.out.println("IOException at WTC run()");
+                }
+
+                while (true) {
+                    //TODO read data from server.
+                    Thread.sleep(sleepTime);
+                }
+            } catch(InterruptedException ex) {
+                System.out.println("InterruptedException at RFS run()\n\n" + ex);
+            }
+        }
+
+        /**
          * Initializes the ReadFromServer class.
          */
-        public ReadFromServer(int sleepTime) {
-            RFSloop = new Thread(this);
+        public ReadFromServer(DataInputStream dataIn, int sleepTime) {
+            this.dataIn = dataIn;
             this.sleepTime = sleepTime;
+            RFSloop = new Thread(this);
         }
 
         /**
@@ -218,19 +305,6 @@ public class GameCanvas extends JComponent {
          */
         public void startThread() {
             RFSloop.start();
-        }
-
-        /**
-         * The thread that continously recieves data from the server.
-         */
-        @Override
-        public void run() {
-
-
-            try { Thread.sleep(sleepTime); }
-                catch(InterruptedException ex) {
-                    System.out.println("InterruptedException at RFS run()\n\n" + ex);
-                }
         }
 
     }

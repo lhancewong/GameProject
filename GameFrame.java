@@ -40,7 +40,13 @@ public class GameFrame {
      * Passes p1 and p2 to the KeyAction class.
      */
     private void setUpKeyActions() {
-
+        KeyAction ka;
+        if (gameCanvas.getPlayerNumber() == 1) {
+            ka = new KeyAction(p1);
+        } else {
+            ka = new KeyAction(p2);
+        }
+        mainPanel.addKeyListener(ka);
     }
 
     /**
