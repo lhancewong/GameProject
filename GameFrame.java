@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
  *  This class contains the code that sets up the main JFrame for the player.
