@@ -4,6 +4,7 @@ import java.awt.geom.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 /**
  * This class extends JComponent and overrides the paintComponent method in
@@ -24,8 +25,12 @@ public class GameCanvas extends JComponent {
     //Game Stuff
     public Player p1, p2;
     public int pNum;
-    private boolean isRunning, isServer;
+    private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
+
+    private ArrayList<GameObject> bossFight;
+    //private MenuObjects serverSelectionMenu;
+    //private MenuObjects classSelectionMenu;
     
     /**
      * Initializes the GameCanvas object.
@@ -36,21 +41,23 @@ public class GameCanvas extends JComponent {
         height = 720;
         setPreferredSize(new Dimension(width,height));
 
+        //Arraylists
+        bossFight = new ArrayList<GameObject>();
+        
         //Objects & Shapes
         bg = new Rectangle2D.Double(0,0,width,height);
-        initPlayer();
-        initBoss();
+        initBossFight();
         initMenuSelection();
 
         //loops
         gameLoop = new GameClient(20);
 
-
-        //variables for the loops
         isRunning = true;
+        isServerSelection = false;
+        isClassSelection = false;
+        isBossFight = true;
 
         gameLoop.startThread();
-
     }
 
     /**
@@ -62,24 +69,24 @@ public class GameCanvas extends JComponent {
         g2d.setColor(new Color(100,150,150));
         g2d.fill(bg);
 
-        //draw player
-        p1.draw(g2d);
-        p2.draw(g2d);
+        if(isBossFight) {
+            for(GameObject i: bossFight) {
+                i.draw(g2d);
+            }
+        }
 
     }
 
     /**
-     * Initializes the player sprite.
+     * Initializes the boss fight.
      */
-    private void initPlayer() {
+    private void initBossFight() {
+        //bg = new Background();
         p1 = new Player(210,180,30,4);
         p2 = new Player(210,540,30,4);
-    }
-
-    /**
-     * Initializes the boss.
-     */
-    private void initBoss() {
+        //bossFight.add(bg);
+        bossFight.add(p1);
+        bossFight.add(p2);
 
     }
 
@@ -101,34 +108,12 @@ public class GameCanvas extends JComponent {
 
     //====================== Game Stuff ============================//
 
-
-    /**
-     * This method will display the server connection menu.
-     */
-    public void startConnectionMenu() {
-
-    }
-
-    /**
-     * This method will display the class selection menu.
-     */
-    public void startClassSelect() {
-
-    }
-
-    /**
-     * This method will display the boss fight.
-     */
-    public void startGame() {
-
-    }
-
     /**
      * A private class that updates and displays the game.
      */
     private class GameClient implements Runnable {
         private Thread logicLoop;
-        private Timer drawTimer;
+        private javax.swing.Timer drawTimer;
         private long sleepTime;
 
         /**
@@ -138,8 +123,8 @@ public class GameCanvas extends JComponent {
          */
         public GameClient(int sleepTime) {
             logicLoop = new Thread(this);
-            this.sleepTime = sleepTime;
             drawLoop();
+            this.sleepTime = sleepTime;
         }
 
         /**
@@ -160,9 +145,10 @@ public class GameCanvas extends JComponent {
                 long currentTime = System.currentTimeMillis();
 
                 double deltaTime = (currentTime - previousTime)/1000.0;
-                //GAME UPDATES
-                p1.update(deltaTime);
-                p2.update(deltaTime);
+
+                for(GameObject i : bossFight) {
+                    i.update(deltaTime);
+                }
 
                 previousTime = currentTime;
 
@@ -178,7 +164,7 @@ public class GameCanvas extends JComponent {
          * reach the FPS_CAP;
          */
         public void drawLoop() {
-            ActionListener displayAnimation = new ActionListener() {
+            ActionListener displayGame = new ActionListener() {
                 long previousTime = System.currentTimeMillis()-1;
                 int frames = 0;
     
@@ -206,7 +192,7 @@ public class GameCanvas extends JComponent {
                 }
     
             };
-            drawTimer = new javax.swing.Timer((int)Math.round(1000.0/FPS_CAP), displayAnimation);
+            drawTimer = new javax.swing.Timer((int)Math.round(1000.0/FPS_CAP), displayGame);
         }
     }
 
@@ -235,7 +221,8 @@ public class GameCanvas extends JComponent {
           System.out.println("IOException from connectToServer() method.");
         }
       }
-    /**
+    
+      /**
      * A private class that writes information to the server.
      */
     private class WriteToServer implements Runnable {

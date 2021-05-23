@@ -1,3 +1,5 @@
+import java.awt.*;
+
 /**
  * The projectiles of the player ship.
  */
@@ -27,18 +29,6 @@ public class ShipBullet implements GameObject, Projectile {
     }
 
     @Override
-    public void draw() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void update() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public String getCompressedData() {
         // TODO Auto-generated method stub
         return null;
@@ -46,6 +36,18 @@ public class ShipBullet implements GameObject, Projectile {
 
     @Override
     public void recieveCompressedData() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void draw(Graphics2D g2d) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void update(double deltaTime) {
         // TODO Auto-generated method stub
         
     }

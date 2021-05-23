@@ -1,7 +1,7 @@
 import java.awt.*;
 
 /**
- * All drawn game objects will implement this class. It had methods that every game
+ * All drawn game objects will implement this class. It has methods that every game
  * object will need.
  */
 public interface GameObject {
