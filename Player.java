@@ -17,7 +17,7 @@ public class Player {
     private double moveSpeed;
     private int projectileDamage; //?
     private boolean isAlive;
-    public boolean movingUp, movingDown, movingLeft, movingRight; //not sure yet
+    private boolean movingUp, movingDown, movingLeft, movingRight; //not sure yet
     
 
     /**
@@ -80,7 +80,7 @@ public class Player {
                     break;
                 default:
                     g2d.setColor(Color.BLACK);
-                    /* g2d.fillRect(xPos,yPos,size,size); */
+                    g2d.fillRect((int)xPos,(int)yPos,(int)size,(int)size);
             }
 
     }
@@ -88,20 +88,20 @@ public class Player {
     /**
      * Updates the player's ship.
      * 
-     * @param deltaTime this basically makes sure it moves correctly
+     * @param d this basically makes sure it moves correctly
      */
-    public void updatePlayerShip(long deltaTime) {
+    public void updatePlayerShip(double d) {
         if(movingUp) {
-            yPos -= moveSpeed*deltaTime;
+            yPos -= moveSpeed*d;
         }
         if(movingDown) {
-            yPos += moveSpeed*deltaTime;
+            yPos += moveSpeed*d;
         }
         if(movingLeft) {
-            xPos -= moveSpeed*deltaTime;
+            xPos -= moveSpeed*d;
         }
         if(movingRight) {
-            xPos += moveSpeed*deltaTime;
+            xPos += moveSpeed*d;
         }
 
         //then another if about getting hit and taking damage.
@@ -153,5 +153,23 @@ public class Player {
      */
     public void setShip(int shipType) {
         this.shipType = shipType;
+    }
+
+    public void setMovement(String letter, boolean value) {
+        switch(letter) {
+            case "W":
+                movingUp = value;
+                break;
+            case "A":
+                movingLeft = value;
+                break;
+            case "S":
+                movingDown = value;
+                break;
+            case "D":
+                movingRight = value;
+                break;
+        }
+
     }
 }

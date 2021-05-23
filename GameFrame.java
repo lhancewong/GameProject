@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 /**
  *  This class contains the code that sets up the main JFrame for the player.
@@ -15,19 +16,16 @@ public class GameFrame {
     //Player stuff
     private Player p1;
     private Player p2;
-    private KeyAction ka1;
-    private KeyAction ka2;
 
     public GameFrame() {
         gameCanvas = new GameCanvas();
-        p1 = new Player(100, 100, 20, 2);
+        window = new JFrame();
     }
 
     /**
      * Sets up the GUI.
      */
     public void setUpGUI() {
-        
         mainPanel = window.getContentPane();
         window.setTitle("Shoot and Scoot");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -42,13 +40,14 @@ public class GameFrame {
     /**
      * Passes p1 and p2 to the KeyAction class.
      */
-    private void setUpKeyActions() {
+    public void setUpKeyActions() {
         KeyAction ka;
-        if (gameCanvas.getPlayerNumber() == 1) {
+        /* if (gameCanvas.getPlayerNumber() == 1) {
             ka = new KeyAction(p1);
         } else {
             ka = new KeyAction(p2);
-        }
+        } */
+        ka = new KeyAction(p1);
         mainPanel.addKeyListener(ka);
     }
 
@@ -58,7 +57,7 @@ public class GameFrame {
     public void startGame() {
         setUpGUI();
         setUpKeyActions();
-
+        mainPanel.requestFocus();
     }
     
 }

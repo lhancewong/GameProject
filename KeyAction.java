@@ -21,16 +21,20 @@ public class KeyAction extends KeyAdapter {
 
         switch(keyCode) {
             case KeyEvent.VK_W:
-                playerShip.movingUp = true;
+                playerShip.setMovement("W", true);
+                System.out.println("W");
                 break;
             case KeyEvent.VK_A:
-                playerShip.movingLeft = true;
+                playerShip.setMovement("A", true);
+                System.out.println("A");
                 break;
             case KeyEvent.VK_S:
-                playerShip.movingDown = true;
+                playerShip.setMovement("S", true);
+                System.out.println("S");
                 break;
             case KeyEvent.VK_D:
-                playerShip.movingRight = true;
+                playerShip.setMovement("D", true);
+                System.out.println("D");
                 break;
         }
 
@@ -42,16 +46,16 @@ public class KeyAction extends KeyAdapter {
 
         switch(keyCode) {
             case KeyEvent.VK_W:
-                playerShip.movingUp = false;
+                playerShip.setMovement("W", false);
                 break;
             case KeyEvent.VK_A:
-                playerShip.movingLeft = false;
+                playerShip.setMovement("A", false);
                 break;
             case KeyEvent.VK_S:
-                playerShip.movingDown = false;
+                playerShip.setMovement("S", false);
                 break;
             case KeyEvent.VK_D:
-                playerShip.movingRight = false;
+                playerShip.setMovement("D", false);
                 break;
         }
         

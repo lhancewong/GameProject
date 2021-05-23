@@ -26,6 +26,7 @@ public class GameCanvas extends JComponent {
     private int pNum;
     private boolean isRunning, isServer;
     private static final int FPS_CAP = 60;
+    private String titleFPS; 
     
     /**
      * Initializes the GameCanvas object.
@@ -49,6 +50,8 @@ public class GameCanvas extends JComponent {
         //variables for the loops
         isRunning = true;
 
+        gameLoop.startThread();
+
     }
 
     /**
@@ -57,7 +60,7 @@ public class GameCanvas extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         g2d = (Graphics2D) g;
-        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.setColor(new Color(100,150,150));
         g2d.fill(bg);
 
         //draw player
@@ -138,6 +141,7 @@ public class GameCanvas extends JComponent {
         public GameClient(int sleepTime) {
             logicLoop = new Thread(this);
             this.sleepTime = sleepTime;
+            drawLoop();
         }
 
         /**
@@ -145,9 +149,7 @@ public class GameCanvas extends JComponent {
          */
         public void startThread() {
             logicLoop.start();
-            if (isServer) {
-                drawTimer.start();
-            }
+            drawTimer.start();
         }
 
         /**
@@ -156,7 +158,8 @@ public class GameCanvas extends JComponent {
         @Override
         public void run() {
             while(isRunning) {
-                //TODO update
+                p1.updatePlayerShip(0.1);
+                p2.updatePlayerShip(0.1);
 
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
@@ -184,9 +187,10 @@ public class GameCanvas extends JComponent {
                      */ 
                     if (currentTime - previousTime >= 1000) {
                         if (isRunning) {
-                            //titleFPS.setText("Camping | FPS: " + frames + "   ");
+                            //titleFPS = "Camping | FPS: " + frames + "   ";
+                            System.out.println("FPS: " + frames);
                         } else {
-                            //titleFPS.setText("Camping   ");
+                            //titleFPS = "Camping   ";
                         }
                         frames = 0;
                         previousTime = currentTime;
