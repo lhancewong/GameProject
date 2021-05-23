@@ -4,7 +4,7 @@ import java.awt.*;
 /**
  * This class contains the code that manages the player's appearance and functionality.
  */
-public class Player {
+public class Player implements GameObject {
     private int playerID;
 
     //appearance related
@@ -17,7 +17,7 @@ public class Player {
     private double moveSpeed;
     private int projectileDamage; //?
     private boolean isAlive;
-    private boolean movingUp, movingDown, movingLeft, movingRight; //not sure yet
+    public boolean movingUp, movingDown, movingLeft, movingRight; //not sure yet
     
 
     /**
@@ -52,6 +52,11 @@ public class Player {
                 moveSpeed = 4;
                 projectileDamage = 1;
                 break;
+            default:
+                hitPoints = 100;
+                moveSpeed = 400;
+                projectileDamage = 1;
+                break;
         } 
 
         isAlive = true;
@@ -66,7 +71,9 @@ public class Player {
      * 
      * @param g2d
      */
-    public void drawPlayerShip(Graphics2D g2d) {
+    @Override
+    public void draw(Graphics2D g2d) {
+        //System.out.println(xPos + " " + yPos + " " + movingUp + " " + movingDown + " " + movingLeft + " " + movingRight);
         if (isAlive)
             switch(shipType) {
                 case 1: //offensive
@@ -90,7 +97,9 @@ public class Player {
      * 
      * @param d this basically makes sure it moves correctly
      */
-    public void updatePlayerShip(double d) {
+    @Override
+    public void update(double d) {
+        //System.out.println("U" + xPos + " " + yPos + " " + movingUp + " " + movingDown + " " + movingLeft + " " + movingRight);
         if(movingUp) {
             yPos -= moveSpeed*d;
         }
@@ -155,21 +164,15 @@ public class Player {
         this.shipType = shipType;
     }
 
-    public void setMovement(String letter, boolean value) {
-        switch(letter) {
-            case "W":
-                movingUp = value;
-                break;
-            case "A":
-                movingLeft = value;
-                break;
-            case "S":
-                movingDown = value;
-                break;
-            case "D":
-                movingRight = value;
-                break;
-        }
+    @Override
+    public String getCompressedData() {
+        String data = "";
+        return null;
+    }
 
+    @Override
+    public void recieveCompressedData() {
+        // TODO Auto-generated method stub
+        
     }
 }

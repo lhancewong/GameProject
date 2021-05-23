@@ -1,3 +1,5 @@
+import java.awt.*;
+
 /**
  * All drawn game objects will implement this class. It had methods that every game
  * object will need.
@@ -6,12 +8,12 @@ public interface GameObject {
     /**
      * Draws the projectile's sprite based on x and y.
      */
-    void draw();
+    void draw(Graphics2D g2d);
 
     /**
      * Updates the GameObject
      */
-    void update();
+    void update(double deltaTime);
 
     /**
      * Compresses the necessary data that will be sent to the server.

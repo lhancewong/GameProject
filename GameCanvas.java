@@ -22,11 +22,10 @@ public class GameCanvas extends JComponent {
     private ReadFromServer rfsLoop;
 
     //Game Stuff
-    private Player p1, p2;
-    private int pNum;
+    public Player p1, p2;
+    public int pNum;
     private boolean isRunning, isServer;
     private static final int FPS_CAP = 60;
-    private String titleFPS; 
     
     /**
      * Initializes the GameCanvas object.
@@ -64,8 +63,8 @@ public class GameCanvas extends JComponent {
         g2d.fill(bg);
 
         //draw player
-        p1.drawPlayerShip(g2d);
-        p2.drawPlayerShip(g2d);
+        p1.draw(g2d);
+        p2.draw(g2d);
 
     }
 
@@ -73,9 +72,8 @@ public class GameCanvas extends JComponent {
      * Initializes the player sprite.
      */
     private void initPlayer() {
-
-        p1 = new Player(210,180,10,4);
-        p2 = new Player(210,540,10,4);
+        p1 = new Player(210,180,30,4);
+        p2 = new Player(210,540,30,4);
     }
 
     /**
@@ -157,9 +155,16 @@ public class GameCanvas extends JComponent {
          */
         @Override
         public void run() {
+            long previousTime = System.currentTimeMillis()-1;
             while(isRunning) {
-                p1.updatePlayerShip(0.1);
-                p2.updatePlayerShip(0.1);
+                long currentTime = System.currentTimeMillis();
+
+                double deltaTime = (currentTime - previousTime)/1000.0;
+                //GAME UPDATES
+                p1.update(deltaTime);
+                p2.update(deltaTime);
+
+                previousTime = currentTime;
 
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
@@ -187,15 +192,16 @@ public class GameCanvas extends JComponent {
                      */ 
                     if (currentTime - previousTime >= 1000) {
                         if (isRunning) {
-                            //titleFPS = "Camping | FPS: " + frames + "   ";
-                            System.out.println("FPS: " + frames);
+                            String titleFPS = "Shoot and Scoot | FPS: " + frames + "   ";
+                            GameUtils.get().setJFrameTitle(titleFPS);
                         } else {
-                            //titleFPS = "Camping   ";
+                            String titleFPS = "Shoot and Scoot";
+                            GameUtils.get().setJFrameTitle(titleFPS);
                         }
                         frames = 0;
                         previousTime = currentTime;
                     }
-    
+                    //GAME DRAW
                     repaint();
                 }
     
