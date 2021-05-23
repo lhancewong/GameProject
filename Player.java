@@ -4,7 +4,7 @@ import java.awt.*;
 /**
  * This class contains the code that manages the player's appearance and functionality.
  */
-public class Player {
+public class Player implements GameObject{
     private int playerID;
 
     //appearance related
@@ -66,7 +66,7 @@ public class Player {
      * 
      * @param g2d
      */
-    public void drawPlayerShip(Graphics2D g2d) {
+    public void draw(Graphics2D g2d) {
         if (isAlive)
             switch(shipType) {
                 case 1: //offensive
@@ -90,7 +90,7 @@ public class Player {
      * 
      * @param d this basically makes sure it moves correctly
      */
-    public void updatePlayerShip(double d) {
+    public void update(double d) {
         if(movingUp) {
             yPos -= moveSpeed*d;
         }
@@ -171,5 +171,17 @@ public class Player {
                 break;
         }
 
+    }
+
+    @Override
+    public String getCompressedData() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void receiveCompressedData() {
+        // TODO Auto-generated method stub
+        
     }
 }
