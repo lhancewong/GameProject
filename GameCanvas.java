@@ -37,8 +37,8 @@ public class GameCanvas extends JComponent {
      */
     public GameCanvas() {
         //Canvas things
-        width = 1280;
-        height = 720;
+        width = GameUtils.get().getWidth();
+        height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
 
         //Arraylists
@@ -203,12 +203,12 @@ public class GameCanvas extends JComponent {
      * Method to connect to the server
      */
     public void connectToServer() {
-        //TODO make it so that the ip and port is taken from a jtextfield or something
+        //TODO make it so that the ip and port is taken from a jtextfield or something. called when join is pressed
         try {
-            System.out.print("Please input the server's IP Address: ");
+            //System.out.print("Please input the server's IP Address: ");
             String ipAddress = "192.168.1.152";
 
-            System.out.print("Please input the port number: ");
+            //System.out.print("Please input the port number: ");
             int portNum = Integer.parseInt("25570");
             System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
             Socket clientSocket = new Socket(ipAddress, portNum);
@@ -235,7 +235,9 @@ public class GameCanvas extends JComponent {
          */
         @Override
         public void run() {
-
+            /* TODO gets the compressed data of every gameobject and sends it to server
+             * Example: player sends its moving up down or something
+             */
             try { Thread.sleep(sleepTime); }
             catch(InterruptedException ex) {
                 System.out.println("InterruptedException at WTS run()\n\n" + ex);

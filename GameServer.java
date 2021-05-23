@@ -41,6 +41,8 @@ public class GameServer {
             }
 
             System.out.println("No longer accepting connections.");
+            GameMaster gameMaster = new GameMaster(20);
+            gameMaster.startThread();
 
         } catch(IOException ex) {
             System.out.println("IOException from acceptConnections().");
@@ -53,6 +55,9 @@ public class GameServer {
     private class GameMaster implements Runnable {
         private Thread logicLoop;
         private long sleepTime;
+
+        private Player p1;
+        private Player p2;
         
         public GameMaster(int sleepTime) {
             logicLoop = new Thread(this);
