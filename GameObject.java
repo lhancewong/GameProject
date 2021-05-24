@@ -1,4 +1,4 @@
-import java.awt.*;
+import java.awt.Graphics2D;
 
 /**
  * All drawn game objects will implement this class. It has methods that every game
@@ -23,6 +23,6 @@ public interface GameObject {
     /**
      * Reads the compressed data received from the server.
      */
-    void recieveCompressedData();
+    void receiveCompressedData();
     
 }
