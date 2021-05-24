@@ -35,7 +35,7 @@ public class ShipBullet implements GameObject, Projectile {
     }
 
     @Override
-    public void recieveCompressedData() {
+    public void recieveCompressedData(String data) {
         // TODO Auto-generated method stub
         
     }

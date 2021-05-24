@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 /**
  * This class contains the code that manages the game server's functionality. It also
@@ -9,8 +10,11 @@ public class GameServer {
     private ServerSocket ss;
     private int numPlayers;
 
+    private String clientInput;
+
     //GameRelated
-    private boolean isRunning;
+    private ArrayList<GameObject> bossFight;
+    private Player p1, p2;
 
     private static final int MAX_PLAYERS = 2;
 
@@ -18,8 +22,12 @@ public class GameServer {
         System.out.println("( ᴜ ω ᴜ )   |Shoot and Scoot Server| ( ᴜ ω ᴜ )");
         numPlayers = 0;
 
+        GameMaster gameMaster = new GameMaster(20);
+        initBossFight();
+        gameMaster.startThread();
+
         try {
-            ss = new ServerSocket(25570);
+            ss = new ServerSocket(11111);
         } catch(IOException ex) {
             System.out.println("IOException from GameServer constructor.");
         }
@@ -28,21 +36,25 @@ public class GameServer {
     public void acceptConnections() {
         try {
             System.out.println("( ᴜ ω ᴜ ) Waiting for connections...");
+            ReadFromClient RFC = null;
+            WriteToClient WTC = null;
 
             while(numPlayers < MAX_PLAYERS) {
                 Socket s = ss.accept();
                 numPlayers++;
                 
-                ReadFromClient RFC = new ReadFromClient(s,numPlayers,20);
-                WriteToClient WTC = new WriteToClient(s,numPlayers,20);
+                RFC = new ReadFromClient(s,numPlayers,20);
+                WTC = new WriteToClient(s,numPlayers,20);
                 System.out.println("( ᴜ ω ᴜ ) Player " + numPlayers + " has connected.");
+                try { 
+                    new DataOutputStream(s.getOutputStream()).writeInt(numPlayers); 
+                } catch(IOException ex) {
+                    System.out.println("IOException at WTC run()");
+                }
                 RFC.startThread();
                 WTC.startThread();
             }
-
             System.out.println("No longer accepting connections.");
-            GameMaster gameMaster = new GameMaster(20);
-            gameMaster.startThread();
 
         } catch(IOException ex) {
             System.out.println("IOException from acceptConnections().");
@@ -50,27 +62,45 @@ public class GameServer {
     }
 
     /**
+     * Initializes the bossFight ArrayList.
+     * This ArrayList is meant to hold what will be 
+     * drawn when repaint is called while the
+     * boss fight is supposed to be displayed.
+     */
+    private void initBossFight() {
+        bossFight = new ArrayList<GameObject>();
+        //bg = new Background();
+        p1 = new Player(210,180,30,4);
+        p2 = new Player(210,540,30,4);
+        //bossFight.add(bg);
+        bossFight.add(p1);
+        bossFight.add(p2);
+    }
+
+    
+
+    /**
      * 
      */
     private class GameMaster implements Runnable {
         private Thread logicLoop;
         private long sleepTime;
-
-        private Player p1;
-        private Player p2;
         
         public GameMaster(int sleepTime) {
             logicLoop = new Thread(this);
             this.sleepTime = sleepTime;
         }
 
+        
+
         public void startThread() {
+            initBossFight();
             logicLoop.start();
         }
 
         @Override
         public void run() {
-            while(isRunning) {
+            while(true) {
                 //TODO update
 
                 try { Thread.sleep(sleepTime); }
@@ -85,7 +115,7 @@ public class GameServer {
      * A private class that writes information to the server.
      */
     private class WriteToClient implements Runnable {
-        private Socket pSocket;
+        //private Socket pSocket;
         private int pNum;
         private long sleepTime;
 
@@ -96,7 +126,7 @@ public class GameServer {
          * Initializes the WriteToServer class
          */
         public WriteToClient(Socket pSocket, int pNum, int sleepTime) {
-            this.pSocket = pSocket;
+            //this.pSocket = pSocket;
             this.pNum = pNum;
             this.sleepTime = sleepTime;
 
@@ -120,17 +150,16 @@ public class GameServer {
          */
         @Override
         public void run() {
-            try { 
-                dataOut.writeInt(pNum); 
-            } catch(IOException ex) {
-                System.out.println("IOException at WTC run()");
-            }
             while(true) {
-                if (pNum == 1) {
-                
-
-                } else {
-    
+                try {
+                    if (pNum == 1) {
+                        dataOut.writeUTF(p2.getCompressedData());
+                    } else {
+                        dataOut.writeUTF(p1.getCompressedData());
+                    }
+                    dataOut.flush();
+                } catch(IOException ex) {
+                    System.out.println("IOException at WTC run()\n\n" + ex);
                 }
             
                 try { Thread.sleep(sleepTime); }
@@ -141,8 +170,6 @@ public class GameServer {
         }
 
     }
-
-
 
     private class ReadFromClient implements Runnable {
         private Socket pSocket;
@@ -171,26 +198,54 @@ public class GameServer {
 
         @Override
         public void run() {
-            while(true) {
-                if (pNum == 1) {
-                
+            try {
+                while(true) {
+                    System.out.println("Yo");
+                    try {
+                        clientInput = dataIn.readUTF();
+                    } catch(IOException ex) {
+                        System.out.println("IOException at RFC run()");
+                    }
 
-                } else {
-    
+                    if(pNum == 1) {
+                        p1.recieveCompressedData(clientInput);
+                    } else {
+                        p2.recieveCompressedData(clientInput);
+                    }
+
+                    //processInput(clientInput.split("_"));
+
+                    Thread.sleep(sleepTime); 
                 }
-            
-                try { Thread.sleep(sleepTime); }
-                catch(InterruptedException ex) {
-                    System.out.println("InterruptedException at WTC run()\n\n" + ex);
-                }
+            } catch(InterruptedException ex) {
+                System.out.println("InterruptedException at WTC run()\n\n" + ex);
             }
-            
-            
         }
 
+        public void processInput(String[] inp) {
+            //ind is the currentIndex
+            int ind = 0;
+            while(ind < inp.length) {
+                String data = "";
+                switch(inp[ind]) {
+                    case "p1":
+                        data = String.format("%s_%s_",inp[ind+1],inp[ind+2]);
+                        p1.recieveCompressedData(data);
+                        ind += 3;
+                        break;
+                    case "p2":
+                        data = String.format("%s_%s_",inp[ind+1],inp[ind+2]);
+                        p2.recieveCompressedData(data);
+                        ind += 3;
+                        break;
+                    default:
+                        ind++;
+                }
+            }
+        }    
     }
 
-    public static void main (String args[]) {
+    public static void main(String args[]) {
         GameServer gs = new GameServer();
         gs.acceptConnections();
     }

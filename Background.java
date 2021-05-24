@@ -20,7 +20,7 @@ public class Background implements GameObject {
     }
 
     @Override
-    public void recieveCompressedData() {
+    public void recieveCompressedData(String data) {
         // TODO Auto-generated method stub
         
     }

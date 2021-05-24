@@ -42,11 +42,8 @@ public class GameCanvas extends JComponent {
         height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
         console = new Scanner(System.in);
-        
-        //Objects & Shapes
-        bg = new Rectangle2D.Double(0,0,width,height);
-        initBossFight();
         initServerSelection();
+        
 
         //loops
         gameLoop = new GameClient(20);
@@ -57,7 +54,14 @@ public class GameCanvas extends JComponent {
         isBossFight = true;
 
         connectToServer();
+
+        //Objects & Shapes
+        bg = new Rectangle2D.Double(0,0,width,height);
+        initBossFight();
+
         gameLoop.startThread();
+        wtsLoop.startThread();
+        rfsLoop.startThread();
     }
 
     /**
@@ -212,14 +216,14 @@ public class GameCanvas extends JComponent {
     public void connectToServer() {
         //TODO make it so that the ip and port is taken from a jtextfield or something. called when join is pressed
         try {
-            System.out.print("Please input the server's IP Address: ");
-            String ipAddress = console.nextLine();
+            //System.out.print("Please input the server's IP Address: ");
+            //String ipAddress = console.nextLine();
 
-            System.out.print("Please input the port number: ");
-            int portNum = Integer.parseInt(console.nextLine());
+            //System.out.print("Please input the port number: ");
+            //int portNum = Integer.parseInt(console.nextLine());
 
             System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
-            Socket clientSocket = new Socket(ipAddress, portNum);
+            Socket clientSocket = new Socket("192.168.1.153", 11111);
 
             System.out.println("CONNECTION SUCCESSFUL!");
             wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 20);
@@ -233,8 +237,7 @@ public class GameCanvas extends JComponent {
                 System.out.println("IOException when trying to get Player Number");
             }
 
-            wtsLoop.startThread();
-            rfsLoop.startThread();
+            
         } catch(IOException ex) {
           System.out.println("IOException from connectToServer() method.");
         }
@@ -253,11 +256,23 @@ public class GameCanvas extends JComponent {
          */
         @Override
         public void run() {
-            /* TODO gets the compressed data of every gameobject and sends it to server
-             * Example: player sends its moving up down or something
-             */
-            try { Thread.sleep(sleepTime); }
-            catch(InterruptedException ex) {
+            try {
+                while (true) {
+                    String data = "";
+                    if(pNum == 1) {
+                        data = p1.getCompressedData();
+                    } else {
+                        data = p2.getCompressedData();
+                    }
+                    try {
+                        dataOut.writeUTF(data);
+                        dataOut.flush();
+                    } catch (IOException ex){
+                        System.out.println("IOException at WTS run()\n\n" + ex);
+                    }
+                    Thread.sleep(sleepTime);
+                }
+            } catch(InterruptedException ex) {
                 System.out.println("InterruptedException at WTS run()\n\n" + ex);
             }
         }
@@ -294,16 +309,20 @@ public class GameCanvas extends JComponent {
         @Override
         public void run() {
             try {
-                /* try { 
-                    pNum = dataIn.readInt();
-                    GameUtils.get().setPlayerNum(pNum); 
-                    System.out.println("You are Player " + pNum + "!");
-                } catch(IOException ex) {
-                    System.out.println("IOException at WTC run()");
-                } */
-
                 while (true) {
-                    //TODO read data from server.
+                    String data = "";
+                    try {
+                        data = dataIn.readUTF();
+                    } catch(IOException ex) {
+                        System.out.println("IOException at RFS run()" + ex);
+                    }
+
+                    if(pNum == 1) {
+                        p2.recieveCompressedData(data);
+                    } else {
+                        p1.recieveCompressedData(data);
+                    }
+
                     Thread.sleep(sleepTime);
                 }
             } catch(InterruptedException ex) {

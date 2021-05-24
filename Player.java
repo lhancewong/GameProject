@@ -35,7 +35,7 @@ public class Player implements GameObject {
         this.size = size;
         this.shipType = shipType;
 
-        pNum = 0;
+        pNum = GameUtils.get().getPlayerNum();
 
         xBorder = GameUtils.get().getWidth();
         yBorder = GameUtils.get().getHeight();
@@ -188,17 +188,47 @@ public class Player implements GameObject {
 
     @Override
     public String getCompressedData() {
-        //[p1_movingUp_movingDown_movingLeft_movingRight]
-        if (pNum == 0) {
-            GameUtils.get().getPlayerNum();
-        } 
-        String data = String.format("[p%d_%b_%b_%b_%b]\n",pNum,movingUp,movingDown,movingLeft,movingRight);
-        return null;
+        //p1_xPos_yPos_
+        //String data = String.format("p%d_%b_%b_%b_%b_",pNum,movingUp,movingDown,movingLeft,movingRight);
+        System.out.printf("SENDING %.2f_%.2f_\n",xPos,yPos);
+        String data = String.format("%.2f_%.2f_",xPos,yPos);
+        return data;
     }
 
     @Override
-    public void recieveCompressedData() {
-        // TODO Auto-generated method stub
+    public void recieveCompressedData(String data) {
+        /* //movingUp_movingDown_movingLeft_movingRight
+        String[] dataList = data.split("_");
+
+        if(dataList[0].equals("true")) {
+            movingUp = true;
+        } else {
+            movingUp = false;
+        }
+
+        if(dataList[1].equals("true")) {
+            movingDown = true;
+        } else {
+            movingDown = false;
+        }
+
+        if(dataList[2].equals("true")) {
+            movingLeft = true;
+        } else {
+            movingLeft = false;
+        }
+
+        if(dataList[3].equals("true")) {
+            movingRight = true;
+        } else {
+            movingRight = false;
+        } */
+
         
+        String[] dataList = data.split("_");
+        System.out.println("RECIEVING"+dataList[0] + " " + dataList[1]);
+        xPos = Double.parseDouble(dataList[0]);
+        yPos = Double.parseDouble(dataList[1]);
+
     }
 }

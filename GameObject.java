@@ -16,13 +16,13 @@ public interface GameObject {
     void update(double deltaTime);
 
     /**
-     * Compresses the necessary data that will be sent to the server.
+     * Compresses the necessary data that will be sent to the clients.
      */
     String getCompressedData();
 
     /**
      * Reads the compressed data received from the server.
      */
-    void recieveCompressedData();
+    void recieveCompressedData(String data);
     
 }
