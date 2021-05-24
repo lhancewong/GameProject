@@ -1,7 +1,7 @@
 import java.awt.Graphics2D;
 
 /**
- * All drawn game objects will implement this class. It had methods that every game
+ * All drawn game objects will implement this class. It has methods that every game
  * object will need.
  */
 public interface GameObject {
@@ -13,7 +13,7 @@ public interface GameObject {
     /**
      * Updates the GameObject
      */
-    void update(double d);
+    void update(double deltaTime);
 
     /**
      * Compresses the necessary data that will be sent to the server.
