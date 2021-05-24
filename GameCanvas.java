@@ -16,6 +16,7 @@ public class GameCanvas extends JComponent {
     private int width, height;
     //temp
     private Rectangle2D.Double bg;
+    private Scanner console;
 
     //Threads
     private GameClient gameLoop;
@@ -24,7 +25,7 @@ public class GameCanvas extends JComponent {
 
     //Game Stuff
     public Player p1, p2;
-    public int pNum;
+    private int pNum;
     private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
 
@@ -40,14 +41,12 @@ public class GameCanvas extends JComponent {
         width = GameUtils.get().getWidth();
         height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
-
-        //Arraylists
-        bossFight = new ArrayList<GameObject>();
+        console = new Scanner(System.in);
         
         //Objects & Shapes
         bg = new Rectangle2D.Double(0,0,width,height);
         initBossFight();
-        initMenuSelection();
+        initServerSelection();
 
         //loops
         gameLoop = new GameClient(20);
@@ -57,6 +56,7 @@ public class GameCanvas extends JComponent {
         isClassSelection = false;
         isBossFight = true;
 
+        connectToServer();
         gameLoop.startThread();
     }
 
@@ -78,9 +78,13 @@ public class GameCanvas extends JComponent {
     }
 
     /**
-     * Initializes the boss fight.
+     * Initializes the bossFight ArrayList.
+     * This ArrayList is meant to hold what will be 
+     * drawn when repaint is called while the
+     * boss fight is supposed to be displayed.
      */
     private void initBossFight() {
+        bossFight = new ArrayList<GameObject>();
         //bg = new Background();
         p1 = new Player(210,180,30,4);
         p2 = new Player(210,540,30,4);
@@ -91,9 +95,12 @@ public class GameCanvas extends JComponent {
     }
 
     /**
-     * Initializes the menu screen.
+     * Initializes the serverSelectionMenu ArrayList.
+     * Meant to hold what will be drawn when repaint 
+     * is called and the serverSelection Menu is supposed
+     * to be up
      */
-    private void initMenuSelection() {
+    private void initServerSelection() {
 
     }
 
@@ -205,16 +212,27 @@ public class GameCanvas extends JComponent {
     public void connectToServer() {
         //TODO make it so that the ip and port is taken from a jtextfield or something. called when join is pressed
         try {
-            //System.out.print("Please input the server's IP Address: ");
-            String ipAddress = "192.168.1.152";
+            System.out.print("Please input the server's IP Address: ");
+            String ipAddress = console.nextLine();
 
-            //System.out.print("Please input the port number: ");
-            int portNum = Integer.parseInt("25570");
+            System.out.print("Please input the port number: ");
+            int portNum = Integer.parseInt(console.nextLine());
+
             System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
             Socket clientSocket = new Socket(ipAddress, portNum);
+
             System.out.println("CONNECTION SUCCESSFUL!");
             wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 20);
             rfsLoop = new ReadFromServer(new DataInputStream(clientSocket.getInputStream()), 20);
+
+            try { 
+                pNum = new DataInputStream(clientSocket.getInputStream()).readInt();
+                GameUtils.get().setPlayerNum(pNum);
+                System.out.println("You are Player " + pNum + "!");
+            } catch(IOException ex) {
+                System.out.println("IOException when trying to get Player Number");
+            }
+
             wtsLoop.startThread();
             rfsLoop.startThread();
         } catch(IOException ex) {
@@ -276,10 +294,13 @@ public class GameCanvas extends JComponent {
         @Override
         public void run() {
             try {
-                try { pNum = dataIn.readInt(); } 
-                catch(IOException ex) {
+                /* try { 
+                    pNum = dataIn.readInt();
+                    GameUtils.get().setPlayerNum(pNum); 
+                    System.out.println("You are Player " + pNum + "!");
+                } catch(IOException ex) {
                     System.out.println("IOException at WTC run()");
-                }
+                } */
 
                 while (true) {
                     //TODO read data from server.

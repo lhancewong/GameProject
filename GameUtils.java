@@ -10,6 +10,7 @@ public class GameUtils {
     private JFrame frame;
     //Variables
     private int width, height;
+    private int pNum;
 
     private GameUtils() {
         width = 1280;
@@ -47,6 +48,13 @@ public class GameUtils {
     }
 
     /**
+     * Sets the player number of the specific gameCanvas Instance.
+     */
+    public void setPlayerNum(int pNum) {
+        this.pNum = pNum;
+    }
+
+    /**
      * Returns the width of the game window.
      * 
      * @return the width of the window
@@ -62,5 +70,14 @@ public class GameUtils {
      */
     public int getHeight() {
         return height;
+    }
+
+    /**
+     * Returns the player number of the gameCanvas instance.
+     * 
+     * @return the player number
+     */
+    public int getPlayerNum() {
+        return pNum;
     }
 }

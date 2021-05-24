@@ -5,7 +5,7 @@ import java.awt.*;
  * This class contains the code that manages the player's appearance and functionality.
  */
 public class Player implements GameObject {
-    private int playerID;
+    private int pNum;
 
     //appearance related
     private double xPos, yPos;
@@ -34,6 +34,8 @@ public class Player implements GameObject {
         this.yPos = yPos;
         this.size = size;
         this.shipType = shipType;
+
+        pNum = 0;
 
         xBorder = GameUtils.get().getWidth();
         yBorder = GameUtils.get().getHeight();
@@ -104,20 +106,16 @@ public class Player implements GameObject {
      */
     @Override
     public void update(double d) {
-        //System.out.println("U" + xPos + " " + yPos + " " + movingUp + " " + movingDown + " " + movingLeft + " " + movingRight);
+        //System.out.printf("[U_%.1f_%.1f_%b_%b_%b_%b]\n",xPos,yPos,movingUp,movingDown,movingLeft,movingRight);
         
-        /**
-         * Note:It would be nice if the -10's will instead be based on the 
-         * speed of the ship and deltatime to optimize the x and y borders
-         * of the ship's movements.
-         */
-        if(xPos+size >= xBorder-10) {
+        double c = moveSpeed*d;
+        if(xPos+size >= xBorder-c) {
             movingRight = false;
         }
         if(xPos <= 10) {
             movingLeft = false;
         }
-        if(yPos+size >= yBorder-10) {
+        if(yPos+size >= yBorder-c) {
             movingDown = false;
         }
         if(yPos <= 10) {
@@ -190,7 +188,11 @@ public class Player implements GameObject {
 
     @Override
     public String getCompressedData() {
-        String data = "";
+        //[p1_movingUp_movingDown_movingLeft_movingRight]
+        if (pNum == 0) {
+            GameUtils.get().getPlayerNum();
+        } 
+        String data = String.format("[p%d_%b_%b_%b_%b]\n",pNum,movingUp,movingDown,movingLeft,movingRight);
         return null;
     }
 

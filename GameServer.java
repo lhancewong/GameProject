@@ -103,7 +103,6 @@ public class GameServer {
             WTCloop = new Thread(this);
             try {
                 dataOut = new DataOutputStream(pSocket.getOutputStream());
-                
             } catch(IOException ex) {
                 System.out.println("IOException from WTC constructor");
             }

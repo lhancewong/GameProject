@@ -12,15 +12,11 @@ public class GameFrame {
     //game stuff
     private GameCanvas gameCanvas;
 
-    //Player stuff
-    private Player p1;
-    private Player p2;
-
     public GameFrame() {
-        gameCanvas = new GameCanvas();
         window = new JFrame();
-
         GameUtils.get().setJFrame(window);
+
+        gameCanvas = new GameCanvas();
     }
 
     /**
