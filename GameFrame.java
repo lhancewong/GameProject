@@ -42,9 +42,9 @@ public class GameFrame {
     public void setUpKeyActions() {
         KeyAction ka;
         if (gameCanvas.getPlayerNumber() == 2) {
-            ka = new KeyAction(gameCanvas.p2);
+            ka = new KeyAction(gameCanvas.p2, gameCanvas);
         } else {
-            ka = new KeyAction(gameCanvas.p1);
+            ka = new KeyAction(gameCanvas.p1, gameCanvas);
         }
         mainPanel.addKeyListener(ka);
     }

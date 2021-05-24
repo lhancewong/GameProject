@@ -13,33 +13,27 @@ import java.util.TimerTask;
  */
 public class Boss implements GameObject{
 
-    private int xPos, yPos;
+    private double xPos, yPos;
     private int xDiff, yDiff;
     private int randomDistance;
     private double xDistance, yDistance;
-    private double size;
     private double moveSpeed;
-    private double chgDirTimer;
     private boolean isAlive;
     private boolean movingUp, movingDown, movingLeft, movingRight;
     private BufferedImage img;
-    private JLabel picLabel;
 
     private double hitPoints;
 
 
     public Boss(){
 
-        xPos = GameUtils.get().getWidth()/2;
-        yPos = GameUtils.get().getHeight()*1/5;
-        moveSpeed = 5;
+        xPos = (GameUtils.get().getWidth()/2)+150;
+        yPos = GameUtils.get().getHeight() - 460;
+        moveSpeed = 100;
         hitPoints = 100;
-        chgDirTimer = 0;
         movingUp = true;
         movingDown = false;
         randomDistance = (int)Math.floor(Math.random()*(yPos-0+1)+0);
-        Timer timer = new Timer();
-        /* timer.scheduleAtFixedRate(new chkDirection(), 0, 3000); */
     }
 
     @Override
@@ -50,24 +44,24 @@ public class Boss implements GameObject{
                 img = ImageIO.read(new File("A:/Admu stuff/Java/CS 22/Finals/Final Proj/GameProject/boss1.png"));
             } catch (IOException e) {
             }
-            g2d.drawImage(img, xPos, yPos, null, null);
+            g2d.drawImage(img, (int) xPos, (int) yPos, null, null);
         
     }
 
     @Override
     public void update(double d) {
 
-        System.out.println(randomDistance);
+
         if(movingUp) {
-            if (yPos > randomDistance){
+            if (yPos >= randomDistance){
                 yPos -= moveSpeed*d;
             }
             else {
                 changeDirection();
             }
         }
-        if(movingDown) {
-            if (yPos < randomDistance){
+        if (movingDown) {
+            if (yPos <= randomDistance){
                 yPos += moveSpeed*d;
             }
             else {
@@ -77,12 +71,6 @@ public class Boss implements GameObject{
 
     }
 
-    /* public class chkDirection extends TimerTask {
-        @Override
-        public void run() {
-            changeDirection();
-        }
-    } */
 
     //encapsulate all movement things under this function
     public void movementPattern(){
@@ -91,19 +79,16 @@ public class Boss implements GameObject{
     }
 
     public void changeDirection(){
+
         if (movingUp){
-            /* yDiff = yPos;
-            yDistance = yDiff * Math.random(); */
-            randomDistance = (int)Math.floor(Math.random()*(720-yPos+1)+yPos);
-            System.out.println(randomDistance);
-            movingUp = false;
-            movingDown = true;
+            movingDown = !movingDown;
+            movingUp =  !movingUp;
+            randomDistance = (int)Math.floor(Math.random()*(233-yPos+1)+yPos);
         }
         else{
+            movingDown = !movingDown;
+            movingUp =  !movingUp;
             randomDistance = (int)Math.floor(Math.random()*(yPos-0+1)+0);
-            System.out.println(randomDistance);
-            movingDown = false;
-            movingUp = true;
         }
     }
 

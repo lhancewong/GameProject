@@ -8,7 +8,7 @@ public class Player implements GameObject {
     private int playerID;
 
     //appearance related
-    private double xPos, yPos;
+    private int xPos, yPos;
     private double size;
     private int shipType;
 
@@ -29,7 +29,7 @@ public class Player implements GameObject {
      * @param yPos y coordinate of ship
      * @param shipType 1 for offense, 2 for balance, 3 for defense
      */
-    public Player(double xPos, double yPos, double size, int shipType) {
+    public Player(int xPos, int yPos, double size, int shipType) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.size = size;
@@ -179,6 +179,14 @@ public class Player implements GameObject {
     }
 
     /**
+     * Creates instance of ShipBullet
+     */
+    public void shoot(){
+        ShipBullet bullet = new ShipBullet(xPos, yPos);
+        bullet.draw(g2d);
+
+    }
+    /**
      * Ideally this can only be called once the player
      * dies.
      * 
@@ -199,5 +207,13 @@ public class Player implements GameObject {
     public void receiveCompressedData(String data) {
         // TODO Auto-generated method stub
         
+    }
+
+    public int getX() {
+        return xPos;
+    }
+
+    public int getY() {
+        return yPos;
     }
 }

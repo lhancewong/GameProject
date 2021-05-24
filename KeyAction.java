@@ -5,14 +5,16 @@ import java.awt.event.*;
  */
 public class KeyAction extends KeyAdapter {
     private Player playerShip;
+    GameCanvas gc;
 
     /**
      * Initializes KeyActions.
      * 
      * @param p the player object that will move based on the keyboard inputs
      */
-    public KeyAction(Player p) {
+    public KeyAction(Player p, GameCanvas gc) {
         playerShip = p;
+        this.gc = gc;
     }
 
     @Override
@@ -35,6 +37,10 @@ public class KeyAction extends KeyAdapter {
             case KeyEvent.VK_D:
                 playerShip.movingRight = true;
                 System.out.println("D");
+                break;
+            case KeyEvent.VK_SPACE:
+                gc.bullets.add(new ShipBullet(playerShip.getX(), playerShip.getY() ) );
+                System.out.println("SPACE");
                 break;
         }
 

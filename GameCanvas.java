@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This class extends JComponent and overrides the paintComponent method in
@@ -28,7 +29,8 @@ public class GameCanvas extends JComponent {
     public int pNum;
     private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
-
+    
+    public CopyOnWriteArrayList<ShipBullet> bullets;
     private ArrayList<GameObject> bossFight;
     //private MenuObjects serverSelectionMenu;
     //private MenuObjects classSelectionMenu;
@@ -44,6 +46,7 @@ public class GameCanvas extends JComponent {
 
         //Arraylists
         bossFight = new ArrayList<GameObject>();
+        bullets = new CopyOnWriteArrayList<ShipBullet>();
         
         //Objects & Shapes
         bg = new Rectangle2D.Double(0,0,width,height);
@@ -74,6 +77,19 @@ public class GameCanvas extends JComponent {
             for(GameObject i: bossFight) {
                 i.draw(g2d);
             }
+            if (bullets.size() > 0) {
+                try {
+                    for(ShipBullet i: bullets) {
+                        i.draw(g2d);
+                        if (i.getX() > 1280){
+                            bullets.remove(i);
+                        }
+                    }  
+                } catch (ConcurrentModificationException e) {
+                    System.out.println("CME");
+                }
+            }
+            
         }
 
     }
@@ -83,9 +99,9 @@ public class GameCanvas extends JComponent {
      */
     private void initBossFight() {
         //bg = new Background();
+        Yalin = new Boss();
         p1 = new Player(210,180,30,4);
         p2 = new Player(210,540,30,4);
-        Yalin = new Boss();
         //bossFight.add(bg);
         bossFight.add(p1);
         bossFight.add(p2);
@@ -107,6 +123,10 @@ public class GameCanvas extends JComponent {
      */
     public int getPlayerNumber() {
         return pNum;
+    }
+
+    public ArrayList<ShipBullet> getBullets() {
+        return bullets;
     }
 
     //====================== Game Stuff ============================//
@@ -151,6 +171,11 @@ public class GameCanvas extends JComponent {
 
                 for(GameObject i : bossFight) {
                     i.update(deltaTime);
+                }
+                if (bullets.size() > 0){
+                    for(ShipBullet i: bullets) {
+                    i.update(deltaTime);
+                    }  
                 }
 
                 previousTime = currentTime;
