@@ -194,20 +194,9 @@ public class Player implements GameObject {
         return null;
     }
 
-    @Override
-    public void recieveCompressedData() {
-        // TODO Auto-generated method stub
-        
-    }
 
     @Override
-    public String getCompressedData() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void receiveCompressedData() {
+    public void receiveCompressedData(String data) {
         // TODO Auto-generated method stub
         
     }

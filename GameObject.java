@@ -23,6 +23,6 @@ public interface GameObject {
     /**
      * Reads the compressed data received from the server.
      */
-    void receiveCompressedData();
+    void receiveCompressedData(String data);
     
 }

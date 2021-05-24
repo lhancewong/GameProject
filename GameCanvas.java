@@ -24,6 +24,7 @@ public class GameCanvas extends JComponent {
 
     //Game Stuff
     public Player p1, p2;
+    public Boss Yalin;
     public int pNum;
     private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
@@ -84,9 +85,11 @@ public class GameCanvas extends JComponent {
         //bg = new Background();
         p1 = new Player(210,180,30,4);
         p2 = new Player(210,540,30,4);
+        Yalin = new Boss();
         //bossFight.add(bg);
         bossFight.add(p1);
         bossFight.add(p2);
+        bossFight.add(Yalin);
 
     }
 
