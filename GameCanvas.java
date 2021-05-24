@@ -4,6 +4,7 @@ import java.awt.geom.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 /**
  * This class extends JComponent and overrides the paintComponent method in
@@ -22,36 +23,41 @@ public class GameCanvas extends JComponent {
     private ReadFromServer rfsLoop;
 
     //Game Stuff
-    private Player p1, p2;
-    private int pNum;
-    private boolean isRunning, isServer;
+    public Player p1, p2;
+    public int pNum;
+    private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
-    private String titleFPS; 
+
+    private ArrayList<GameObject> bossFight;
+    //private MenuObjects serverSelectionMenu;
+    //private MenuObjects classSelectionMenu;
     
     /**
      * Initializes the GameCanvas object.
      */
     public GameCanvas() {
         //Canvas things
-        width = 1280;
-        height = 720;
+        width = GameUtils.get().getWidth();
+        height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
 
+        //Arraylists
+        bossFight = new ArrayList<GameObject>();
+        
         //Objects & Shapes
         bg = new Rectangle2D.Double(0,0,width,height);
-        initPlayer();
-        initBoss();
+        initBossFight();
         initMenuSelection();
 
         //loops
         gameLoop = new GameClient(20);
 
-
-        //variables for the loops
         isRunning = true;
+        isServerSelection = false;
+        isClassSelection = false;
+        isBossFight = true;
 
         gameLoop.startThread();
-
     }
 
     /**
@@ -63,25 +69,24 @@ public class GameCanvas extends JComponent {
         g2d.setColor(new Color(100,150,150));
         g2d.fill(bg);
 
-        //draw player
-        p1.drawPlayerShip(g2d);
-        p2.drawPlayerShip(g2d);
+        if(isBossFight) {
+            for(GameObject i: bossFight) {
+                i.draw(g2d);
+            }
+        }
 
     }
 
     /**
-     * Initializes the player sprite.
+     * Initializes the boss fight.
      */
-    private void initPlayer() {
-
-        p1 = new Player(210,180,10,4);
-        p2 = new Player(210,540,10,4);
-    }
-
-    /**
-     * Initializes the boss.
-     */
-    private void initBoss() {
+    private void initBossFight() {
+        //bg = new Background();
+        p1 = new Player(210,180,30,4);
+        p2 = new Player(210,540,30,4);
+        //bossFight.add(bg);
+        bossFight.add(p1);
+        bossFight.add(p2);
 
     }
 
@@ -103,34 +108,12 @@ public class GameCanvas extends JComponent {
 
     //====================== Game Stuff ============================//
 
-
-    /**
-     * This method will display the server connection menu.
-     */
-    public void startConnectionMenu() {
-
-    }
-
-    /**
-     * This method will display the class selection menu.
-     */
-    public void startClassSelect() {
-
-    }
-
-    /**
-     * This method will display the boss fight.
-     */
-    public void startGame() {
-
-    }
-
     /**
      * A private class that updates and displays the game.
      */
     private class GameClient implements Runnable {
         private Thread logicLoop;
-        private Timer drawTimer;
+        private javax.swing.Timer drawTimer;
         private long sleepTime;
 
         /**
@@ -140,8 +123,8 @@ public class GameCanvas extends JComponent {
          */
         public GameClient(int sleepTime) {
             logicLoop = new Thread(this);
-            this.sleepTime = sleepTime;
             drawLoop();
+            this.sleepTime = sleepTime;
         }
 
         /**
@@ -157,9 +140,17 @@ public class GameCanvas extends JComponent {
          */
         @Override
         public void run() {
+            long previousTime = System.currentTimeMillis()-1;
             while(isRunning) {
-                p1.updatePlayerShip(0.1);
-                p2.updatePlayerShip(0.1);
+                long currentTime = System.currentTimeMillis();
+
+                double deltaTime = (currentTime - previousTime)/1000.0;
+
+                for(GameObject i : bossFight) {
+                    i.update(deltaTime);
+                }
+
+                previousTime = currentTime;
 
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
@@ -173,7 +164,7 @@ public class GameCanvas extends JComponent {
          * reach the FPS_CAP;
          */
         public void drawLoop() {
-            ActionListener displayAnimation = new ActionListener() {
+            ActionListener displayGame = new ActionListener() {
                 long previousTime = System.currentTimeMillis()-1;
                 int frames = 0;
     
@@ -187,20 +178,21 @@ public class GameCanvas extends JComponent {
                      */ 
                     if (currentTime - previousTime >= 1000) {
                         if (isRunning) {
-                            //titleFPS = "Camping | FPS: " + frames + "   ";
-                            System.out.println("FPS: " + frames);
+                            String titleFPS = "Shoot and Scoot | FPS: " + frames + "   ";
+                            GameUtils.get().setJFrameTitle(titleFPS);
                         } else {
-                            //titleFPS = "Camping   ";
+                            String titleFPS = "Shoot and Scoot";
+                            GameUtils.get().setJFrameTitle(titleFPS);
                         }
                         frames = 0;
                         previousTime = currentTime;
                     }
-    
+                    //GAME DRAW
                     repaint();
                 }
     
             };
-            drawTimer = new javax.swing.Timer((int)Math.round(1000.0/FPS_CAP), displayAnimation);
+            drawTimer = new javax.swing.Timer((int)Math.round(1000.0/FPS_CAP), displayGame);
         }
     }
 
@@ -211,12 +203,12 @@ public class GameCanvas extends JComponent {
      * Method to connect to the server
      */
     public void connectToServer() {
-        //TODO make it so that the ip and port is taken from a jtextfield or something
+        //TODO make it so that the ip and port is taken from a jtextfield or something. called when join is pressed
         try {
-            System.out.print("Please input the server's IP Address: ");
+            //System.out.print("Please input the server's IP Address: ");
             String ipAddress = "192.168.1.152";
 
-            System.out.print("Please input the port number: ");
+            //System.out.print("Please input the port number: ");
             int portNum = Integer.parseInt("25570");
             System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
             Socket clientSocket = new Socket(ipAddress, portNum);
@@ -229,7 +221,8 @@ public class GameCanvas extends JComponent {
           System.out.println("IOException from connectToServer() method.");
         }
       }
-    /**
+    
+      /**
      * A private class that writes information to the server.
      */
     private class WriteToServer implements Runnable {
@@ -242,7 +235,9 @@ public class GameCanvas extends JComponent {
          */
         @Override
         public void run() {
-
+            /* TODO gets the compressed data of every gameobject and sends it to server
+             * Example: player sends its moving up down or something
+             */
             try { Thread.sleep(sleepTime); }
             catch(InterruptedException ex) {
                 System.out.println("InterruptedException at WTS run()\n\n" + ex);
