@@ -49,7 +49,8 @@ public class GameServer {
                 try { 
                     new DataOutputStream(s.getOutputStream()).writeInt(numPlayers); 
                 } catch(IOException ex) {
-                    System.out.println("IOException at WTC run()");
+                    System.out.println("IOException at acceptingconnections()");
+                    System.exit(1);
                 }
                 RFC.startThread();
                 WTC.startThread();
@@ -115,7 +116,6 @@ public class GameServer {
      * A private class that writes information to the server.
      */
     private class WriteToClient implements Runnable {
-        //private Socket pSocket;
         private int pNum;
         private long sleepTime;
 
@@ -126,7 +126,6 @@ public class GameServer {
          * Initializes the WriteToServer class
          */
         public WriteToClient(Socket pSocket, int pNum, int sleepTime) {
-            //this.pSocket = pSocket;
             this.pNum = pNum;
             this.sleepTime = sleepTime;
 
@@ -160,6 +159,7 @@ public class GameServer {
                     dataOut.flush();
                 } catch(IOException ex) {
                     System.out.println("IOException at WTC run()\n\n" + ex);
+                    System.exit(1);
                 }
             
                 try { Thread.sleep(sleepTime); }
@@ -175,7 +175,6 @@ public class GameServer {
         private Socket pSocket;
         private int pNum;
         private long sleepTime;
-
         private DataInputStream dataIn;
         private Thread RFCloop;
 
@@ -200,11 +199,11 @@ public class GameServer {
         public void run() {
             try {
                 while(true) {
-                    System.out.println("Yo");
                     try {
                         clientInput = dataIn.readUTF();
                     } catch(IOException ex) {
                         System.out.println("IOException at RFC run()");
+                        System.exit(1);
                     }
 
                     if(pNum == 1) {

@@ -60,4 +60,8 @@ public class KeyAction extends KeyAdapter {
         }
         
     }
+
+    public void sendInput() {
+        
+    }
 }

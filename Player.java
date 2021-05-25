@@ -5,8 +5,6 @@ import java.awt.*;
  * This class contains the code that manages the player's appearance and functionality.
  */
 public class Player implements GameObject {
-    private int pNum;
-
     //appearance related
     private double xPos, yPos;
     private double size;
@@ -34,8 +32,6 @@ public class Player implements GameObject {
         this.yPos = yPos;
         this.size = size;
         this.shipType = shipType;
-
-        pNum = GameUtils.get().getPlayerNum();
 
         xBorder = GameUtils.get().getWidth();
         yBorder = GameUtils.get().getHeight();
@@ -189,44 +185,20 @@ public class Player implements GameObject {
     @Override
     public String getCompressedData() {
         //p1_xPos_yPos_
-        //String data = String.format("p%d_%b_%b_%b_%b_",pNum,movingUp,movingDown,movingLeft,movingRight);
-        System.out.printf("SENDING %.2f_%.2f_\n",xPos,yPos);
+        //System.out.printf("SENDING %.2f_%.2f_\n",xPos,yPos);
         String data = String.format("%.2f_%.2f_",xPos,yPos);
         return data;
     }
 
+    /**
+     * This method will be called on the server side of things.
+     * It will send the 
+     */
     @Override
     public void recieveCompressedData(String data) {
-        /* //movingUp_movingDown_movingLeft_movingRight
-        String[] dataList = data.split("_");
-
-        if(dataList[0].equals("true")) {
-            movingUp = true;
-        } else {
-            movingUp = false;
-        }
-
-        if(dataList[1].equals("true")) {
-            movingDown = true;
-        } else {
-            movingDown = false;
-        }
-
-        if(dataList[2].equals("true")) {
-            movingLeft = true;
-        } else {
-            movingLeft = false;
-        }
-
-        if(dataList[3].equals("true")) {
-            movingRight = true;
-        } else {
-            movingRight = false;
-        } */
-
         
         String[] dataList = data.split("_");
-        System.out.println("RECIEVING"+dataList[0] + " " + dataList[1]);
+        //System.out.println("RECIEVING"+dataList[0] + " " + dataList[1]);
         xPos = Double.parseDouble(dataList[0]);
         yPos = Double.parseDouble(dataList[1]);
 

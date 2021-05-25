@@ -223,7 +223,7 @@ public class GameCanvas extends JComponent {
             //int portNum = Integer.parseInt(console.nextLine());
 
             System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
-            Socket clientSocket = new Socket("192.168.1.153", 11111);
+            Socket clientSocket = new Socket("localhost", 11111);
 
             System.out.println("CONNECTION SUCCESSFUL!");
             wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 20);
@@ -269,6 +269,7 @@ public class GameCanvas extends JComponent {
                         dataOut.flush();
                     } catch (IOException ex){
                         System.out.println("IOException at WTS run()\n\n" + ex);
+                        System.exit(1);
                     }
                     Thread.sleep(sleepTime);
                 }
@@ -315,6 +316,7 @@ public class GameCanvas extends JComponent {
                         data = dataIn.readUTF();
                     } catch(IOException ex) {
                         System.out.println("IOException at RFS run()" + ex);
+                        System.exit(1);
                     }
 
                     if(pNum == 1) {
