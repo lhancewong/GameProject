@@ -15,7 +15,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
      */ 
 public class Game implements Runnable{
 
-    private Rectangle2D.Double bg;
+    private Background bg1;
+    private Background bg2;
     private Thread logicLoop;
     private long sleepTime;
     public Player p1, p2;
@@ -32,7 +33,7 @@ public class Game implements Runnable{
      * @param sleepTime delay between loops in milliseconds
      */
     public Game() {
-        bg = new Rectangle2D.Double(0,0,GameUtils.get().getWidth(),GameUtils.get().getHeight());
+        /* bg = new Rectangle2D.Double(0,0,GameUtils.get().getWidth(),GameUtils.get().getHeight()); */
         logicLoop = new Thread(this);
         isRunning = true;
         isBossFight = true;
@@ -78,11 +79,14 @@ public class Game implements Runnable{
     
     private void initBossFight() {
         bossFight = new ArrayList<GameObject>();
-        //bg = new Background();
+        bg1 = new Background(1);
+        bg2 = new Background(2);
         Yalin = new Boss();
         p1 = new Player(210,180,30,4);
         p2 = new Player(210,540,30,4);
         //bossFight.add(bg);
+        bossFight.add(bg1);
+        bossFight.add(bg2);
         bossFight.add(p1);
         bossFight.add(p2);
         bossFight.add(Yalin);
@@ -94,7 +98,6 @@ public class Game implements Runnable{
     public void draw(Graphics2D g2d){
         g2d = (Graphics2D) g2d;
         g2d.setColor(new Color(100,150,150));
-        g2d.fill(bg);
 
         if(isBossFight) {
             for(GameObject i: bossFight) {
