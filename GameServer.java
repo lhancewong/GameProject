@@ -100,8 +100,18 @@ public class GameServer {
 
         @Override
         public void run() {
+            long previousTime = System.currentTimeMillis()-1;
             while(true) {
-                //TODO update
+                long currentTime = System.currentTimeMillis();
+
+                double deltaTime = (currentTime - previousTime)/1000.0;
+
+                for(GameObject i : bossFight) {
+                    i.update(deltaTime);
+                }
+
+                previousTime = currentTime;
+
 
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {

@@ -223,7 +223,7 @@ public class GameCanvas extends JComponent {
             //int portNum = Integer.parseInt(console.nextLine());
 
             System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
-            Socket clientSocket = new Socket("ginks.ml", 25570);
+            Socket clientSocket = new Socket("ginks.ml", 25565);
 
             System.out.println("CONNECTION SUCCESSFUL!");
             wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 60);

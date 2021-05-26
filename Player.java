@@ -194,13 +194,13 @@ public class Player implements GameObject {
         try {
             dataOut.writeDouble(xPos);
             dataOut.writeDouble(yPos);
-            dataOut.writeBoolean(movingUp);
-            dataOut.writeBoolean(movingDown);
-            dataOut.writeBoolean(movingLeft);
-            dataOut.writeBoolean(movingRight);
+            //dataOut.writeBoolean(movingUp);
+            //dataOut.writeBoolean(movingDown);
+            //dataOut.writeBoolean(movingLeft);
+            //dataOut.writeBoolean(movingRight);
             dataOut.flush();
         } catch(IOException ex) {
-
+            System.out.println("IOException send" + ex);
         }
         
 
@@ -245,12 +245,12 @@ public class Player implements GameObject {
         try {
             xPos = dataIn.readDouble();
             yPos = dataIn.readDouble();
-            movingUp = dataIn.readBoolean();
-            movingDown = dataIn.readBoolean();
-            movingLeft = dataIn.readBoolean();
-            movingRight = dataIn.readBoolean();
+            //movingUp = dataIn.readBoolean();
+            //movingDown = dataIn.readBoolean();
+            //movingLeft = dataIn.readBoolean();
+            //movingRight = dataIn.readBoolean();
         } catch(IOException ex) {
-
+            System.out.println("IOException received" + ex);
         }
 
     }
