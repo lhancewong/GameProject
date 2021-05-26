@@ -215,39 +215,29 @@ public class GameCanvas extends JComponent {
      */
     public void connectToServer() {
         //TODO make it so that the ip and port is taken from a jtextfield or something. called when join is pressed
-        try {
-            //System.out.print("Please input the server's IP Address: ");
-            //String ipAddress = console.nextLine();
+        //System.out.print("Please input the server's IP Address: ");
+        //String ipAddress = console.nextLine();
 
-            //System.out.print("Please input the port number: ");
-            //int portNum = Integer.parseInt(console.nextLine());
+        //System.out.print("Please input the port number: ");
+        //int portNum = Integer.parseInt(console.nextLine());
 
-            System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
-            Socket clientSocket = new Socket("localhost", 11111);
+        pNum = console.nextInt();
+        System.out.println("You are Player " + pNum + "!");
+        System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
+        NetworkProtocol networkProtocol = new NetworkProtocol(pNum == 1 ? 25570 : 25571);
+        networkProtocol.setChannel("channel");
 
-            System.out.println("CONNECTION SUCCESSFUL!");
-            wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 20);
-            rfsLoop = new ReadFromServer(new DataInputStream(clientSocket.getInputStream()), 20);
-
-            try { 
-                pNum = new DataInputStream(clientSocket.getInputStream()).readInt();
-                GameUtils.get().setPlayerNum(pNum);
-                System.out.println("You are Player " + pNum + "!");
-            } catch(IOException ex) {
-                System.out.println("IOException when trying to get Player Number");
-            }
-
-            
-        } catch(IOException ex) {
-          System.out.println("IOException from connectToServer() method.");
-        }
+        System.out.println("CONNECTION SUCCESSFUL!");
+        wtsLoop = new WriteToServer(networkProtocol, 20);
+        rfsLoop = new ReadFromServer();
+        networkProtocol.addReceiver(rfsLoop);
       }
     
       /**
      * A private class that writes information to the server.
      */
     private class WriteToServer implements Runnable {
-        private DataOutputStream dataOut;
+        private NetworkProtocol dataOut;
         private long sleepTime;
         private Thread WTSloop;
 
@@ -264,13 +254,7 @@ public class GameCanvas extends JComponent {
                     } else {
                         data = p2.getCompressedData();
                     }
-                    try {
-                        dataOut.writeUTF(data);
-                        dataOut.flush();
-                    } catch (IOException ex){
-                        System.out.println("IOException at WTS run()\n\n" + ex);
-                        System.exit(1);
-                    }
+                    dataOut.send(data);
                     Thread.sleep(sleepTime);
                 }
             } catch(InterruptedException ex) {
@@ -281,8 +265,8 @@ public class GameCanvas extends JComponent {
         /**
          * Initializes the WriteToServer class
          */
-        public WriteToServer(DataOutputStream dataOut, int sleepTime) {
-            WTSloop = new Thread(this);
+        public WriteToServer(NetworkProtocol dataOut, int sleepTime) {
+            //WTSloop = new Thread(this);
             this.sleepTime = sleepTime;
             this.dataOut = dataOut;
         }
@@ -299,7 +283,7 @@ public class GameCanvas extends JComponent {
     /**
      * A private class that reads data from the server
      */
-    private class ReadFromServer implements Runnable {
+    private class ReadFromServer implements Runnable,Receiver {
         private DataInputStream dataIn;
         private long sleepTime;
         private Thread RFSloop;
@@ -332,20 +316,27 @@ public class GameCanvas extends JComponent {
             }
         }
 
+        @Override
+        public void receive(String in) {
+            if(pNum == 1) {
+                p2.recieveCompressedData(in);
+            } else {
+                p1.recieveCompressedData(in);
+            }
+        }
+
         /**
          * Initializes the ReadFromServer class.
          */
-        public ReadFromServer(DataInputStream dataIn, int sleepTime) {
-            this.dataIn = dataIn;
-            this.sleepTime = sleepTime;
-            RFSloop = new Thread(this);
+        public ReadFromServer() {
+            //RFSloop = new Thread(this);
         }
 
         /**
          * Starts the RFS thread.
          */
         public void startThread() {
-            RFSloop.start();
+            //RFSloop.start();
         }
 
     }

@@ -19,7 +19,7 @@ public class GameServer {
     private static final int MAX_PLAYERS = 2;
 
     public GameServer() {
-        System.out.println("( ᴜ ω ᴜ )   |Shoot and Scoot Server| ( ᴜ ω ᴜ )");
+        System.out.println("Shoot and Scoot Server");
         numPlayers = 0;
 
         GameMaster gameMaster = new GameMaster(20);
@@ -27,39 +27,35 @@ public class GameServer {
         gameMaster.startThread();
 
         try {
-            ss = new ServerSocket(11111);
+            ss = new ServerSocket(25570);
         } catch(IOException ex) {
             System.out.println("IOException from GameServer constructor.");
         }
     }
 
     public void acceptConnections() {
-        try {
-            System.out.println("( ᴜ ω ᴜ ) Waiting for connections...");
+            System.out.println("Waiting for connections...");
             ReadFromClient RFC = null;
             WriteToClient WTC = null;
+            NetworkProtocol protocol = new NetworkProtocol(25570);
+            protocol.setChannel("channel");
+            NetworkProtocol protocol2 = new NetworkProtocol(25571);
+            protocol2.setChannel("channel2");
 
             while(numPlayers < MAX_PLAYERS) {
-                Socket s = ss.accept();
+                //Socket s = ss.accept();
                 numPlayers++;
                 
-                RFC = new ReadFromClient(s,numPlayers,20);
-                WTC = new WriteToClient(s,numPlayers,20);
-                System.out.println("( ᴜ ω ᴜ ) Player " + numPlayers + " has connected.");
-                try { 
-                    new DataOutputStream(s.getOutputStream()).writeInt(numPlayers); 
-                } catch(IOException ex) {
-                    System.out.println("IOException at acceptingconnections()");
-                    System.exit(1);
-                }
+                NetworkProtocol np = numPlayers == 1 ? protocol : protocol2;
+
+                RFC = new ReadFromClient(numPlayers,20);
+                np.addReceiver(RFC);
+                WTC = new WriteToClient(np, numPlayers,20);
+                System.out.println("Player " + numPlayers + " has connected.");
                 RFC.startThread();
                 WTC.startThread();
             }
             System.out.println("No longer accepting connections.");
-
-        } catch(IOException ex) {
-            System.out.println("IOException from acceptConnections().");
-        }
     }
 
     /**
@@ -101,8 +97,18 @@ public class GameServer {
 
         @Override
         public void run() {
+            long previousTime = System.currentTimeMillis()-1;
             while(true) {
-                //TODO update
+                long currentTime = System.currentTimeMillis();
+
+                double deltaTime = (currentTime - previousTime)/1000.0;
+
+                for(GameObject i : bossFight) {
+                    i.update(deltaTime);
+                }
+
+                previousTime = currentTime;
+
 
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
@@ -116,25 +122,44 @@ public class GameServer {
      * A private class that writes information to the server.
      */
     private class WriteToClient implements Runnable {
+        private NetworkProtocol networkProtocol;
         private int pNum;
         private long sleepTime;
 
-        private DataOutputStream dataOut; 
         private Thread WTCloop;
+
+        /**
+         * The thread that continuously sends data to the client.
+         */
+        @Override
+        public void run() {
+            while(true) {
+                String data;
+                if (pNum == 1) {
+                    data = p2.getCompressedData();
+                } else {
+                    data = p1.getCompressedData();
+                }
+
+                networkProtocol.send(data);
+            
+                try { Thread.sleep(sleepTime); }
+                catch(InterruptedException ex) {
+                    System.out.println("InterruptedException at WTC run()\n\n" + ex);
+                    System.exit(1);
+                }
+            }
+        }
 
         /**
          * Initializes the WriteToServer class
          */
-        public WriteToClient(Socket pSocket, int pNum, int sleepTime) {
-            this.pNum = pNum;
+        public WriteToClient(NetworkProtocol networkProtocol, int n, int sleepTime) {
+            //this.pSocket = pSocket;
+            this.networkProtocol = networkProtocol;
             this.sleepTime = sleepTime;
-
+            pNum = n;
             WTCloop = new Thread(this);
-            try {
-                dataOut = new DataOutputStream(pSocket.getOutputStream());
-            } catch(IOException ex) {
-                System.out.println("IOException from WTC constructor");
-            }
         }
 
         /**
@@ -144,73 +169,19 @@ public class GameServer {
             WTCloop.start();
         }
 
-        /**
-         * The thread that continuously sends data to the server.
-         */
-        @Override
-        public void run() {
-            while(true) {
-                try {
-                    if (pNum == 1) {
-                        dataOut.writeUTF(p2.getCompressedData());
-                    } else {
-                        dataOut.writeUTF(p1.getCompressedData());
-                    }
-                    dataOut.flush();
-                } catch(IOException ex) {
-                    System.out.println("IOException at WTC run()\n\n" + ex);
-                    System.exit(1);
-                }
-            
-                try { Thread.sleep(sleepTime); }
-                catch(InterruptedException ex) {
-                    System.out.println("InterruptedException at WTC run()\n\n" + ex);
-                }
-            }
-        }
-
     }
 
-    private class ReadFromClient implements Runnable {
-        private Socket pSocket;
+    private class ReadFromClient implements Runnable, Receiver {
         private int pNum;
         private long sleepTime;
-        private DataInputStream dataIn;
+
         private Thread RFCloop;
-
-        public ReadFromClient(Socket pSocket, int pNum, int sleepTime) {
-            this.pSocket = pSocket;
-            this.pNum = pNum;
-            this.sleepTime = sleepTime;
-
-            RFCloop = new Thread(this);
-            try { 
-                dataIn = new DataInputStream(pSocket.getInputStream()); 
-            } catch(IOException ex) {
-                System.out.println("IOException from RFC constructor");
-            }
-        }
-
-        public void startThread() {
-            RFCloop.start();
-        }
 
         @Override
         public void run() {
             try {
                 while(true) {
-                    try {
-                        clientInput = dataIn.readUTF();
-                    } catch(IOException ex) {
-                        System.out.println("IOException at RFC run()");
-                        System.exit(1);
-                    }
-
-                    if(pNum == 1) {
-                        p1.recieveCompressedData(clientInput);
-                    } else {
-                        p2.recieveCompressedData(clientInput);
-                    }
+                    
 
                     //processInput(clientInput.split("_"));
 
@@ -218,30 +189,29 @@ public class GameServer {
                 }
             } catch(InterruptedException ex) {
                 System.out.println("InterruptedException at WTC run()\n\n" + ex);
+                System.exit(1);
             }
         }
 
-        public void processInput(String[] inp) {
-            //ind is the currentIndex
-            int ind = 0;
-            while(ind < inp.length) {
-                String data = "";
-                switch(inp[ind]) {
-                    case "p1":
-                        data = String.format("%s_%s_",inp[ind+1],inp[ind+2]);
-                        p1.recieveCompressedData(data);
-                        ind += 3;
-                        break;
-                    case "p2":
-                        data = String.format("%s_%s_",inp[ind+1],inp[ind+2]);
-                        p2.recieveCompressedData(data);
-                        ind += 3;
-                        break;
-                    default:
-                        ind++;
-                }
+        @Override
+        public void receive(String in) {
+            if(pNum == 1) {
+                p1.recieveCompressedData(in);
+            } else {
+                p2.recieveCompressedData(in);
             }
-        }    
+        }
+
+        public ReadFromClient(int pNum, int sleepTime) {
+            this.pNum = pNum;
+            this.sleepTime = sleepTime;
+            RFCloop = new Thread(this);
+        }
+
+        public void startThread() {
+            RFCloop.start();
+        }
+           
     }
 
     public static void main(String args[]) {
