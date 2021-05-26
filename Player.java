@@ -1,5 +1,6 @@
 import java.awt.geom.*;
 import java.awt.*;
+import java.io.*;
 
 /**
  * This class contains the code that manages the player's appearance and functionality.
@@ -187,16 +188,27 @@ public class Player implements GameObject {
     }
 
     @Override
-    public String getCompressedData() {
-        //p1_xPos_yPos_
+    public void sendCompressedData(DataOutputStream dataOut) {
         //String data = String.format("p%d_%b_%b_%b_%b_",pNum,movingUp,movingDown,movingLeft,movingRight);
-        System.out.printf("SENDING %.2f_%.2f_\n",xPos,yPos);
-        String data = String.format("%.2f_%.2f_",xPos,yPos);
-        return data;
+        //String data = String.format("%.2f_%.2f_",xPos,yPos);
+        try {
+            dataOut.writeDouble(xPos);
+            dataOut.writeDouble(yPos);
+            dataOut.writeBoolean(movingUp);
+            dataOut.writeBoolean(movingDown);
+            dataOut.writeBoolean(movingLeft);
+            dataOut.writeBoolean(movingRight);
+            dataOut.flush();
+        } catch(IOException ex) {
+
+        }
+        
+
+
     }
 
     @Override
-    public void recieveCompressedData(String data) {
+    public void recieveCompressedData(DataInputStream dataIn) {
         /* //movingUp_movingDown_movingLeft_movingRight
         String[] dataList = data.split("_");
 
@@ -225,10 +237,21 @@ public class Player implements GameObject {
         } */
 
         
-        String[] dataList = data.split("_");
-        System.out.println("RECIEVING"+dataList[0] + " " + dataList[1]);
-        xPos = Double.parseDouble(dataList[0]);
-        yPos = Double.parseDouble(dataList[1]);
+        //String[] dataList = data.split("_");
+        //System.out.println("RECIEVING"+dataList[0] + " " + dataList[1]);
+        //xPos = Double.parseDouble(dataList[0]);
+        //yPos = Double.parseDouble(dataList[1]);
+
+        try {
+            xPos = dataIn.readDouble();
+            yPos = dataIn.readDouble();
+            movingUp = dataIn.readBoolean();
+            movingDown = dataIn.readBoolean();
+            movingLeft = dataIn.readBoolean();
+            movingRight = dataIn.readBoolean();
+        } catch(IOException ex) {
+
+        }
 
     }
 }

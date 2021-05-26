@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 
 public class Background implements GameObject {
 
@@ -14,13 +16,13 @@ public class Background implements GameObject {
     }
 
     @Override
-    public String getCompressedData() {
+    public void sendCompressedData(DataOutputStream dataOut) {
         // TODO Auto-generated method stub
-        return null;
+        
     }
 
     @Override
-    public void recieveCompressedData(String data) {
+    public void recieveCompressedData(DataInputStream dataIn) {
         // TODO Auto-generated method stub
         
     }

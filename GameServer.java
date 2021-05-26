@@ -19,7 +19,7 @@ public class GameServer {
     private static final int MAX_PLAYERS = 2;
 
     public GameServer() {
-        System.out.println("( ᴜ ω ᴜ )   |Shoot and Scoot Server| ( ᴜ ω ᴜ )");
+        System.out.println("Shoot and Scoot Server");
         numPlayers = 0;
 
         GameMaster gameMaster = new GameMaster(20);
@@ -27,7 +27,7 @@ public class GameServer {
         gameMaster.startThread();
 
         try {
-            ss = new ServerSocket(11111);
+            ss = new ServerSocket(25570);
         } catch(IOException ex) {
             System.out.println("IOException from GameServer constructor.");
         }
@@ -35,7 +35,7 @@ public class GameServer {
 
     public void acceptConnections() {
         try {
-            System.out.println("( ᴜ ω ᴜ ) Waiting for connections...");
+            System.out.println("Waiting for connections...");
             ReadFromClient RFC = null;
             WriteToClient WTC = null;
 
@@ -43,9 +43,9 @@ public class GameServer {
                 Socket s = ss.accept();
                 numPlayers++;
                 
-                RFC = new ReadFromClient(s,numPlayers,20);
-                WTC = new WriteToClient(s,numPlayers,20);
-                System.out.println("( ᴜ ω ᴜ ) Player " + numPlayers + " has connected.");
+                RFC = new ReadFromClient(s,numPlayers,60);
+                WTC = new WriteToClient(s,numPlayers,60);
+                System.out.println("Player " + numPlayers + " has connected.");
                 try { 
                     new DataOutputStream(s.getOutputStream()).writeInt(numPlayers); 
                 } catch(IOException ex) {
@@ -123,6 +123,26 @@ public class GameServer {
         private Thread WTCloop;
 
         /**
+         * The thread that continuously sends data to the client.
+         */
+        @Override
+        public void run() {
+            while(true) {
+                    if (pNum == 1) {
+                        p2.sendCompressedData(dataOut);
+                    } else {
+                        p1.sendCompressedData(dataOut);
+                    }
+            
+                try { Thread.sleep(sleepTime); }
+                catch(InterruptedException ex) {
+                    System.out.println("InterruptedException at WTC run()\n\n" + ex);
+                    System.exit(1);
+                }
+            }
+        }
+
+        /**
          * Initializes the WriteToServer class
          */
         public WriteToClient(Socket pSocket, int pNum, int sleepTime) {
@@ -145,30 +165,6 @@ public class GameServer {
             WTCloop.start();
         }
 
-        /**
-         * The thread that continuously sends data to the server.
-         */
-        @Override
-        public void run() {
-            while(true) {
-                try {
-                    if (pNum == 1) {
-                        dataOut.writeUTF(p2.getCompressedData());
-                    } else {
-                        dataOut.writeUTF(p1.getCompressedData());
-                    }
-                    dataOut.flush();
-                } catch(IOException ex) {
-                    System.out.println("IOException at WTC run()\n\n" + ex);
-                }
-            
-                try { Thread.sleep(sleepTime); }
-                catch(InterruptedException ex) {
-                    System.out.println("InterruptedException at WTC run()\n\n" + ex);
-                }
-            }
-        }
-
     }
 
     private class ReadFromClient implements Runnable {
@@ -178,6 +174,26 @@ public class GameServer {
 
         private DataInputStream dataIn;
         private Thread RFCloop;
+
+        @Override
+        public void run() {
+            try {
+                while(true) {
+                    if(pNum == 1) {
+                        p1.recieveCompressedData(dataIn);
+                    } else {
+                        p2.recieveCompressedData(dataIn);
+                    }
+
+                    //processInput(clientInput.split("_"));
+
+                    Thread.sleep(sleepTime); 
+                }
+            } catch(InterruptedException ex) {
+                System.out.println("InterruptedException at WTC run()\n\n" + ex);
+                System.exit(1);
+            }
+        }
 
         public ReadFromClient(Socket pSocket, int pNum, int sleepTime) {
             this.pSocket = pSocket;
@@ -195,54 +211,7 @@ public class GameServer {
         public void startThread() {
             RFCloop.start();
         }
-
-        @Override
-        public void run() {
-            try {
-                while(true) {
-                    System.out.println("Yo");
-                    try {
-                        clientInput = dataIn.readUTF();
-                    } catch(IOException ex) {
-                        System.out.println("IOException at RFC run()");
-                    }
-
-                    if(pNum == 1) {
-                        p1.recieveCompressedData(clientInput);
-                    } else {
-                        p2.recieveCompressedData(clientInput);
-                    }
-
-                    //processInput(clientInput.split("_"));
-
-                    Thread.sleep(sleepTime); 
-                }
-            } catch(InterruptedException ex) {
-                System.out.println("InterruptedException at WTC run()\n\n" + ex);
-            }
-        }
-
-        public void processInput(String[] inp) {
-            //ind is the currentIndex
-            int ind = 0;
-            while(ind < inp.length) {
-                String data = "";
-                switch(inp[ind]) {
-                    case "p1":
-                        data = String.format("%s_%s_",inp[ind+1],inp[ind+2]);
-                        p1.recieveCompressedData(data);
-                        ind += 3;
-                        break;
-                    case "p2":
-                        data = String.format("%s_%s_",inp[ind+1],inp[ind+2]);
-                        p2.recieveCompressedData(data);
-                        ind += 3;
-                        break;
-                    default:
-                        ind++;
-                }
-            }
-        }    
+           
     }
 
     public static void main(String args[]) {

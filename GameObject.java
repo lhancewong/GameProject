@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.io.*;
 
 /**
  * All drawn game objects will implement this class. It has methods that every game
@@ -18,11 +19,11 @@ public interface GameObject {
     /**
      * Compresses the necessary data that will be sent to the clients.
      */
-    String getCompressedData();
+    void sendCompressedData(DataOutputStream dataOut);
 
     /**
      * Reads the compressed data received from the server.
      */
-    void recieveCompressedData(String data);
+    void recieveCompressedData(DataInputStream dataIn);
     
 }

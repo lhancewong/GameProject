@@ -223,11 +223,11 @@ public class GameCanvas extends JComponent {
             //int portNum = Integer.parseInt(console.nextLine());
 
             System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
-            Socket clientSocket = new Socket("192.168.1.153", 11111);
+            Socket clientSocket = new Socket("ginks.ml", 25570);
 
             System.out.println("CONNECTION SUCCESSFUL!");
-            wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 20);
-            rfsLoop = new ReadFromServer(new DataInputStream(clientSocket.getInputStream()), 20);
+            wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 60);
+            rfsLoop = new ReadFromServer(new DataInputStream(clientSocket.getInputStream()), 60);
 
             try { 
                 pNum = new DataInputStream(clientSocket.getInputStream()).readInt();
@@ -258,22 +258,16 @@ public class GameCanvas extends JComponent {
         public void run() {
             try {
                 while (true) {
-                    String data = "";
-                    if(pNum == 1) {
-                        data = p1.getCompressedData();
+                    if (pNum == 1) {
+                        p1.sendCompressedData(dataOut);
                     } else {
-                        data = p2.getCompressedData();
-                    }
-                    try {
-                        dataOut.writeUTF(data);
-                        dataOut.flush();
-                    } catch (IOException ex){
-                        System.out.println("IOException at WTS run()\n\n" + ex);
+                        p2.sendCompressedData(dataOut);
                     }
                     Thread.sleep(sleepTime);
                 }
             } catch(InterruptedException ex) {
                 System.out.println("InterruptedException at WTS run()\n\n" + ex);
+                System.exit(1);
             }
         }
 
@@ -310,23 +304,17 @@ public class GameCanvas extends JComponent {
         public void run() {
             try {
                 while (true) {
-                    String data = "";
-                    try {
-                        data = dataIn.readUTF();
-                    } catch(IOException ex) {
-                        System.out.println("IOException at RFS run()" + ex);
-                    }
-
                     if(pNum == 1) {
-                        p2.recieveCompressedData(data);
+                        p2.recieveCompressedData(dataIn);
                     } else {
-                        p1.recieveCompressedData(data);
+                        p1.recieveCompressedData(dataIn);
                     }
 
                     Thread.sleep(sleepTime);
                 }
             } catch(InterruptedException ex) {
                 System.out.println("InterruptedException at RFS run()\n\n" + ex);
+                System.exit(1);
             }
         }
 
