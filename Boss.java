@@ -29,7 +29,7 @@ public class Boss implements GameObject{
 
         xPos = (GameUtils.get().getWidth()/2)+150;
         yPos = GameUtils.get().getHeight() - 460;
-        moveSpeed = 100;
+        moveSpeed = 400;
         hitPoints = 100;
         movingUp = true;
         movingDown = false;

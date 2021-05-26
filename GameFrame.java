@@ -11,12 +11,14 @@ public class GameFrame {
 
     //game stuff
     private GameCanvas gameCanvas;
+    private Game game;
 
     //Player stuff
 
     public GameFrame() {
         gameCanvas = new GameCanvas();
         window = new JFrame();
+        game = gameCanvas.getGame();
 
         GameUtils.get().setJFrame(window);
     }
@@ -41,10 +43,10 @@ public class GameFrame {
      */
     public void setUpKeyActions() {
         KeyAction ka;
-        if (gameCanvas.getPlayerNumber() == 2) {
-            ka = new KeyAction(gameCanvas.p2, gameCanvas);
+        if (game.getPlayerNumber() == 2) {
+            ka = new KeyAction(game.p2, game);
         } else {
-            ka = new KeyAction(gameCanvas.p1, gameCanvas);
+            ka = new KeyAction(game.p1, game);
         }
         mainPanel.addKeyListener(ka);
     }

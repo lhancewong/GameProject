@@ -19,9 +19,9 @@ public class GameCanvas extends JComponent {
     private Rectangle2D.Double bg;
 
     //Threads
-    private GameClient gameLoop;
     private WriteToServer wtsLoop;
     private ReadFromServer rfsLoop;
+    private Game game;
 
     //Game Stuff
     public Player p1, p2;
@@ -29,6 +29,7 @@ public class GameCanvas extends JComponent {
     public int pNum;
     private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
+    private javax.swing.Timer drawTimer;
     
     public CopyOnWriteArrayList<ShipBullet> bullets;
     private ArrayList<GameObject> bossFight;
@@ -50,18 +51,18 @@ public class GameCanvas extends JComponent {
         
         //Objects & Shapes
         bg = new Rectangle2D.Double(0,0,width,height);
-        initBossFight();
+        game = new Game();
         initMenuSelection();
 
         //loops
-        gameLoop = new GameClient(20);
+        game.startThread();
+        drawLoop();
+        drawTimer.start();
 
         isRunning = true;
         isServerSelection = false;
         isClassSelection = false;
         isBossFight = true;
-
-        gameLoop.startThread();
     }
 
     /**
@@ -70,28 +71,7 @@ public class GameCanvas extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         g2d = (Graphics2D) g;
-        g2d.setColor(new Color(100,150,150));
-        g2d.fill(bg);
-
-        if(isBossFight) {
-            for(GameObject i: bossFight) {
-                i.draw(g2d);
-            }
-            if (bullets.size() > 0) {
-                try {
-                    for(ShipBullet i: bullets) {
-                        i.draw(g2d);
-                        if (i.getX() > 1280){
-                            bullets.remove(i);
-                        }
-                    }  
-                } catch (ConcurrentModificationException e) {
-                    System.out.println("CME");
-                }
-            }
-            
-        }
-
+        game.draw(g2d);
     }
 
     /**
@@ -125,103 +105,44 @@ public class GameCanvas extends JComponent {
         return pNum;
     }
 
-    public ArrayList<ShipBullet> getBullets() {
-        return bullets;
+    public Game getGame() {
+        return game;
     }
 
-    //====================== Game Stuff ============================//
-
     /**
-     * A private class that updates and displays the game.
+     * The display thread. It calculates fps and calls repaint to ideally
+     * reach the FPS_CAP;
      */
-    private class GameClient implements Runnable {
-        private Thread logicLoop;
-        private javax.swing.Timer drawTimer;
-        private long sleepTime;
-
-        /**
-         * Instantiates the logic loop class.
-         * 
-         * @param sleepTime delay between loops in milliseconds
-         */
-        public GameClient(int sleepTime) {
-            logicLoop = new Thread(this);
-            drawLoop();
-            this.sleepTime = sleepTime;
-        }
-
-        /**
-         * Starts the threads.
-         */
-        public void startThread() {
-            logicLoop.start();
-            drawTimer.start();
-        }
-
-        /**
-         * The logic Thread.
-         */
-        @Override
-        public void run() {
+    public void drawLoop() {
+        ActionListener displayGame = new ActionListener() {
             long previousTime = System.currentTimeMillis()-1;
-            while(isRunning) {
+            int frames = 0;
+
+            public void actionPerformed(ActionEvent e) {
+                frames++; 
                 long currentTime = System.currentTimeMillis();
-
-                double deltaTime = (currentTime - previousTime)/1000.0;
-
-                for(GameObject i : bossFight) {
-                    i.update(deltaTime);
-                }
-                if (bullets.size() > 0){
-                    for(ShipBullet i: bullets) {
-                    i.update(deltaTime);
-                    }  
-                }
-
-                previousTime = currentTime;
-
-                try { Thread.sleep(sleepTime); }
-                catch(InterruptedException ex) {
-                    System.out.println("InterruptedException at GameLoop run()\n\n" + ex);
-                }
-            }
-        }
-
-        /**
-         * The display thread. It calculates fps and calls repaint to ideally
-         * reach the FPS_CAP;
-         */
-        public void drawLoop() {
-            ActionListener displayGame = new ActionListener() {
-                long previousTime = System.currentTimeMillis()-1;
-                int frames = 0;
-    
-                public void actionPerformed(ActionEvent e) {
-                    frames++; 
-                    long currentTime = System.currentTimeMillis();
-                    /**
-                     * Counts how many times the animation as displayed per second (basically fps)
-                     * Checks if ~1 sec has passed. If a second has passed and displayFPS_Counter is true,
-                     * it resets the value of frames and gets a new previous time.
-                     */ 
-                    if (currentTime - previousTime >= 1000) {
-                        if (isRunning) {
-                            String titleFPS = "Shoot and Scoot | FPS: " + frames + "   ";
-                            GameUtils.get().setJFrameTitle(titleFPS);
-                        } else {
-                            String titleFPS = "Shoot and Scoot";
-                            GameUtils.get().setJFrameTitle(titleFPS);
-                        }
-                        frames = 0;
-                        previousTime = currentTime;
+                /**
+                 * Counts how many times the animation as displayed per second (basically fps)
+                 * Checks if ~1 sec has passed. If a second has passed and displayFPS_Counter is true,
+                 * it resets the value of frames and gets a new previous time.
+                 */ 
+                if (currentTime - previousTime >= 1000) {
+                    if (isRunning) {
+                        String titleFPS = "Shoot and Scoot | FPS: " + frames + "   ";
+                        GameUtils.get().setJFrameTitle(titleFPS);
+                    } else {
+                        String titleFPS = "Shoot and Scoot";
+                        GameUtils.get().setJFrameTitle(titleFPS);
                     }
-                    //GAME DRAW
-                    repaint();
+                    frames = 0;
+                    previousTime = currentTime;
                 }
-    
-            };
-            drawTimer = new javax.swing.Timer((int)Math.round(1000.0/FPS_CAP), displayGame);
-        }
+                //GAME DRAW
+                repaint();
+            }
+
+        };
+        drawTimer = new javax.swing.Timer((int)Math.round(1000.0/FPS_CAP), displayGame);
     }
 
     //==================== Networking ================================//
