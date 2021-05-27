@@ -98,6 +98,9 @@ public class GameServer {
             logicLoop.start();
         }
 
+        /**
+         * The logic Thread.
+         */
         @Override
         public void run() {
             long previousTime = System.currentTimeMillis()-1;
@@ -112,13 +115,11 @@ public class GameServer {
 
                 previousTime = currentTime;
 
-
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
-                    System.out.println("InterruptedException at GameLoop run()\n\n" + ex);
+                    System.out.println("InterruptedException at GameMaster run()\n\n" + ex);
                 }
             }
-            
         }
     }
     /**
@@ -161,6 +162,8 @@ public class GameServer {
             this.sleepTime = sleepTime;
 
             WTCloop = new Thread(this);
+
+            //gets the DataOutputStream
             try {
                 dataOut = new DataOutputStream(pSocket.getOutputStream());
             } catch(IOException ex) {
@@ -194,8 +197,6 @@ public class GameServer {
                     } else {
                         p2.recieveCompressedData(dataIn);
                     }
-
-                    //processInput(clientInput.split("_"));
 
                     Thread.sleep(sleepTime); 
                 }
