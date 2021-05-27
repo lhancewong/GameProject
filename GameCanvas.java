@@ -263,6 +263,7 @@ public class GameCanvas extends JComponent {
                     } else {
                         p2.sendCompressedData(dataOut);
                     }
+                    
                     Thread.sleep(sleepTime);
                 }
             } catch(InterruptedException ex) {

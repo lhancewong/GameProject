@@ -12,15 +12,15 @@ public class Player implements GameObject {
     private double xPos, yPos;
     private double size;
     private int shipType;
-
     //game related
     private int hitPoints;
     private double moveSpeed;
     private int projectileDamage; //?
     private boolean isAlive;
     //movements related
-    public boolean movingUp, movingDown, movingLeft, movingRight; //not sure yet
-    public double xBorder, yBorder;
+    public boolean mUp, mDown, mLeft, mRight; //not sure yet
+    private String sDataOut, sDataIn;
+    private double xBorder, yBorder;
     
 
     /**
@@ -68,10 +68,13 @@ public class Player implements GameObject {
         } 
 
         isAlive = true;
-        movingUp = false;
-        movingDown = false;
-        movingLeft = false;
-        movingRight = false;
+        mUp = false;
+        mDown = false;
+        mLeft = false;
+        mRight = false;
+
+        sDataOut = String.format("%.1f_%.1f_%b_%b_%b_%b",xPos,yPos,mUp,mDown,mLeft,mRight);
+        sDataIn = "";
     }
 
     /**
@@ -81,7 +84,7 @@ public class Player implements GameObject {
      */
     @Override
     public void draw(Graphics2D g2d) {
-        //System.out.println(xPos + " " + yPos + " " + movingUp + " " + movingDown + " " + movingLeft + " " + movingRight);
+        //System.out.println(xPos + " " + yPos + " " + mUp + " " + mDown + " " + mLeft + " " + mRight);
         if (isAlive)
             switch(shipType) {
                 case 1: //offensive
@@ -107,37 +110,49 @@ public class Player implements GameObject {
      */
     @Override
     public void update(double d) {
-        //System.out.printf("[U_%.1f_%.1f_%b_%b_%b_%b]\n",xPos,yPos,movingUp,movingDown,movingLeft,movingRight);
+        //System.out.printf("[U_%.1f_%.1f_%b_%b_%b_%b]\n",xPos,yPos,mUp,mDown,mLeft,mRight);
         
         double c = moveSpeed*d;
         if(xPos+size >= xBorder-c) {
-            movingRight = false;
+            mRight = false;
         }
         if(xPos <= 10) {
-            movingLeft = false;
+            mLeft = false;
         }
         if(yPos+size >= yBorder-c) {
-            movingDown = false;
+            mDown = false;
         }
         if(yPos <= 10) {
-            movingUp = false;
+            mUp = false;
         }
 
-        if(movingUp) {
+        if(mUp) {
             yPos -= moveSpeed*d;
         }
-        if(movingDown) {
+        if(mDown) {
             yPos += moveSpeed*d;
         }
-        if(movingLeft) {
+        if(mLeft) {
             xPos -= moveSpeed*d;
         }
-        if(movingRight) {
+        if(mRight) {
             xPos += moveSpeed*d;
         }
 
-        //then another if about getting hit and taking damage.
+        sDataOut = String.format("%.1f_%.1f_%b_%b_%b_%b",xPos,yPos,mUp,mDown,mLeft,mRight);
+        readStringData(sDataIn);
+    }
 
+    public void readStringData(String s) {
+        if(!s.equals("")) {
+            String[] data = s.split("_");
+            xPos = Double.parseDouble(data[0]);
+            yPos = Double.parseDouble(data[1]);
+            mUp = Boolean.parseBoolean(data[2]);
+            mDown = Boolean.parseBoolean(data[3]);
+            mLeft = Boolean.parseBoolean(data[4]);
+            mRight = Boolean.parseBoolean(data[5]);
+        }  
     }
 
     /**
@@ -153,9 +168,9 @@ public class Player implements GameObject {
      * Draws the offensive ship's sprite.
      */
     private void offensiveShip() {
-        if(movingUp && !movingDown) {
+        if(mUp && !mDown) {
 
-        } else if(movingDown && !movingUp) {
+        } else if(mDown && !mUp) {
 
         } else {
 
@@ -189,69 +204,33 @@ public class Player implements GameObject {
 
     @Override
     public void sendCompressedData(DataOutputStream dataOut) {
-        //String data = String.format("p%d_%b_%b_%b_%b_",pNum,movingUp,movingDown,movingLeft,movingRight);
-        //String data = String.format("%.2f_%.2f_",xPos,yPos);
+        //String data = String.format("p%d_%b_%b_%b_%b_",pNum,mUp,mDown,mLeft,mRight);
         try {
-            dataOut.writeDouble(xPos);
+            /* dataOut.writeDouble(xPos);
             dataOut.writeDouble(yPos);
-            dataOut.writeBoolean(movingUp);
-            dataOut.writeBoolean(movingDown);
-            dataOut.writeBoolean(movingLeft);
-            dataOut.writeBoolean(movingRight);
+            dataOut.writeBoolean(mUp);
+            dataOut.writeBoolean(mDown);
+            dataOut.writeBoolean(mLeft);
+            dataOut.writeBoolean(mRight); */
+            dataOut.writeUTF(sDataOut);
             dataOut.flush();
         } catch(IOException ex) {
-
+            System.out.println(ex);
         }
-        
-
-
     }
 
     @Override
     public void recieveCompressedData(DataInputStream dataIn) {
-        /* //movingUp_movingDown_movingLeft_movingRight
-        String[] dataList = data.split("_");
-
-        if(dataList[0].equals("true")) {
-            movingUp = true;
-        } else {
-            movingUp = false;
-        }
-
-        if(dataList[1].equals("true")) {
-            movingDown = true;
-        } else {
-            movingDown = false;
-        }
-
-        if(dataList[2].equals("true")) {
-            movingLeft = true;
-        } else {
-            movingLeft = false;
-        }
-
-        if(dataList[3].equals("true")) {
-            movingRight = true;
-        } else {
-            movingRight = false;
-        } */
-
-        
-        //String[] dataList = data.split("_");
-        //System.out.println("RECIEVING"+dataList[0] + " " + dataList[1]);
-        //xPos = Double.parseDouble(dataList[0]);
-        //yPos = Double.parseDouble(dataList[1]);
-
         try {
-            xPos = dataIn.readDouble();
+            /* xPos = dataIn.readDouble();
             yPos = dataIn.readDouble();
-            movingUp = dataIn.readBoolean();
-            movingDown = dataIn.readBoolean();
-            movingLeft = dataIn.readBoolean();
-            movingRight = dataIn.readBoolean();
+            mUp = dataIn.readBoolean();
+            mDown = dataIn.readBoolean();
+            mLeft = dataIn.readBoolean();
+            mRight = dataIn.readBoolean(); */
+            sDataIn = dataIn.readUTF();
         } catch(IOException ex) {
-
+            System.out.println(ex);
         }
-
     }
 }
