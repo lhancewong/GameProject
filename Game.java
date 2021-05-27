@@ -23,6 +23,8 @@ public class Game implements Runnable{
     public Boss Yalin;
     public int pNum;
     private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
+    private BulletController controller1;
+    private BulletController controller2;
     public CopyOnWriteArrayList<ShipBullet> bullets;
     private ArrayList<GameObject> bossFight;
     
@@ -61,11 +63,8 @@ public class Game implements Runnable{
             for(GameObject i : bossFight) {
                 i.update(deltaTime);
             }
-            if (bullets.size() > 0){
-                for(ShipBullet i: bullets) {
-                i.update(deltaTime);
-                }  
-            }
+
+            checkBulletHitboxes();
 
             previousTime = currentTime;
 
@@ -82,14 +81,16 @@ public class Game implements Runnable{
         bg1 = new Background(1);
         bg2 = new Background(2);
         Yalin = new Boss();
-        p1 = new Player(210,180,30,4);
-        p2 = new Player(210,540,30,4);
+        p1 = new Player(210,180,30,1);
+        p2 = new Player(210,540,30,3);
+        controller1 = new BulletController("Attack", p1);
         //bossFight.add(bg);
         bossFight.add(bg1);
         bossFight.add(bg2);
         bossFight.add(p1);
         bossFight.add(p2);
         bossFight.add(Yalin);
+        bossFight.add(controller1);
 
         bullets = new CopyOnWriteArrayList<ShipBullet>();
 
@@ -103,24 +104,38 @@ public class Game implements Runnable{
             for(GameObject i: bossFight) {
                 i.draw(g2d);
             }
-            if (bullets.size() > 0) {
-                try {
-                    for(ShipBullet i: bullets) {
-                        i.draw(g2d);
-                        if (i.getX() > 1280){
-                            bullets.remove(i);
-                        }
-                    }  
-                } catch (ConcurrentModificationException e) {
-                    System.out.println("CME");
-                }
-            }
-            
         }
     }
 
     public int getPlayerNumber() {
         return pNum;
+    }
+
+    public boolean checkBulletHitboxes() {
+        for(ShipBullet i: controller1.getshipBulletArray()){
+            if (i.getX() >= Yalin.getHitbox().getX() && 
+                i.getX() <= Yalin.getHitbox().getX() + Yalin.getHitbox().getWidth() &&
+                i.getY() >= Yalin.getHitbox().getY() &&
+                i.getY() <= Yalin.getHitbox().getY() + Yalin.getHitbox().getHeight() ){
+                System.out.println("HIT");
+                controller1.removeBullet(i);
+                return true;
+            }
+        }
+        /* for(ShipBullet i: controller2.getshipBulletArray()){
+            if (i.getX() >= Yalin.getHitbox().getX() || 
+                i.getX() <= Yalin.getHitbox().getX() + Yalin.getHitbox().getWidth() ||
+                i.getY() >= Yalin.getHitbox().getY() ||
+                i.getY() <= Yalin.getHitbox().getY() + Yalin.getHitbox().getHeight() ){
+                controller2.removeBullet(i);
+                return true;
+            }
+        } */
+        return false;
+    }
+
+    public BulletController getController1(){
+        return controller1;
     }
     
 

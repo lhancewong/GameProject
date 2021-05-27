@@ -39,7 +39,7 @@ public class KeyAction extends KeyAdapter {
                 System.out.println("D");
                 break;
             case KeyEvent.VK_SPACE:
-                game.bullets.add(new ShipBullet(playerShip.getX(), playerShip.getY() ) );
+                game.getController1().addBullet();
                 System.out.println("SPACE");
                 break;
         }

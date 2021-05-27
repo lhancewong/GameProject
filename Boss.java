@@ -1,11 +1,10 @@
 import java.awt.*;
-import javax.swing.*;
+import java.awt.geom.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 
 /**
@@ -14,13 +13,12 @@ import java.util.TimerTask;
 public class Boss implements GameObject{
 
     private double xPos, yPos;
-    private int xDiff, yDiff;
     private int randomDistance;
-    private double xDistance, yDistance;
     private double moveSpeed;
     private boolean isAlive;
     private boolean movingUp, movingDown, movingLeft, movingRight;
     private BufferedImage img;
+    private Hitbox box;
 
     private double hitPoints;
 
@@ -31,20 +29,25 @@ public class Boss implements GameObject{
         yPos = GameUtils.get().getHeight() - 460;
         moveSpeed = 400;
         hitPoints = 100;
+        isAlive = true;
         movingUp = true;
         movingDown = false;
         randomDistance = (int)Math.floor(Math.random()*(yPos-0+1)+0);
+        
     }
 
     @Override
     public void draw(Graphics2D g2d) {
-        if (isAlive)
+        if (isAlive) {
             img = null;
             try {
                 img = ImageIO.read(new File("A:/Admu stuff/Java/CS 22/Finals/Final Proj/GameProject/boss1.png"));
             } catch (IOException e) {
             }
             g2d.drawImage(img, (int) xPos, (int) yPos, null, null);
+        }
+        box = new Hitbox(xPos + 102, yPos + 98, 198, 160);
+        box.draw(g2d);
         
     }
 
@@ -71,6 +74,9 @@ public class Boss implements GameObject{
 
     }
 
+    public Hitbox getHitbox(){
+        return box;
+    }
 
     //encapsulate all movement things under this function
     public void movementPattern(){
@@ -83,7 +89,7 @@ public class Boss implements GameObject{
         if (movingUp){
             movingDown = !movingDown;
             movingUp =  !movingUp;
-            randomDistance = (int)Math.floor(Math.random()*(233-yPos+1)+yPos);
+            randomDistance = (int)Math.floor(Math.random()*(383-yPos+1)+yPos);
         }
         else{
             movingDown = !movingDown;
@@ -99,13 +105,11 @@ public class Boss implements GameObject{
 
     @Override
     public String getCompressedData() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void receiveCompressedData(String data) {
-        // TODO Auto-generated method stub
         
     }
     

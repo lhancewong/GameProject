@@ -7,7 +7,7 @@ public class ShipBullet implements GameObject, Projectile {
     private double xPos, yPos; 
     private double speed;
 
-    public ShipBullet(int xPos, int yPos) {
+    public ShipBullet(double xPos, double yPos) {
         this.xPos = xPos;
         this.yPos = yPos;
         speed = 1000;
@@ -21,6 +21,7 @@ public class ShipBullet implements GameObject, Projectile {
 
     @Override
     public void draw(Graphics2D g2d) {
+        g2d.setColor(Color.black);
         g2d.fillRect( (int) xPos, (int) yPos, 4, 4);
 
     }
@@ -29,21 +30,22 @@ public class ShipBullet implements GameObject, Projectile {
         return xPos;
     }
 
+    public double getY() {
+        return yPos;
+    }
+
     @Override
     public void update(double d) {
-        // TODO Auto-generated method stub
         xPos += speed*d;
     }
 
     @Override
     public String getCompressedData() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void receiveCompressedData(String data) {
-        // TODO Auto-generated method stub
         
     }
     

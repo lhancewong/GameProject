@@ -1,5 +1,9 @@
 import java.awt.geom.*;
 import java.awt.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This class contains the code that manages the player's appearance and functionality.
@@ -8,9 +12,14 @@ public class Player implements GameObject {
     private int playerID;
 
     //appearance related
-    private int xPos, yPos;
+    private double xPos, yPos;
     private double size;
+    private double width, height;
     private int shipType;
+    private BufferedImage ship1Image;
+    private BufferedImage ship2Image;
+    private BufferedImage ship3Image;
+    private Hitbox box;
 
     //game related
     private int hitPoints;
@@ -29,7 +38,7 @@ public class Player implements GameObject {
      * @param yPos y coordinate of ship
      * @param shipType 1 for offense, 2 for balance, 3 for defense
      */
-    public Player(int xPos, int yPos, double size, int shipType) {
+    public Player(double xPos, double yPos, double size, int shipType) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.size = size;
@@ -42,19 +51,19 @@ public class Player implements GameObject {
         switch (shipType) {
             case 1: //offensive
                 hitPoints = 1;
-                moveSpeed = 5;
+                moveSpeed = 500;
                 projectileDamage = 5;
                 break;
 
             case 2: //balanced
                 hitPoints = 3;
-                moveSpeed = 5;
+                moveSpeed = 400;
                 projectileDamage = 3;
                 break;
 
             case 3: //defensive
                 hitPoints = 5;
-                moveSpeed = 4;
+                moveSpeed = 300;
                 projectileDamage = 1;
                 break;
             default:
@@ -64,6 +73,16 @@ public class Player implements GameObject {
                 break;
         } 
 
+        
+        ship1Image = null;
+        ship2Image = null;
+        ship3Image = null;
+        try {
+            ship1Image = ImageIO.read(new File("A:/Admu stuff/Java/CS 22/Finals/Final Proj/GameProject/Ship1.png"));
+            ship2Image = ImageIO.read(new File("A:/Admu stuff/Java/CS 22/Finals/Final Proj/GameProject/Ship2.png"));
+            ship3Image = ImageIO.read(new File("A:/Admu stuff/Java/CS 22/Finals/Final Proj/GameProject/Ship3.png"));
+        } catch (IOException e) {
+        }
         isAlive = true;
         movingUp = false;
         movingDown = false;
@@ -82,13 +101,13 @@ public class Player implements GameObject {
         if (isAlive)
             switch(shipType) {
                 case 1: //offensive
-                    offensiveShip();
+                    offensiveShip(g2d);
                     break;
                 case 2: //balanced
-                    balancedShip();
+                    balancedShip(g2d);
                     break;
                 case 3: //defensive
-                    defensiveShip();
+                    defensiveShip(g2d);
                     break;
                 default:
                     g2d.setColor(Color.BLACK);
@@ -153,37 +172,43 @@ public class Player implements GameObject {
     /**
      * Draws the offensive ship's sprite.
      */
-    private void offensiveShip() {
-        if(movingUp && !movingDown) {
-
-        } else if(movingDown && !movingUp) {
-
-        } else {
-
+    private void offensiveShip(Graphics2D g2d) {
+        if (isAlive){
+            g2d.drawImage(ship1Image, (int) xPos, (int) yPos, null, null);
+            box = new Hitbox(xPos + 30, yPos + 12, 134, 46);
+            box.draw(g2d);
         }
         
-    }
-
-    /**
-     * Draws the balanced ship's sprite.
-     */
-    private void balancedShip() {
-
     }
     
     /**
      * Draws the defensive ship's sprite.
      */
-    private void defensiveShip() {
-
+    private void defensiveShip(Graphics2D g2d) {
+        if (isAlive){
+            g2d.drawImage(ship2Image, (int) xPos, (int) yPos, null, null);
+            box = new Hitbox(xPos + 2, yPos + 6, 112, 72);
+            box.draw(g2d);
+        }
     }
 
+    /**
+     * Draws the balanced ship's sprite.
+     */
+    private void balancedShip(Graphics2D g2d) {
+        if (isAlive){
+            g2d.drawImage(ship3Image, (int) xPos, (int) yPos, null, null);
+            box = new Hitbox(xPos + 14, yPos + 10, 106, 50);
+            box.draw(g2d);
+        }
+    }
+    
     /**
      * Creates instance of ShipBullet
      */
     public void shoot(){
-        ShipBullet bullet = new ShipBullet(xPos, yPos);
-        bullet.draw(g2d);
+        /* ShipBullet bullet = new ShipBullet(xPos, yPos);
+        bullet.draw(g2d); */
 
     }
     /**
@@ -194,6 +219,14 @@ public class Player implements GameObject {
      */
     public void setShip(int shipType) {
         this.shipType = shipType;
+    }
+
+    public Hitbox getHitbox(){
+        return box;
+    }
+
+    public int getShipType(){
+        return shipType;
     }
 
     @Override
@@ -209,11 +242,12 @@ public class Player implements GameObject {
         
     }
 
-    public int getX() {
+    public double getX() {
         return xPos;
     }
 
-    public int getY() {
+    public double getY() {
         return yPos;
     }
+
 }
