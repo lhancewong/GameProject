@@ -2,7 +2,9 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.net.*;
+import java.util.*;
 
 /**
  * This class extends JComponent and overrides the paintComponent method in
@@ -12,29 +14,21 @@ public class GameCanvas extends JComponent {
     //Graphics
     private Graphics2D g2d;
     private int width, height;
-<<<<<<< HEAD
-    //temp
-    private Rectangle2D.Double bg;
-    private Scanner console;
-
-    //Threads
-    private GameClient gameLoop;
-=======
->>>>>>> Server-N-Hitboxes
     private WriteToServer wtsLoop;
     private ReadFromServer rfsLoop;
 
     //Game Stuff
     private Game game;
     public Player p1, p2;
-<<<<<<< HEAD
-=======
     public Boss Yalin;
->>>>>>> Server-N-Hitboxes
     private int pNum;
     private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
     private javax.swing.Timer drawTimer;
+
+    //Network Stuff
+    private DatagramSocket clientSocket;
+    private static final int bufMax = 512;
     
     //private MenuObjects serverSelectionMenu;
     //private MenuObjects classSelectionMenu;
@@ -47,37 +41,17 @@ public class GameCanvas extends JComponent {
         width = GameUtils.get().getWidth();
         height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
-<<<<<<< HEAD
-        console = new Scanner(System.in);
-        initServerSelection();
-        
-
-        //loops
-        gameLoop = new GameClient(20);
-
-=======
         
         //Game Stuff
         game = new Game(false);
         drawLoop();
         
->>>>>>> Server-N-Hitboxes
         isRunning = true;
         isServerSelection = false;
         isClassSelection = false;
         isBossFight = true;
 
-        connectToServer();
-<<<<<<< HEAD
-
-        //Objects & Shapes
-        bg = new Rectangle2D.Double(0,0,width,height);
-        initBossFight();
-
-        gameLoop.startThread();
-        wtsLoop.startThread();
-        rfsLoop.startThread();
-=======
+        findServer();
         game.startThread();
 
         p1 = game.getPlayer1();
@@ -87,9 +61,6 @@ public class GameCanvas extends JComponent {
         drawTimer.start();
         rfsLoop.startThread();
         wtsLoop.startThread();
-
-        
->>>>>>> Server-N-Hitboxes
     }
 
     /**
@@ -98,46 +69,7 @@ public class GameCanvas extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         g2d = (Graphics2D) g;
-<<<<<<< HEAD
-        g2d.setColor(new Color(100,150,150));
-        g2d.fill(bg);
-
-        if(isBossFight) {
-            for(GameObject i: bossFight) {
-                i.draw(g2d);
-            }
-        }
-
-    }
-
-    /**
-     * Initializes the bossFight ArrayList.
-     * This ArrayList is meant to hold what will be 
-     * drawn when repaint is called while the
-     * boss fight is supposed to be displayed.
-     */
-    private void initBossFight() {
-        bossFight = new ArrayList<GameObject>();
-        //bg = new Background();
-        p1 = new Player(210,180,30,4);
-        p2 = new Player(210,540,30,4);
-        //bossFight.add(bg);
-        bossFight.add(p1);
-        bossFight.add(p2);
-
-    }
-
-    /**
-     * Initializes the serverSelectionMenu ArrayList.
-     * Meant to hold what will be drawn when repaint 
-     * is called and the serverSelection Menu is supposed
-     * to be up
-     */
-    private void initServerSelection() {
-
-=======
         game.draw(g2d);
->>>>>>> Server-N-Hitboxes
     }
     
 
@@ -187,44 +119,48 @@ public class GameCanvas extends JComponent {
     /**
      * Method to connect to the server
      */
-    public void connectToServer() {
+    public void findServer() {
         try {
-            //System.out.print("Please input the server's IP Address: ");
-            //String ipAddress = console.nextLine();
-
-            //System.out.print("Please input the port number: ");
-            //int portNum = Integer.parseInt(console.nextLine());
-
-            System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
-<<<<<<< HEAD
-            Socket clientSocket = new Socket("ginks.ml", 25565);
-=======
-            Socket clientSocket = new Socket("ginks.ml", 25570);
->>>>>>> Server-N-Hitboxes
-
-            System.out.println("CONNECTION SUCCESSFUL!");
-            wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 60);
-            rfsLoop = new ReadFromServer(new DataInputStream(clientSocket.getInputStream()), 60);
-
-            try { 
-                pNum = new DataInputStream(clientSocket.getInputStream()).readInt();
-                GameUtils.get().setPlayerNum(pNum);
-                System.out.println("You are Player " + pNum + "!");
-            } catch(IOException ex) {
-                System.out.println("IOException when trying to get Player Number");
-            }
-
+            /* Random random = new Random();
+            int ranPort = 1023 + random.nextInt(64331);//gets a random int from 1023 to 65353. */
+            clientSocket = new DatagramSocket();
             
+            InetAddress ip = InetAddress.getByName("localhost");
+            int port = 25570;
+
+            Socket cSoc = new Socket("ginks.ml",port);
+            
+            wtsLoop = new WriteToServer(ip, port, 20);
+            rfsLoop = new ReadFromServer();
+
+            System.out.println("Requesting for Player number from server...");
+
+            pNum = new DataInputStream(cSoc.getInputStream()).readInt();
+            GameUtils.get().setPlayerNum(pNum);
+            System.out.println("You are Player " + pNum + "!");
+
+            byte[] buf = new byte[256];
+            DatagramPacket packet = new DatagramPacket(buf,buf.length,ip,port);
+            clientSocket.send(packet);
+
+            System.out.println("Waiting for other Player...");
+            byte[] start = new byte[bufMax];
+            DatagramPacket startPacket = new DatagramPacket(start, start.length);
+            clientSocket.receive(startPacket);
+
+            cSoc.close();
         } catch(IOException ex) {
           System.out.println("IOException from connectToServer() method.");
         }
+
       }
     
       /**
      * A private class that writes information to the server.
      */
     private class WriteToServer implements Runnable {
-        private DataOutputStream dataOut;
+        private InetAddress address;
+        private int port;
         private long sleepTime;
         private Thread WTSloop;
 
@@ -233,32 +169,38 @@ public class GameCanvas extends JComponent {
          */
         @Override
         public void run() {
-            try {
-                while (true) {
-                    if (pNum == 1) {
-                        p1.sendCompressedData(dataOut);
-                    } else {
-                        p2.sendCompressedData(dataOut);
-                    }
-<<<<<<< HEAD
-=======
-                    
->>>>>>> Server-N-Hitboxes
-                    Thread.sleep(sleepTime);
+            while (true) {
+                if (pNum == 1) {
+                    send(p1.getCompressedData());
+                } else {
+                    send(p2.getCompressedData());
                 }
-            } catch(InterruptedException ex) {
-                System.out.println("InterruptedException at WTS run()\n\n" + ex);
-                System.exit(1);
+
+                try { Thread.sleep(sleepTime); }
+                catch(InterruptedException ex) {
+                    System.out.println("InterruptedException at WTC run()\n\n" + ex);
+                    System.exit(1);
+                }
+            }
+        }
+
+        public void send(byte[] buf) {
+            DatagramPacket packet = new DatagramPacket(buf,buf.length,address,port);
+            try {
+                clientSocket.send(packet);
+            } catch(IOException ex) {
+                System.out.println("IOException from WTC send()");
             }
         }
 
         /**
          * Initializes the WriteToServer class
          */
-        public WriteToServer(DataOutputStream dataOut, int sleepTime) {
-            WTSloop = new Thread(this);
+        public WriteToServer(InetAddress address, int port, int sleepTime) {
+            this.address = address;
+            this.port = port;
             this.sleepTime = sleepTime;
-            this.dataOut = dataOut;
+            WTSloop = new Thread(this);
         }
 
         /**
@@ -274,35 +216,33 @@ public class GameCanvas extends JComponent {
      * A private class that reads data from the server
      */
     private class ReadFromServer implements Runnable {
-        private DataInputStream dataIn;
-        private long sleepTime;
         private Thread RFSloop;
 
-        /**
-         * The thread that continously recieves data from the server.
-         */
         @Override
         public void run() {
             try {
-                while (true) {
-                    if(pNum == 1) {
-<<<<<<< HEAD
-                        p2.recieveCompressedData(dataIn);
-                    } else {
-                        p1.recieveCompressedData(dataIn);
-                    }
-=======
-                        p2.receiveCompressedData(dataIn);
-                    } else {
-                        p1.receiveCompressedData(dataIn);
-                    }
-                    Yalin.receiveCompressedData(dataIn);
->>>>>>> Server-N-Hitboxes
+                while(true) {
+                    byte[] buf = new byte[bufMax];
+                    DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                    clientSocket.receive(packet);
 
-                    Thread.sleep(sleepTime);
+                    String sDataIn = new String(packet.getData(), StandardCharsets.UTF_8);
+                    sDataIn = sDataIn.trim();
+
+                    if(sDataIn.startsWith("p1")) {
+                        p1.receiveCompressedData(sDataIn);
+                    } else if(sDataIn.startsWith("p2")) {
+                        p2.receiveCompressedData(sDataIn);
+                    } else if(sDataIn.startsWith("Yalin")){
+                        Yalin.receiveCompressedData(sDataIn);
+                    } else {
+                        System.out.println("Data bad: " + sDataIn);
+                    }
+                        
+                    
                 }
-            } catch(InterruptedException ex) {
-                System.out.println("InterruptedException at RFS run()\n\n" + ex);
+            } catch(IOException ex) {
+                System.out.println("IOException at RFC run()" + ex);
                 System.exit(1);
             }
         }
@@ -310,9 +250,7 @@ public class GameCanvas extends JComponent {
         /**
          * Initializes the ReadFromServer class.
          */
-        public ReadFromServer(DataInputStream dataIn, int sleepTime) {
-            this.dataIn = dataIn;
-            this.sleepTime = sleepTime;
+        public ReadFromServer() {
             RFSloop = new Thread(this);
         }
 

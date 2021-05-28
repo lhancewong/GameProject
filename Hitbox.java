@@ -48,21 +48,22 @@ public class Hitbox implements GameObject{
         return height;
     }
 
-
-    @Override
-    public void sendCompressedData(DataOutputStream dataOut) {
-        
-    }
-
-
-    @Override
-    public void receiveCompressedData(DataInputStream dataIn) {
-        
-    }
-
-
     @Override
     public void readStringData(String s) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+    @Override
+    public byte[] getCompressedData() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    @Override
+    public void receiveCompressedData(String sDataIn) {
         // TODO Auto-generated method stub
         
     }

@@ -1,13 +1,8 @@
 import java.awt.*;
-<<<<<<< HEAD
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-=======
 import java.awt.geom.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
->>>>>>> Server-N-Hitboxes
 
 public class Background implements GameObject {
 
@@ -67,26 +62,19 @@ public class Background implements GameObject {
         
         
     }
-
-    @Override
-    public void sendCompressedData(DataOutputStream dataOut) {
-<<<<<<< HEAD
-        // TODO Auto-generated method stub
-=======
->>>>>>> Server-N-Hitboxes
-        
-    }
-
-    @Override
-<<<<<<< HEAD
-    public void recieveCompressedData(DataInputStream dataIn) {
-=======
-    public void receiveCompressedData(DataInputStream dataIn) {
-        
-    }
+    
     @Override
     public void readStringData(String s) {
->>>>>>> Server-N-Hitboxes
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public byte[] getCompressedData() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Override
+    public void receiveCompressedData(String sDataIn) {
         // TODO Auto-generated method stub
         
     }

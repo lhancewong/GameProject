@@ -13,22 +13,14 @@ public class GameFrame {
     private GameCanvas gameCanvas;
     private Game game;
 
-<<<<<<< HEAD
-=======
     //Player stuff
 
->>>>>>> Server-N-Hitboxes
     public GameFrame() {
         window = new JFrame();
         GameUtils.get().setJFrame(window);
 
-<<<<<<< HEAD
-        gameCanvas = new GameCanvas();
-=======
-
         gameCanvas = new GameCanvas();
         game = gameCanvas.getGame();
->>>>>>> Server-N-Hitboxes
     }
 
     /**

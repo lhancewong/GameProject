@@ -72,7 +72,7 @@ public class Boss implements GameObject{
         }
 
         //mUp_mDown_randomDistance_hitPoints_
-        sDataOut = String.format("%.2f_%.2f_%b_%b_%d_%f_",xPos,yPos,mUp,mDown,randomDistance,hitPoints);
+        sDataOut = String.format("Yalin_%.1f_%.1f_%b_%b_%d_%.1f_",xPos,yPos,mUp,mDown,randomDistance,hitPoints);
         readStringData(sDataIn);
 
     }
@@ -81,12 +81,12 @@ public class Boss implements GameObject{
     public void readStringData(String s) {
         if(!s.equals("")) {
             String[] data = s.split("_");
-            xPos = Double.parseDouble(data[0]);
-            yPos = Double.parseDouble(data[1]);
-            mUp = Boolean.parseBoolean(data[2]);
-            mDown = Boolean.parseBoolean(data[3]);
-            randomDistance = Integer.parseInt(data[4]);
-            hitPoints = Double.parseDouble(data[5]);
+            xPos = Double.parseDouble(data[1]);
+            yPos = Double.parseDouble(data[2]);
+            mUp = Boolean.parseBoolean(data[3]);
+            mDown = Boolean.parseBoolean(data[4]);
+            randomDistance = Integer.parseInt(data[5]);
+            hitPoints = Double.parseDouble(data[6]);
         }   
     }
 
@@ -119,22 +119,13 @@ public class Boss implements GameObject{
     }
 
     @Override
-    public void sendCompressedData(DataOutputStream dataOut) {
-        try {
-            dataOut.writeUTF(sDataOut);
-            dataOut.flush();
-        } catch(IOException ex) {
-            System.out.println(ex);
-        }
+    public byte[] getCompressedData() {
+        return sDataOut.getBytes();
     }
 
     @Override
-    public void receiveCompressedData(DataInputStream dataIn) {
-        try {
-            sDataIn = dataIn.readUTF();
-        } catch(IOException ex) {
-            System.out.println(ex);
-        }
+    public void receiveCompressedData(String sDataIn) {
+        this.sDataIn = sDataIn;
     }
     
 }

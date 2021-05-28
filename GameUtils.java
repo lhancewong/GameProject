@@ -48,21 +48,15 @@ public class GameUtils {
     }
 
     /**
-<<<<<<< HEAD
-     * Sets the player number of the specific gameCanvas Instance.
-=======
      * Sets the player number of GameUtils.
      * 
      * @param pNum the player number
->>>>>>> Server-N-Hitboxes
      */
     public void setPlayerNum(int pNum) {
         this.pNum = pNum;
     }
 
     /**
-<<<<<<< HEAD
-=======
      * Returns the player number of GameUtils
      * 
      * @return player number
@@ -72,7 +66,6 @@ public class GameUtils {
     }
 
     /**
->>>>>>> Server-N-Hitboxes
      * Returns the width of the game window.
      * 
      * @return the width of the window
@@ -88,14 +81,5 @@ public class GameUtils {
      */
     public int getHeight() {
         return height;
-    }
-
-    /**
-     * Returns the player number of the gameCanvas instance.
-     * 
-     * @return the player number
-     */
-    public int getPlayerNum() {
-        return pNum;
     }
 }

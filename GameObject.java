@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-import java.awt.*;
-=======
 import java.awt.Graphics2D;
->>>>>>> Server-N-Hitboxes
 import java.io.*;
+import java.net.DatagramSocket;
 
 /**
  * All drawn game objects will implement this class. It has methods that every game
@@ -21,30 +18,20 @@ public interface GameObject {
     void update(double deltaTime);
 
     /**
-<<<<<<< HEAD
-     * Compresses the necessary data that will be sent to the clients.
-     */
-    void sendCompressedData(DataOutputStream dataOut);
-=======
      * Updates the object using most recent the compressed data.
      * 
      * @param s the compressed data
      */
     void readStringData(String s);
->>>>>>> Server-N-Hitboxes
 
     /**
-     * Sends the compressed data.
+     * Gets the compressed data of the GameObject.
      */
-<<<<<<< HEAD
-    void recieveCompressedData(DataInputStream dataIn);
-=======
-    void sendCompressedData(DataOutputStream dataOut);
+    byte[] getCompressedData();
 
     /**
-     * Receives the compressed data.
+     * Receives the compressed string data.
      */
-    void receiveCompressedData(DataInputStream dataIn);
->>>>>>> Server-N-Hitboxes
+    void receiveCompressedData(String sDataIn);
     
 }

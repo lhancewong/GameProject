@@ -79,19 +79,19 @@ public class BulletController implements GameObject{
     }
 
     @Override
-    public void sendCompressedData(DataOutputStream dataOut) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void receiveCompressedData(DataInputStream dataIn) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public void readStringData(String s) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public byte[] getCompressedData() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void receiveCompressedData(String sDataIn) {
         // TODO Auto-generated method stub
         
     }    
