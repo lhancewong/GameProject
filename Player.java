@@ -80,9 +80,9 @@ public class Player implements GameObject {
         ship2Image = null;
         ship3Image = null;
         try {
-            ship1Image = ImageIO.read(new File("A:/Admu stuff/Java/CS 22/Finals/Final Proj/GameProject/Ship1.png"));
-            ship2Image = ImageIO.read(new File("A:/Admu stuff/Java/CS 22/Finals/Final Proj/GameProject/Ship2.png"));
-            ship3Image = ImageIO.read(new File("A:/Admu stuff/Java/CS 22/Finals/Final Proj/GameProject/Ship3.png"));
+            ship1Image = ImageIO.read(new File("sprites/Ship1.png"));
+            ship2Image = ImageIO.read(new File("sprites/Ship2.png"));
+            ship3Image = ImageIO.read(new File("sprites/Ship3.png"));
         } catch (IOException e) {
         }
         isAlive = true;
@@ -224,6 +224,7 @@ public class Player implements GameObject {
         bullet.draw(g2d); */
 
     }
+    
     /**
      * Ideally this can only be called once the player
      * dies.

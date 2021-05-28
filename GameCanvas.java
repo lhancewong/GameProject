@@ -1,11 +1,8 @@
 import java.awt.*;
 import javax.swing.*;
-import java.awt.geom.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This class extends JComponent and overrides the paintComponent method in
@@ -15,24 +12,18 @@ public class GameCanvas extends JComponent {
     //Graphics
     private Graphics2D g2d;
     private int width, height;
-    //temp
-    private Rectangle2D.Double bg;
-
-    //Threads
     private WriteToServer wtsLoop;
     private ReadFromServer rfsLoop;
-    private Game game;
 
     //Game Stuff
+    private Game game;
     public Player p1, p2;
     public Boss Yalin;
-    public int pNum;
+    private int pNum;
     private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
     private javax.swing.Timer drawTimer;
     
-    public CopyOnWriteArrayList<ShipBullet> bullets;
-    private ArrayList<GameObject> bossFight;
     //private MenuObjects serverSelectionMenu;
     //private MenuObjects classSelectionMenu;
     
@@ -44,25 +35,28 @@ public class GameCanvas extends JComponent {
         width = GameUtils.get().getWidth();
         height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
-
-        //Arraylists
-        bossFight = new ArrayList<GameObject>();
-        bullets = new CopyOnWriteArrayList<ShipBullet>();
         
-        //Objects & Shapes
-        bg = new Rectangle2D.Double(0,0,width,height);
-        game = new Game();
-        initMenuSelection();
-
-        //loops
-        game.startThread();
+        //Game Stuff
+        game = new Game(false);
         drawLoop();
-        drawTimer.start();
-
+        
         isRunning = true;
         isServerSelection = false;
         isClassSelection = false;
         isBossFight = true;
+
+        connectToServer();
+        game.startThread();
+
+        p1 = game.getPlayer1();
+        p2 = game.getPlayer2();
+        Yalin = game.getYalin();
+        
+        drawTimer.start();
+        rfsLoop.startThread();
+        wtsLoop.startThread();
+
+        
     }
 
     /**
@@ -73,28 +67,7 @@ public class GameCanvas extends JComponent {
         g2d = (Graphics2D) g;
         game.draw(g2d);
     }
-
-    /**
-     * Initializes the boss fight.
-     */
-    private void initBossFight() {
-        //bg = new Background();
-        Yalin = new Boss();
-        p1 = new Player(210,180,30,4);
-        p2 = new Player(210,540,30,4);
-        //bossFight.add(bg);
-        bossFight.add(p1);
-        bossFight.add(p2);
-        bossFight.add(Yalin);
-
-    }
-
-    /**
-     * Initializes the menu screen.
-     */
-    private void initMenuSelection() {
-
-    }
+    
 
     public Game getGame() {
         return game;
@@ -143,20 +116,29 @@ public class GameCanvas extends JComponent {
      * Method to connect to the server
      */
     public void connectToServer() {
-        //TODO make it so that the ip and port is taken from a jtextfield or something. called when join is pressed
         try {
             //System.out.print("Please input the server's IP Address: ");
-            String ipAddress = "192.168.1.152";
+            //String ipAddress = console.nextLine();
 
             //System.out.print("Please input the port number: ");
-            int portNum = Integer.parseInt("25570");
+            //int portNum = Integer.parseInt(console.nextLine());
+
             System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
-            Socket clientSocket = new Socket(ipAddress, portNum);
+            Socket clientSocket = new Socket("ginks.ml", 25570);
+
             System.out.println("CONNECTION SUCCESSFUL!");
-            wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 20);
-            rfsLoop = new ReadFromServer(new DataInputStream(clientSocket.getInputStream()), 20);
-            wtsLoop.startThread();
-            rfsLoop.startThread();
+            wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 60);
+            rfsLoop = new ReadFromServer(new DataInputStream(clientSocket.getInputStream()), 60);
+
+            try { 
+                pNum = new DataInputStream(clientSocket.getInputStream()).readInt();
+                GameUtils.get().setPlayerNum(pNum);
+                System.out.println("You are Player " + pNum + "!");
+            } catch(IOException ex) {
+                System.out.println("IOException when trying to get Player Number");
+            }
+
+            
         } catch(IOException ex) {
           System.out.println("IOException from connectToServer() method.");
         }
@@ -175,12 +157,19 @@ public class GameCanvas extends JComponent {
          */
         @Override
         public void run() {
-            /* TODO gets the compressed data of every gameobject and sends it to server
-             * Example: player sends its moving up down or something
-             */
-            try { Thread.sleep(sleepTime); }
-            catch(InterruptedException ex) {
+            try {
+                while (true) {
+                    if (pNum == 1) {
+                        p1.sendCompressedData(dataOut);
+                    } else {
+                        p2.sendCompressedData(dataOut);
+                    }
+                    
+                    Thread.sleep(sleepTime);
+                }
+            } catch(InterruptedException ex) {
                 System.out.println("InterruptedException at WTS run()\n\n" + ex);
+                System.exit(1);
             }
         }
 
@@ -216,17 +205,19 @@ public class GameCanvas extends JComponent {
         @Override
         public void run() {
             try {
-                try { pNum = dataIn.readInt(); } 
-                catch(IOException ex) {
-                    System.out.println("IOException at WTC run()");
-                }
-
                 while (true) {
-                    //TODO read data from server.
+                    if(pNum == 1) {
+                        p2.receiveCompressedData(dataIn);
+                    } else {
+                        p1.receiveCompressedData(dataIn);
+                    }
+                    Yalin.receiveCompressedData(dataIn);
+
                     Thread.sleep(sleepTime);
                 }
             } catch(InterruptedException ex) {
                 System.out.println("InterruptedException at RFS run()\n\n" + ex);
+                System.exit(1);
             }
         }
 

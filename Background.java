@@ -29,8 +29,8 @@ public class Background implements GameObject {
         this.number = number;
 
         try {
-            back1 = ImageIO.read(new File("A:/Admu stuff/Java/CS 22/Finals/Final Proj/GameProject/bg.jpg"));
-            back2 = ImageIO.read(new File("A:/Admu stuff/Java/CS 22/Finals/Final Proj/GameProject/bg2.jpg"));
+            back1 = ImageIO.read(new File("sprites/bg.jpg"));
+            back2 = ImageIO.read(new File("sprites/bg2.jpg"));
         } catch (IOException e) {
         }
         
@@ -70,6 +70,11 @@ public class Background implements GameObject {
 
     @Override
     public void receiveCompressedData(DataInputStream dataIn) {
+        
+    }
+    @Override
+    public void readStringData(String s) {
+        // TODO Auto-generated method stub
         
     }
     

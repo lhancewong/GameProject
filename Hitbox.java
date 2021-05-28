@@ -60,4 +60,11 @@ public class Hitbox implements GameObject{
         
     }
 
+
+    @Override
+    public void readStringData(String s) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

@@ -88,6 +88,12 @@ public class BulletController implements GameObject{
     public void receiveCompressedData(DataInputStream dataIn) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public void readStringData(String s) {
+        // TODO Auto-generated method stub
+        
     }    
 
 }

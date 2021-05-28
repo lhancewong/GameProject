@@ -48,5 +48,10 @@ public class ShipBullet implements GameObject, Projectile {
     public void receiveCompressedData(DataInputStream dataIn) {
         
     }
+
+    @Override
+    public void readStringData(String s) {
+        
+    }
     
 }

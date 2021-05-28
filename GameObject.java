@@ -17,12 +17,19 @@ public interface GameObject {
     void update(double deltaTime);
 
     /**
+     * Updates the object using most recent the compressed data.
+     * 
+     * @param s the compressed data
+     */
+    void readStringData(String s);
+
+    /**
      * Sends the compressed data.
      */
     void sendCompressedData(DataOutputStream dataOut);
 
     /**
-     * Receives the compressed data and updates its values.
+     * Receives the compressed data.
      */
     void receiveCompressedData(DataInputStream dataIn);
     

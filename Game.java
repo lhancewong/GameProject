@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
     /**
      * class that updates and displays the game.
      */ 
-public class Game implements Runnable{
+    public class Game implements Runnable{
 
     private Background bg1;
     private Background bg2;
@@ -22,7 +22,7 @@ public class Game implements Runnable{
     public Player p1, p2;
     public Boss Yalin;
     public int pNum;
-    private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
+    private boolean isRunning, isMaster, isBossFight, isServerSelection, isClassSelection;
     private BulletController controller1;
     private BulletController controller2;
     public CopyOnWriteArrayList<ShipBullet> bullets;
@@ -34,12 +34,13 @@ public class Game implements Runnable{
      * 
      * @param sleepTime delay between loops in milliseconds
      */
-    public Game() {
+    public Game(boolean isMaster) {
         /* bg = new Rectangle2D.Double(0,0,GameUtils.get().getWidth(),GameUtils.get().getHeight()); */
         logicLoop = new Thread(this);
         isRunning = true;
         isBossFight = true;
         initBossFight();
+        initMenuSelection();
     }
 
     /**
@@ -63,6 +64,17 @@ public class Game implements Runnable{
             for(GameObject i : bossFight) {
                 i.update(deltaTime);
             }
+            
+            /* bg1.update(deltaTime);
+            bg2.update(deltaTime);
+            p1.update(deltaTime);
+            p2.update(deltaTime);
+
+            if(isMaster) {
+                Yalin.update(deltaTime);
+                controller1.update(deltaTime);
+            } */
+
 
             checkBulletHitboxes();
 
@@ -93,6 +105,13 @@ public class Game implements Runnable{
         bossFight.add(controller1);
 
         bullets = new CopyOnWriteArrayList<ShipBullet>();
+
+    }
+
+    /**
+     * Initializes the menu screen.
+     */
+    private void initMenuSelection() {
 
     }
 
@@ -137,7 +156,18 @@ public class Game implements Runnable{
     public BulletController getController1(){
         return controller1;
     }
+
+    public Player getPlayer1() {
+        return p1;
+    }
+
+    public Player getPlayer2() {
+        return p2;
+    }
     
+    public Boss getYalin() {
+        return Yalin;
+    }
 
     
 }

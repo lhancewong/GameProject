@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 /**
  * This class contains the code that manages the game server's functionality. It also
@@ -9,12 +8,11 @@ import java.util.*;
 public class GameServer {
     private ServerSocket ss;
     private int numPlayers;
-
-    private String clientInput;
+    private Game gameMaster;
 
     //GameRelated
-    private ArrayList<GameObject> bossFight;
     private Player p1, p2;
+    private Boss Yalin;
 
     private static final int MAX_PLAYERS = 2;
 
@@ -22,9 +20,10 @@ public class GameServer {
         System.out.println("=================\nShoot and Scoot Server");
         numPlayers = 0;
 
-        GameMaster gameMaster = new GameMaster(20);
-        initBossFight();
+        gameMaster = new Game(true);
         gameMaster.startThread();
+        initGameObjects();
+        
 
         try {
             ss = new ServerSocket(25570);
@@ -33,9 +32,15 @@ public class GameServer {
         }
     }
 
+    private void initGameObjects() {
+        p1 = gameMaster.getPlayer1();
+        p2 = gameMaster.getPlayer2();
+        Yalin = gameMaster.getYalin();
+    }
+
     public void acceptConnections() {
         try {
-            System.out.println("Waiting for connections...");
+            System.out.println("\nWaiting for connections...");
             ReadFromClient RFC = null;
             WriteToClient WTC = null;
 
@@ -45,7 +50,7 @@ public class GameServer {
                 
                 RFC = new ReadFromClient(s,numPlayers,60);
                 WTC = new WriteToClient(s,numPlayers,60);
-                System.out.println("Player " + numPlayers + " has connected.");
+                System.out.println("===============\nPlayer " + numPlayers + " has connected.");
                 try { 
                     new DataOutputStream(s.getOutputStream()).writeInt(numPlayers); 
                 } catch(IOException ex) {
@@ -61,67 +66,6 @@ public class GameServer {
         }
     }
 
-    /**
-     * Initializes the bossFight ArrayList.
-     * This ArrayList is meant to hold what will be 
-     * drawn when repaint is called while the
-     * boss fight is supposed to be displayed.
-     */
-    private void initBossFight() {
-        bossFight = new ArrayList<GameObject>();
-        //bg = new Background();
-        p1 = new Player(210,180,30,4);
-        p2 = new Player(210,540,30,4);
-        //bossFight.add(bg);
-        bossFight.add(p1);
-        bossFight.add(p2);
-    }
-
-    
-
-    /**
-     * 
-     */
-    private class GameMaster implements Runnable {
-        private Thread logicLoop;
-        private long sleepTime;
-        
-        public GameMaster(int sleepTime) {
-            logicLoop = new Thread(this);
-            this.sleepTime = sleepTime;
-        }
-
-        
-
-        public void startThread() {
-            initBossFight();
-            logicLoop.start();
-        }
-
-        /**
-         * The logic Thread.
-         */
-        @Override
-        public void run() {
-            long previousTime = System.currentTimeMillis()-1;
-            while(true) {
-                long currentTime = System.currentTimeMillis();
-
-                double deltaTime = (currentTime - previousTime)/1000.0;
-
-                for(GameObject i : bossFight) {
-                    i.update(deltaTime);
-                }
-
-                previousTime = currentTime;
-
-                try { Thread.sleep(sleepTime); }
-                catch(InterruptedException ex) {
-                    System.out.println("InterruptedException at GameMaster run()\n\n" + ex);
-                }
-            }
-        }
-    }
     /**
      * A private class that writes information to the server.
      */
@@ -144,6 +88,8 @@ public class GameServer {
                     } else {
                         p1.sendCompressedData(dataOut);
                     }
+                    Yalin.sendCompressedData(dataOut);
+
             
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
@@ -181,7 +127,6 @@ public class GameServer {
     }
 
     private class ReadFromClient implements Runnable {
-        private Socket pSocket;
         private int pNum;
         private long sleepTime;
 
@@ -207,7 +152,6 @@ public class GameServer {
         }
 
         public ReadFromClient(Socket pSocket, int pNum, int sleepTime) {
-            this.pSocket = pSocket;
             this.pNum = pNum;
             this.sleepTime = sleepTime;
 

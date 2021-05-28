@@ -13,10 +13,10 @@ public class Boss implements GameObject{
     private int randomDistance;
     private double moveSpeed;
     private boolean isAlive;
-    private boolean movingUp, movingDown, movingLeft, movingRight;
+    private boolean mUp, mDown, movingLeft, movingRight;
     private BufferedImage img;
     private Hitbox box;
-
+    private String sDataOut, sDataIn;
     private double hitPoints;
 
 
@@ -27,9 +27,12 @@ public class Boss implements GameObject{
         moveSpeed = 400;
         hitPoints = 100;
         isAlive = true;
-        movingUp = true;
-        movingDown = false;
+        mUp = true;
+        mDown = false;
         randomDistance = (int)Math.floor(Math.random()*(yPos-0+1)+0);
+
+        sDataIn = "";
+        sDataOut = "";
         
     }
 
@@ -38,7 +41,7 @@ public class Boss implements GameObject{
         if (isAlive) {
             img = null;
             try {
-                img = ImageIO.read(new File("A:/Admu stuff/Java/CS 22/Finals/Final Proj/GameProject/boss1.png"));
+                img = ImageIO.read(new File("sprites/boss1.png"));
             } catch (IOException e) {
             }
             g2d.drawImage(img, (int) xPos, (int) yPos, null, null);
@@ -51,8 +54,7 @@ public class Boss implements GameObject{
     @Override
     public void update(double d) {
 
-
-        if(movingUp) {
+        if(mUp) {
             if (yPos >= randomDistance){
                 yPos -= moveSpeed*d;
             }
@@ -60,7 +62,7 @@ public class Boss implements GameObject{
                 changeDirection();
             }
         }
-        if (movingDown) {
+        if (mDown) {
             if (yPos <= randomDistance){
                 yPos += moveSpeed*d;
             }
@@ -69,6 +71,23 @@ public class Boss implements GameObject{
             }
         }
 
+        //mUp_mDown_randomDistance_hitPoints_
+        sDataOut = String.format("%.2f_%.2f_%b_%b_%d_%f_",xPos,yPos,mUp,mDown,randomDistance,hitPoints);
+        readStringData(sDataIn);
+
+    }
+
+    @Override
+    public void readStringData(String s) {
+        if(!s.equals("")) {
+            String[] data = s.split("_");
+            xPos = Double.parseDouble(data[0]);
+            yPos = Double.parseDouble(data[1]);
+            mUp = Boolean.parseBoolean(data[2]);
+            mDown = Boolean.parseBoolean(data[3]);
+            randomDistance = Integer.parseInt(data[4]);
+            hitPoints = Double.parseDouble(data[5]);
+        }   
     }
 
     public Hitbox getHitbox(){
@@ -83,14 +102,14 @@ public class Boss implements GameObject{
 
     public void changeDirection(){
 
-        if (movingUp){
-            movingDown = !movingDown;
-            movingUp =  !movingUp;
+        if (mUp){
+            mDown = !mDown;
+            mUp =  !mUp;
             randomDistance = (int)Math.floor(Math.random()*(383-yPos+1)+yPos);
         }
         else{
-            movingDown = !movingDown;
-            movingUp =  !movingUp;
+            mDown = !mDown;
+            mUp =  !mUp;
             randomDistance = (int)Math.floor(Math.random()*(yPos-0+1)+0);
         }
     }
@@ -101,12 +120,21 @@ public class Boss implements GameObject{
 
     @Override
     public void sendCompressedData(DataOutputStream dataOut) {
-        
+        try {
+            dataOut.writeUTF(sDataOut);
+            dataOut.flush();
+        } catch(IOException ex) {
+            System.out.println(ex);
+        }
     }
 
     @Override
     public void receiveCompressedData(DataInputStream dataIn) {
-        
+        try {
+            sDataIn = dataIn.readUTF();
+        } catch(IOException ex) {
+            System.out.println(ex);
+        }
     }
     
 }
