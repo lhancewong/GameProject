@@ -13,18 +13,5 @@ public interface Projectile{
      */
     void setCenter(double xPos, double yPos);
 
-    /**
-     * Moves the projectile left or right.
-     * 
-     * @param amnt the distance to move
-     */
-    void moveH(double amnt);
-
-    /**
-     * Moves the projectile up or down.
-     * 
-     * @param amnt the distance to move
-     */
-    void moveV(double amnt);
 
 }

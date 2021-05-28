@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import java.awt.*;
+=======
+import java.awt.Graphics2D;
+>>>>>>> Server-N-Hitboxes
 import java.io.*;
 
 /**
@@ -17,13 +21,30 @@ public interface GameObject {
     void update(double deltaTime);
 
     /**
+<<<<<<< HEAD
      * Compresses the necessary data that will be sent to the clients.
      */
     void sendCompressedData(DataOutputStream dataOut);
+=======
+     * Updates the object using most recent the compressed data.
+     * 
+     * @param s the compressed data
+     */
+    void readStringData(String s);
+>>>>>>> Server-N-Hitboxes
 
     /**
-     * Reads the compressed data received from the server.
+     * Sends the compressed data.
      */
+<<<<<<< HEAD
     void recieveCompressedData(DataInputStream dataIn);
+=======
+    void sendCompressedData(DataOutputStream dataOut);
+
+    /**
+     * Receives the compressed data.
+     */
+    void receiveCompressedData(DataInputStream dataIn);
+>>>>>>> Server-N-Hitboxes
     
 }

@@ -1,10 +1,8 @@
 import java.awt.*;
 import javax.swing.*;
-import java.awt.geom.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 /**
  * This class extends JComponent and overrides the paintComponent method in
@@ -14,22 +12,30 @@ public class GameCanvas extends JComponent {
     //Graphics
     private Graphics2D g2d;
     private int width, height;
+<<<<<<< HEAD
     //temp
     private Rectangle2D.Double bg;
     private Scanner console;
 
     //Threads
     private GameClient gameLoop;
+=======
+>>>>>>> Server-N-Hitboxes
     private WriteToServer wtsLoop;
     private ReadFromServer rfsLoop;
 
     //Game Stuff
+    private Game game;
     public Player p1, p2;
+<<<<<<< HEAD
+=======
+    public Boss Yalin;
+>>>>>>> Server-N-Hitboxes
     private int pNum;
     private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
-
-    private ArrayList<GameObject> bossFight;
+    private javax.swing.Timer drawTimer;
+    
     //private MenuObjects serverSelectionMenu;
     //private MenuObjects classSelectionMenu;
     
@@ -41,6 +47,7 @@ public class GameCanvas extends JComponent {
         width = GameUtils.get().getWidth();
         height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
+<<<<<<< HEAD
         console = new Scanner(System.in);
         initServerSelection();
         
@@ -48,12 +55,20 @@ public class GameCanvas extends JComponent {
         //loops
         gameLoop = new GameClient(20);
 
+=======
+        
+        //Game Stuff
+        game = new Game(false);
+        drawLoop();
+        
+>>>>>>> Server-N-Hitboxes
         isRunning = true;
         isServerSelection = false;
         isClassSelection = false;
         isBossFight = true;
 
         connectToServer();
+<<<<<<< HEAD
 
         //Objects & Shapes
         bg = new Rectangle2D.Double(0,0,width,height);
@@ -62,6 +77,19 @@ public class GameCanvas extends JComponent {
         gameLoop.startThread();
         wtsLoop.startThread();
         rfsLoop.startThread();
+=======
+        game.startThread();
+
+        p1 = game.getPlayer1();
+        p2 = game.getPlayer2();
+        Yalin = game.getYalin();
+        
+        drawTimer.start();
+        rfsLoop.startThread();
+        wtsLoop.startThread();
+
+        
+>>>>>>> Server-N-Hitboxes
     }
 
     /**
@@ -70,6 +98,7 @@ public class GameCanvas extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         g2d = (Graphics2D) g;
+<<<<<<< HEAD
         g2d.setColor(new Color(100,150,150));
         g2d.fill(bg);
 
@@ -106,105 +135,50 @@ public class GameCanvas extends JComponent {
      */
     private void initServerSelection() {
 
+=======
+        game.draw(g2d);
+>>>>>>> Server-N-Hitboxes
+    }
+    
+
+    public Game getGame() {
+        return game;
     }
 
     /**
-     * Returns the number of the player.
-     * 
-     * @return The player's number
+     * The display thread. It calculates fps and calls repaint to ideally
+     * reach the FPS_CAP;
      */
-    public int getPlayerNumber() {
-        return pNum;
-    }
-
-    //====================== Game Stuff ============================//
-
-    /**
-     * A private class that updates and displays the game.
-     */
-    private class GameClient implements Runnable {
-        private Thread logicLoop;
-        private javax.swing.Timer drawTimer;
-        private long sleepTime;
-
-        /**
-         * Instantiates the logic loop class.
-         * 
-         * @param sleepTime delay between loops in milliseconds
-         */
-        public GameClient(int sleepTime) {
-            logicLoop = new Thread(this);
-            drawLoop();
-            this.sleepTime = sleepTime;
-        }
-
-        /**
-         * Starts the threads.
-         */
-        public void startThread() {
-            logicLoop.start();
-            drawTimer.start();
-        }
-
-        /**
-         * The logic Thread.
-         */
-        @Override
-        public void run() {
+    public void drawLoop() {
+        ActionListener displayGame = new ActionListener() {
             long previousTime = System.currentTimeMillis()-1;
-            while(isRunning) {
+            int frames = 0;
+
+            public void actionPerformed(ActionEvent e) {
+                frames++; 
                 long currentTime = System.currentTimeMillis();
-
-                double deltaTime = (currentTime - previousTime)/1000.0;
-
-                for(GameObject i : bossFight) {
-                    i.update(deltaTime);
-                }
-
-                previousTime = currentTime;
-
-                try { Thread.sleep(sleepTime); }
-                catch(InterruptedException ex) {
-                    System.out.println("InterruptedException at GameLoop run()\n\n" + ex);
-                }
-            }
-        }
-
-        /**
-         * The display thread. It calculates fps and calls repaint to ideally
-         * reach the FPS_CAP;
-         */
-        public void drawLoop() {
-            ActionListener displayGame = new ActionListener() {
-                long previousTime = System.currentTimeMillis()-1;
-                int frames = 0;
-    
-                public void actionPerformed(ActionEvent e) {
-                    frames++; 
-                    long currentTime = System.currentTimeMillis();
-                    /**
-                     * Counts how many times the animation as displayed per second (basically fps)
-                     * Checks if ~1 sec has passed. If a second has passed and displayFPS_Counter is true,
-                     * it resets the value of frames and gets a new previous time.
-                     */ 
-                    if (currentTime - previousTime >= 1000) {
-                        if (isRunning) {
-                            String titleFPS = "Shoot and Scoot | FPS: " + frames + "   ";
-                            GameUtils.get().setJFrameTitle(titleFPS);
-                        } else {
-                            String titleFPS = "Shoot and Scoot";
-                            GameUtils.get().setJFrameTitle(titleFPS);
-                        }
-                        frames = 0;
-                        previousTime = currentTime;
+                /**
+                 * Counts how many times the animation as displayed per second (basically fps)
+                 * Checks if ~1 sec has passed. If a second has passed and displayFPS_Counter is true,
+                 * it resets the value of frames and gets a new previous time.
+                 */ 
+                if (currentTime - previousTime >= 1000) {
+                    if (isRunning) {
+                        String titleFPS = "Shoot and Scoot | FPS: " + frames + "   ";
+                        GameUtils.get().setJFrameTitle(titleFPS);
+                    } else {
+                        String titleFPS = "Shoot and Scoot";
+                        GameUtils.get().setJFrameTitle(titleFPS);
                     }
-                    //GAME DRAW
-                    repaint();
+                    frames = 0;
+                    previousTime = currentTime;
                 }
-    
-            };
-            drawTimer = new javax.swing.Timer((int)Math.round(1000.0/FPS_CAP), displayGame);
-        }
+                //GAME DRAW
+                repaint();
+            }
+
+        };
+        drawTimer = new javax.swing.Timer((int)Math.round(1000.0/FPS_CAP), displayGame);
     }
 
     //==================== Networking ================================//
@@ -214,7 +188,6 @@ public class GameCanvas extends JComponent {
      * Method to connect to the server
      */
     public void connectToServer() {
-        //TODO make it so that the ip and port is taken from a jtextfield or something. called when join is pressed
         try {
             //System.out.print("Please input the server's IP Address: ");
             //String ipAddress = console.nextLine();
@@ -223,7 +196,11 @@ public class GameCanvas extends JComponent {
             //int portNum = Integer.parseInt(console.nextLine());
 
             System.out.println("ATTEMPTING TO CONNECT TO THE SERVER...");
+<<<<<<< HEAD
             Socket clientSocket = new Socket("ginks.ml", 25565);
+=======
+            Socket clientSocket = new Socket("ginks.ml", 25570);
+>>>>>>> Server-N-Hitboxes
 
             System.out.println("CONNECTION SUCCESSFUL!");
             wtsLoop = new WriteToServer(new DataOutputStream(clientSocket.getOutputStream()), 60);
@@ -263,6 +240,10 @@ public class GameCanvas extends JComponent {
                     } else {
                         p2.sendCompressedData(dataOut);
                     }
+<<<<<<< HEAD
+=======
+                    
+>>>>>>> Server-N-Hitboxes
                     Thread.sleep(sleepTime);
                 }
             } catch(InterruptedException ex) {
@@ -305,10 +286,18 @@ public class GameCanvas extends JComponent {
             try {
                 while (true) {
                     if(pNum == 1) {
+<<<<<<< HEAD
                         p2.recieveCompressedData(dataIn);
                     } else {
                         p1.recieveCompressedData(dataIn);
                     }
+=======
+                        p2.receiveCompressedData(dataIn);
+                    } else {
+                        p1.receiveCompressedData(dataIn);
+                    }
+                    Yalin.receiveCompressedData(dataIn);
+>>>>>>> Server-N-Hitboxes
 
                     Thread.sleep(sleepTime);
                 }

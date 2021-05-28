@@ -11,12 +11,24 @@ public class GameFrame {
 
     //game stuff
     private GameCanvas gameCanvas;
+    private Game game;
 
+<<<<<<< HEAD
+=======
+    //Player stuff
+
+>>>>>>> Server-N-Hitboxes
     public GameFrame() {
         window = new JFrame();
         GameUtils.get().setJFrame(window);
 
+<<<<<<< HEAD
         gameCanvas = new GameCanvas();
+=======
+
+        gameCanvas = new GameCanvas();
+        game = gameCanvas.getGame();
+>>>>>>> Server-N-Hitboxes
     }
 
     /**
@@ -39,10 +51,10 @@ public class GameFrame {
      */
     public void setUpKeyActions() {
         KeyAction ka;
-        if (gameCanvas.getPlayerNumber() == 2) {
-            ka = new KeyAction(gameCanvas.p2);
+        if (GameUtils.get().getPlayerNum() == 2) {
+            ka = new KeyAction(gameCanvas.p2, game);
         } else {
-            ka = new KeyAction(gameCanvas.p1);
+            ka = new KeyAction(gameCanvas.p1, game);
         }
         mainPanel.addKeyListener(ka);
     }

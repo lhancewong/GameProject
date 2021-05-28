@@ -9,22 +9,38 @@ import java.util.*;
 public class GameServer {
     private ServerSocket ss;
     private int numPlayers;
+    private Game gameMaster;
 
     private String clientInput;
 
     //GameRelated
+<<<<<<< HEAD
     private ArrayList<GameObject> bossFight;
     private Player p1, p2;
+=======
+    private Player p1, p2;
+    private Boss Yalin;
+>>>>>>> Server-N-Hitboxes
 
     private static final int MAX_PLAYERS = 2;
 
     public GameServer() {
+<<<<<<< HEAD
         System.out.println("Shoot and Scoot Server");
         numPlayers = 0;
 
         GameMaster gameMaster = new GameMaster(20);
         initBossFight();
         gameMaster.startThread();
+=======
+        System.out.println("=================\nShoot and Scoot Server");
+        numPlayers = 0;
+
+        gameMaster = new Game(true);
+        gameMaster.startThread();
+        initGameObjects();
+        
+>>>>>>> Server-N-Hitboxes
 
         try {
             ss = new ServerSocket(25570);
@@ -33,9 +49,19 @@ public class GameServer {
         }
     }
 
+    private void initGameObjects() {
+        p1 = gameMaster.getPlayer1();
+        p2 = gameMaster.getPlayer2();
+        Yalin = gameMaster.getYalin();
+    }
+
     public void acceptConnections() {
         try {
+<<<<<<< HEAD
             System.out.println("Waiting for connections...");
+=======
+            System.out.println("\nWaiting for connections...");
+>>>>>>> Server-N-Hitboxes
             ReadFromClient RFC = null;
             WriteToClient WTC = null;
 
@@ -45,7 +71,11 @@ public class GameServer {
                 
                 RFC = new ReadFromClient(s,numPlayers,60);
                 WTC = new WriteToClient(s,numPlayers,60);
+<<<<<<< HEAD
                 System.out.println("Player " + numPlayers + " has connected.");
+=======
+                System.out.println("===============\nPlayer " + numPlayers + " has connected.");
+>>>>>>> Server-N-Hitboxes
                 try { 
                     new DataOutputStream(s.getOutputStream()).writeInt(numPlayers); 
                 } catch(IOException ex) {
@@ -62,6 +92,7 @@ public class GameServer {
     }
 
     /**
+<<<<<<< HEAD
      * Initializes the bossFight ArrayList.
      * This ArrayList is meant to hold what will be 
      * drawn when repaint is called while the
@@ -81,10 +112,15 @@ public class GameServer {
 
     /**
      * 
+=======
+     * A private class that writes information to the server.
+>>>>>>> Server-N-Hitboxes
      */
-    private class GameMaster implements Runnable {
-        private Thread logicLoop;
+    private class WriteToClient implements Runnable {
+        //private Socket pSocket;
+        private int pNum;
         private long sleepTime;
+<<<<<<< HEAD
         
         public GameMaster(int sleepTime) {
             logicLoop = new Thread(this);
@@ -97,9 +133,18 @@ public class GameServer {
             initBossFight();
             logicLoop.start();
         }
+=======
 
+        private DataOutputStream dataOut; 
+        private Thread WTCloop;
+>>>>>>> Server-N-Hitboxes
+
+        /**
+         * The thread that continuously sends data to the client.
+         */
         @Override
         public void run() {
+<<<<<<< HEAD
             long previousTime = System.currentTimeMillis()-1;
             while(true) {
                 long currentTime = System.currentTimeMillis();
@@ -112,14 +157,25 @@ public class GameServer {
 
                 previousTime = currentTime;
 
+=======
+            while(true) {
+                    if (pNum == 1) {
+                        p2.sendCompressedData(dataOut);
+                    } else {
+                        p1.sendCompressedData(dataOut);
+                    }
+                    Yalin.sendCompressedData(dataOut);
+>>>>>>> Server-N-Hitboxes
 
+            
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
-                    System.out.println("InterruptedException at GameLoop run()\n\n" + ex);
+                    System.out.println("InterruptedException at WTC run()\n\n" + ex);
+                    System.exit(1);
                 }
             }
-            
         }
+<<<<<<< HEAD
     }
     /**
      * A private class that writes information to the server.
@@ -131,6 +187,8 @@ public class GameServer {
 
         private DataOutputStream dataOut; 
         private Thread WTCloop;
+=======
+>>>>>>> Server-N-Hitboxes
 
         /**
          * The thread that continuously sends data to the client.
@@ -161,6 +219,8 @@ public class GameServer {
             this.sleepTime = sleepTime;
 
             WTCloop = new Thread(this);
+
+            //gets the DataOutputStream
             try {
                 dataOut = new DataOutputStream(pSocket.getOutputStream());
             } catch(IOException ex) {
@@ -178,7 +238,6 @@ public class GameServer {
     }
 
     private class ReadFromClient implements Runnable {
-        private Socket pSocket;
         private int pNum;
         private long sleepTime;
 
@@ -190,6 +249,7 @@ public class GameServer {
             try {
                 while(true) {
                     if(pNum == 1) {
+<<<<<<< HEAD
                         p1.recieveCompressedData(dataIn);
                     } else {
                         p2.recieveCompressedData(dataIn);
@@ -197,6 +257,13 @@ public class GameServer {
 
                     //processInput(clientInput.split("_"));
 
+=======
+                        p1.receiveCompressedData(dataIn);
+                    } else {
+                        p2.receiveCompressedData(dataIn);
+                    }
+
+>>>>>>> Server-N-Hitboxes
                     Thread.sleep(sleepTime); 
                 }
             } catch(InterruptedException ex) {
@@ -206,7 +273,6 @@ public class GameServer {
         }
 
         public ReadFromClient(Socket pSocket, int pNum, int sleepTime) {
-            this.pSocket = pSocket;
             this.pNum = pNum;
             this.sleepTime = sleepTime;
 
