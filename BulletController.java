@@ -1,4 +1,6 @@
 import java.awt.Graphics2D;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BulletController implements GameObject{
@@ -72,19 +74,20 @@ public class BulletController implements GameObject{
         shipBulletArray.remove(bullet);
     }
 
-    @Override
-    public String getCompressedData() {
-        return null;
+    public CopyOnWriteArrayList<ShipBullet> getshipBulletArray(){
+        return shipBulletArray;
     }
 
-
     @Override
-    public void receiveCompressedData(String data) {
+    public void sendCompressedData(DataOutputStream dataOut) {
+        // TODO Auto-generated method stub
         
     }
 
-    public CopyOnWriteArrayList<ShipBullet> getshipBulletArray(){
-        return shipBulletArray;
+    @Override
+    public void receiveCompressedData(DataInputStream dataIn) {
+        // TODO Auto-generated method stub
+        
     }    
 
 }

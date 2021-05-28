@@ -2,8 +2,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class Background implements GameObject {
 
@@ -65,12 +64,12 @@ public class Background implements GameObject {
     }
 
     @Override
-    public String getCompressedData() {
-        return null;
+    public void sendCompressedData(DataOutputStream dataOut) {
+        
     }
 
     @Override
-    public void receiveCompressedData(String data) {
+    public void receiveCompressedData(DataInputStream dataIn) {
         
     }
     

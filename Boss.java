@@ -1,10 +1,7 @@
 import java.awt.*;
-import java.awt.geom.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
+import java.io.*;
 
 
 /**
@@ -102,14 +99,13 @@ public class Boss implements GameObject{
         hitPoints += amnt;
     }
 
-
     @Override
-    public String getCompressedData() {
-        return null;
+    public void sendCompressedData(DataOutputStream dataOut) {
+        
     }
 
     @Override
-    public void receiveCompressedData(String data) {
+    public void receiveCompressedData(DataInputStream dataIn) {
         
     }
     

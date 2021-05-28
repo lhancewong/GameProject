@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.geom.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 
 public class Hitbox implements GameObject{
     private double xPos;
@@ -30,16 +32,6 @@ public class Hitbox implements GameObject{
         
     }
 
-    @Override
-    public String getCompressedData() {
-        return null;
-    }
-
-    @Override
-    public void receiveCompressedData(String data) {
-        
-    }
-
     public double getX(){
         return xPos;
     }
@@ -54,6 +46,18 @@ public class Hitbox implements GameObject{
 
     public double getHeight(){
         return height;
+    }
+
+
+    @Override
+    public void sendCompressedData(DataOutputStream dataOut) {
+        
+    }
+
+
+    @Override
+    public void receiveCompressedData(DataInputStream dataIn) {
+        
     }
 
 }

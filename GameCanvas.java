@@ -96,15 +96,6 @@ public class GameCanvas extends JComponent {
 
     }
 
-    /**
-     * Returns the number of the player.
-     * 
-     * @return The player's number
-     */
-    public int getPlayerNumber() {
-        return pNum;
-    }
-
     public Game getGame() {
         return game;
     }

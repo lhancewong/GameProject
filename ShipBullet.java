@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.io.*;
 
 /**
  * The projectiles of the player ship.
@@ -15,7 +16,6 @@ public class ShipBullet implements GameObject, Projectile {
 
     @Override
     public void setCenter(double xPos, double yPos) {
-        // TODO Auto-generated method stub
         
     }
 
@@ -40,12 +40,12 @@ public class ShipBullet implements GameObject, Projectile {
     }
 
     @Override
-    public String getCompressedData() {
-        return null;
+    public void sendCompressedData(DataOutputStream dataOut) {
+        
     }
 
     @Override
-    public void receiveCompressedData(String data) {
+    public void receiveCompressedData(DataInputStream dataIn) {
         
     }
     

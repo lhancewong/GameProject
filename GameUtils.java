@@ -10,6 +10,7 @@ public class GameUtils {
     private JFrame frame;
     //Variables
     private int width, height;
+    private int pNum;
 
     private GameUtils() {
         width = 1280;
@@ -44,6 +45,24 @@ public class GameUtils {
      */
     public void setJFrameTitle(String title) {
         frame.setTitle(title);
+    }
+
+    /**
+     * Sets the player number of GameUtils.
+     * 
+     * @param pNum the player number
+     */
+    public void setPlayerNum(int pNum) {
+        this.pNum = pNum;
+    }
+
+    /**
+     * Returns the player number of GameUtils
+     * 
+     * @return player number
+     */
+    public int getPlayerNum() {
+        return pNum;
     }
 
     /**

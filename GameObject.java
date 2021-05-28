@@ -1,4 +1,5 @@
 import java.awt.Graphics2D;
+import java.io.*;
 
 /**
  * All drawn game objects will implement this class. It has methods that every game
@@ -16,13 +17,13 @@ public interface GameObject {
     void update(double deltaTime);
 
     /**
-     * Compresses the necessary data that will be sent to the server.
+     * Sends the compressed data.
      */
-    String getCompressedData();
+    void sendCompressedData(DataOutputStream dataOut);
 
     /**
-     * Reads the compressed data received from the server.
+     * Receives the compressed data and updates its values.
      */
-    void receiveCompressedData(String data);
+    void receiveCompressedData(DataInputStream dataIn);
     
 }

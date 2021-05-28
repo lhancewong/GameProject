@@ -1,15 +1,14 @@
 import java.awt.geom.*;
 import java.awt.*;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import javax.imageio.*;
+import java.awt.image.*;
 
 /**
  * This class contains the code that manages the player's appearance and functionality.
  */
 public class Player implements GameObject {
-    private int playerID;
+    private int pNum;
 
     //appearance related
     private double xPos, yPos;
@@ -27,8 +26,9 @@ public class Player implements GameObject {
     private int projectileDamage; //?
     private boolean isAlive;
     //movements related
-    public boolean movingUp, movingDown, movingLeft, movingRight; //not sure yet
-    public double xBorder, yBorder;
+    public boolean mUp, mDown, mLeft, mRight; //not sure yet
+    private String sDataOut, sDataIn;
+    private double xBorder, yBorder;
     
 
     /**
@@ -43,6 +43,8 @@ public class Player implements GameObject {
         this.yPos = yPos;
         this.size = size;
         this.shipType = shipType;
+
+        pNum = GameUtils.get().getPlayerNum();
 
         xBorder = GameUtils.get().getWidth();
         yBorder = GameUtils.get().getHeight();
@@ -84,10 +86,13 @@ public class Player implements GameObject {
         } catch (IOException e) {
         }
         isAlive = true;
-        movingUp = false;
-        movingDown = false;
-        movingLeft = false;
-        movingRight = false;
+        mUp = false;
+        mDown = false;
+        mLeft = false;
+        mRight = false;
+
+        sDataOut = String.format("%.1f_%.1f_%b_%b_%b_%b",xPos,yPos,mUp,mDown,mLeft,mRight);
+        sDataIn = "";
     }
 
     /**
@@ -97,7 +102,6 @@ public class Player implements GameObject {
      */
     @Override
     public void draw(Graphics2D g2d) {
-        //System.out.println(xPos + " " + yPos + " " + movingUp + " " + movingDown + " " + movingLeft + " " + movingRight);
         if (isAlive)
             switch(shipType) {
                 case 1: //offensive
@@ -123,41 +127,50 @@ public class Player implements GameObject {
      */
     @Override
     public void update(double d) {
-        //System.out.println("U" + xPos + " " + yPos + " " + movingUp + " " + movingDown + " " + movingLeft + " " + movingRight);
+        //System.out.printf("[U_%.1f_%.1f_%b_%b_%b_%b]\n",xPos,yPos,mUp,mDown,mLeft,mRight);
         
-        /**
-         * Note:It would be nice if the -10's will instead be based on the 
-         * speed of the ship and deltatime to optimize the x and y borders
-         * of the ship's movements.
-         */
-        if(xPos+size >= xBorder-10) {
-            movingRight = false;
+        double c = moveSpeed*d;
+        if(xPos+size >= xBorder-c) {
+            mRight = false;
         }
         if(xPos <= 10) {
-            movingLeft = false;
+            mLeft = false;
         }
-        if(yPos+size >= yBorder-10) {
-            movingDown = false;
+        if(yPos+size >= yBorder-c) {
+            mDown = false;
         }
         if(yPos <= 10) {
-            movingUp = false;
+            mUp = false;
         }
 
-        if(movingUp) {
+        if(mUp) {
             yPos -= moveSpeed*d;
         }
-        if(movingDown) {
+        if(mDown) {
             yPos += moveSpeed*d;
         }
-        if(movingLeft) {
+        if(mLeft) {
             xPos -= moveSpeed*d;
         }
-        if(movingRight) {
+        if(mRight) {
             xPos += moveSpeed*d;
         }
 
-        //then another if about getting hit and taking damage.
+        sDataOut = String.format("%.1f_%.1f_%b_%b_%b_%b",xPos,yPos,mUp,mDown,mLeft,mRight);
+        readStringData(sDataIn);
+        
+    }
 
+    public void readStringData(String s) {
+        if(!s.equals("")) {
+            String[] data = s.split("_");
+            xPos = Double.parseDouble(data[0]);
+            yPos = Double.parseDouble(data[1]);
+            mUp = Boolean.parseBoolean(data[2]);
+            mDown = Boolean.parseBoolean(data[3]);
+            mLeft = Boolean.parseBoolean(data[4]);
+            mRight = Boolean.parseBoolean(data[5]);
+        }  
     }
 
     /**
@@ -230,16 +243,35 @@ public class Player implements GameObject {
     }
 
     @Override
-    public String getCompressedData() {
-        String data = "";
-        return null;
+    public void sendCompressedData(DataOutputStream dataOut) {
+        //String data = String.format("p%d_%b_%b_%b_%b_",pNum,mUp,mDown,mLeft,mRight);
+        try {
+            /* dataOut.writeDouble(xPos);
+            dataOut.writeDouble(yPos);
+            dataOut.writeBoolean(mUp);
+            dataOut.writeBoolean(mDown);
+            dataOut.writeBoolean(mLeft);
+            dataOut.writeBoolean(mRight); */
+            dataOut.writeUTF(sDataOut);
+            dataOut.flush();
+        } catch(IOException ex) {
+            System.out.println(ex);
+        }
     }
 
-
     @Override
-    public void receiveCompressedData(String data) {
-        // TODO Auto-generated method stub
-        
+    public void receiveCompressedData(DataInputStream dataIn) {
+        try {
+            /* xPos = dataIn.readDouble();
+            yPos = dataIn.readDouble();
+            mUp = dataIn.readBoolean();
+            mDown = dataIn.readBoolean();
+            mLeft = dataIn.readBoolean();
+            mRight = dataIn.readBoolean(); */
+            sDataIn = dataIn.readUTF();
+        } catch(IOException ex) {
+            System.out.println(ex);
+        }
     }
 
     public double getX() {
