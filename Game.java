@@ -23,8 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
     public Boss Yalin;
     public int pNum;
     private boolean isRunning, isMaster, isBossFight, isServerSelection, isClassSelection;
-    private BulletController controller1;
-    private BulletController controller2;
+    private BulletController controller;
     public CopyOnWriteArrayList<ShipBullet> bullets;
     private ArrayList<GameObject> bossFight;
     
@@ -39,6 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
         logicLoop = new Thread(this);
         isRunning = true;
         isBossFight = true;
+        pNum = GameUtils.get().getPlayerNum();
         initBossFight();
         initMenuSelection();
     }
@@ -95,14 +95,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
         Yalin = new Boss();
         p1 = new Player("p1",210,180,30,1);
         p2 = new Player("p2",210,540,30,3);
-        controller1 = new BulletController("Attack", p1);
+        if (pNum == 1){
+            controller = new BulletController(p1);
+        }
+        else if (pNum == 2){
+            controller = new BulletController(p2);
+        }
+
         //bossFight.add(bg);
         bossFight.add(bg1);
         bossFight.add(bg2);
         bossFight.add(p1);
         bossFight.add(p2);
         bossFight.add(Yalin);
-        bossFight.add(controller1);
+        bossFight.add(controller);
 
         bullets = new CopyOnWriteArrayList<ShipBullet>();
 
@@ -131,13 +137,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
     }
 
     public boolean checkBulletHitboxes() {
-        for(ShipBullet i: controller1.getshipBulletArray()){
+        for(ShipBullet i: controller.getshipBulletArray()){
             if (i.getX() >= Yalin.getHitbox().getX() && 
                 i.getX() <= Yalin.getHitbox().getX() + Yalin.getHitbox().getWidth() &&
                 i.getY() >= Yalin.getHitbox().getY() &&
                 i.getY() <= Yalin.getHitbox().getY() + Yalin.getHitbox().getHeight() ){
                 System.out.println("HIT");
-                controller1.removeBullet(i);
+                controller.removeBullet(i);
                 return true;
             }
         }
@@ -154,7 +160,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
     }
 
     public BulletController getController1(){
-        return controller1;
+        return controller;
     }
 
     public Player getPlayer1() {

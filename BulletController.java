@@ -9,7 +9,7 @@ public class BulletController implements GameObject{
     private int max;
     private Player player;
 
-    public BulletController (String type, Player player){
+    public BulletController (Player player){
         switch(player.getShipType()) {
                 case 1: //offensive
                     max = 5;

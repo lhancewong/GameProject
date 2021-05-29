@@ -42,16 +42,15 @@ public class GameCanvas extends JComponent {
         height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
         
+        
+        findServer();
         //Game Stuff
         game = new Game(false);
         drawLoop();
-        
         isRunning = true;
         isServerSelection = false;
         isClassSelection = false;
         isBossFight = true;
-
-        findServer();
         game.startThread();
 
         p1 = game.getPlayer1();
@@ -125,7 +124,7 @@ public class GameCanvas extends JComponent {
             int ranPort = 1023 + random.nextInt(64331);//gets a random int from 1023 to 65353. */
             clientSocket = new DatagramSocket();
             
-            InetAddress ip = InetAddress.getByName("localhost");
+            InetAddress ip = InetAddress.getByName("ginks.ml");
             int port = 25570;
 
             Socket cSoc = new Socket("ginks.ml",port);
