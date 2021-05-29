@@ -25,7 +25,7 @@ public class Boss implements GameObject{
         xPos = (GameUtils.get().getWidth()/2)+150;
         yPos = GameUtils.get().getHeight() - 460;
         moveSpeed = 400;
-        hitPoints = 100;
+        hitPoints = 10;
         isAlive = true;
         mUp = true;
         mDown = false;
@@ -33,6 +33,7 @@ public class Boss implements GameObject{
 
         sDataIn = "";
         sDataOut = "";
+        box = new Hitbox(xPos + 102, yPos + 98, 198, 160);
     }
 
     @Override
@@ -45,12 +46,13 @@ public class Boss implements GameObject{
                 boss2(g2d);
             }
         }
-        
         box.draw(g2d);
+        
     }
-
+    
     @Override
     public void update(double d) {
+        
         box = new Hitbox(xPos + 102, yPos + 98, 198, 160);
         if(mUp) {
             if (yPos >= randomDistance){
@@ -73,7 +75,6 @@ public class Boss implements GameObject{
         sDataOut = String.format("Yalin_%.1f_%.1f_%b_%b_%d_%.1f_",xPos,yPos,mUp,mDown,randomDistance,hitPoints);
         readStringData(sDataIn);
 
-        System.out.println(hitPoints);
     }
 
     @Override
@@ -111,10 +112,30 @@ public class Boss implements GameObject{
         return box;
     }
 
+    public boolean checkHitbox(ShipBullet i){
+        if (i.getX() >= box.getX() && 
+            i.getX() <= box.getX() + box.getWidth() &&
+            i.getY() >= box.getY() &&
+            i.getY() <= box.getY() + box.getHeight() ){
+                return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     //encapsulate all movement things under this function
     public void movementPattern(){
         
         
+    }
+
+    public double getX(){
+        return xPos;
+    }
+
+    public double getY(){
+        return yPos;
     }
 
     public void changeDirection(){
@@ -133,7 +154,7 @@ public class Boss implements GameObject{
 
     public void gotHit(){
         hitPoints -= 1;
-        
+        System.out.println(hitPoints);
     }
 
     public double getBossHP(){

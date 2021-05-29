@@ -39,10 +39,12 @@ public class Player implements GameObject {
      * @param shipType 1 for offense, 2 for balance, 3 for defense
      */
     public Player(String pName, double xPos, double yPos, double size, int shipType) {
+        this.pName = pName;
         this.xPos = xPos;
         this.yPos = yPos;
         this.size = size;
         this.shipType = shipType;
+        box = new Hitbox(xPos + 30, yPos + 12, 134, 46);
 
         xBorder = GameUtils.get().getWidth();
         yBorder = GameUtils.get().getHeight();
@@ -88,7 +90,7 @@ public class Player implements GameObject {
         mLeft = false;
         mRight = false;
 
-        this.pName = pName;
+        
 
         sDataOut = "dud";
         sDataIn = "";
@@ -216,15 +218,23 @@ public class Player implements GameObject {
         }
     }
     
-    /**
-     * Creates instance of ShipBullet
-     */
-    public void shoot(){
-        /* ShipBullet bullet = new ShipBullet(xPos, yPos);
-        bullet.draw(g2d); */
-
+    public boolean checkHitbox(BossBullet i){
+        if (i.getX() + i.getWidth() >= box.getX() && 
+            i.getX() <= box.getX() + box.getWidth() &&
+            i.getY() + i.getHeight()>= box.getY() &&
+            i.getY() <= box.getY() + box.getHeight() ){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
-    
+
+    public void gotHit(){
+        hitPoints -= 1;
+        System.out.println(hitPoints);
+    }
+
     /**
      * Ideally this can only be called once the player
      * dies.

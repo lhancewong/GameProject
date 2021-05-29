@@ -43,8 +43,8 @@ public class GameCanvas extends JComponent {
         height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
         
+        
         findServer();
-
         //Game Stuff
         game = new Game(false);
         drawLoop();
@@ -54,14 +54,14 @@ public class GameCanvas extends JComponent {
         isBossFight = true;
 
 
-        game.startThread();
-
+        
         p1 = game.getPlayer1();
         p2 = game.getPlayer2();
         Yalin = game.getYalin();
         controller1 = game.getBC1();
         controller2 = game.getBC2();
         
+        game.startThread();
         drawTimer.start();
         rfsLoop.startThread();
         wtsLoop.startThread();
@@ -127,10 +127,10 @@ public class GameCanvas extends JComponent {
         try {
             clientSocket = new DatagramSocket();
             
-            InetAddress ip = InetAddress.getByName("ginks.ml");
+            InetAddress ip = InetAddress.getByName("localhost");
             int port = 25570;
 
-            Socket cSoc = new Socket("ginks.ml",port);
+            Socket cSoc = new Socket("localhost",port);
             
             wtsLoop = new WriteToServer(ip, port, 20);
             rfsLoop = new ReadFromServer();
