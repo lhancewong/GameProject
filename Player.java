@@ -21,7 +21,7 @@ public class Player implements GameObject {
     private Hitbox box;
 
     //game related
-    private int hitPoints;
+    private double hitPoints;
     private double moveSpeed;
     private int projectileDamage; //?
     private boolean isAlive;
@@ -155,9 +155,9 @@ public class Player implements GameObject {
             xPos += moveSpeed*d;
         }
 
-        sDataOut = String.format("%s_%.1f_%.1f_%b_%b_%b_%b",pName,xPos,yPos,mUp,mDown,mLeft,mRight);
+
+        sDataOut = String.format("%s_%.1f_%.1f_%b_%b_%b_%b_%.1f_",pName,xPos,yPos,mUp,mDown,mLeft,mRight,hitPoints);
         readStringData(sDataIn);
-        
     }
 
     public void readStringData(String s) {
@@ -169,6 +169,7 @@ public class Player implements GameObject {
             mDown = Boolean.parseBoolean(data[4]);
             mLeft = Boolean.parseBoolean(data[5]);
             mRight = Boolean.parseBoolean(data[6]);
+            hitPoints = Double.parseDouble(data[7]);
         }  
     }
 
@@ -258,6 +259,10 @@ public class Player implements GameObject {
 
     public double getY() {
         return yPos;
+    }
+
+    public String getPlayerName() {
+        return pName;
     }
 
 }

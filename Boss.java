@@ -25,7 +25,7 @@ public class Boss implements GameObject{
         xPos = (GameUtils.get().getWidth()/2)+150;
         yPos = GameUtils.get().getHeight() - 460;
         moveSpeed = 400;
-        hitPoints = 10;
+        hitPoints = 100;
         isAlive = true;
         mUp = true;
         mDown = false;
@@ -33,7 +33,6 @@ public class Boss implements GameObject{
 
         sDataIn = "";
         sDataOut = "";
-        
     }
 
     @Override
@@ -46,14 +45,13 @@ public class Boss implements GameObject{
                 boss2(g2d);
             }
         }
-        box = new Hitbox(xPos + 102, yPos + 98, 198, 160);
-        box.draw(g2d);
         
+        box.draw(g2d);
     }
 
     @Override
     public void update(double d) {
-
+        box = new Hitbox(xPos + 102, yPos + 98, 198, 160);
         if(mUp) {
             if (yPos >= randomDistance){
                 yPos -= moveSpeed*d;
@@ -75,6 +73,7 @@ public class Boss implements GameObject{
         sDataOut = String.format("Yalin_%.1f_%.1f_%b_%b_%d_%.1f_",xPos,yPos,mUp,mDown,randomDistance,hitPoints);
         readStringData(sDataIn);
 
+        System.out.println(hitPoints);
     }
 
     @Override
@@ -134,7 +133,7 @@ public class Boss implements GameObject{
 
     public void gotHit(){
         hitPoints -= 1;
-        System.out.println(hitPoints);
+        
     }
 
     public double getBossHP(){

@@ -23,7 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
     public Boss Yalin;
     public int pNum;
     private boolean isRunning, isMaster, isBossFight, isServerSelection, isClassSelection;
-    private BulletController controller;
+    private BulletController controller1,controller2;
     public CopyOnWriteArrayList<ShipBullet> bullets;
     private ArrayList<GameObject> bossFight;
     
@@ -34,13 +34,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
      * @param sleepTime delay between loops in milliseconds
      */
     public Game(boolean isMaster) {
-        /* bg = new Rectangle2D.Double(0,0,GameUtils.get().getWidth(),GameUtils.get().getHeight()); */
         logicLoop = new Thread(this);
         isRunning = true;
         isBossFight = true;
         pNum = GameUtils.get().getPlayerNum();
         initBossFight();
         initMenuSelection();
+
+        this.isMaster = isMaster;
     }
 
     /**
@@ -64,20 +65,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
             for(GameObject i : bossFight) {
                 i.update(deltaTime);
             }
-            
-            /* bg1.update(deltaTime);
-            bg2.update(deltaTime);
-            p1.update(deltaTime);
-            p2.update(deltaTime);
-
-            if(isMaster) {
-                Yalin.update(deltaTime);
-                controller1.update(deltaTime);
-            } */
-
 
             checkBulletHitboxes();
-
+            
             previousTime = currentTime;
 
             try { Thread.sleep(16); }
@@ -95,20 +85,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
         Yalin = new Boss();
         p1 = new Player("p1",210,180,30,1);
         p2 = new Player("p2",210,540,30,3);
-        if (pNum == 1){
-            controller = new BulletController(p1);
-        }
-        else if (pNum == 2){
-            controller = new BulletController(p2);
-        }
+        controller1 = new BulletController(p1);
+        controller2 = new BulletController(p2);
 
-        //bossFight.add(bg);
         bossFight.add(bg1);
         bossFight.add(bg2);
         bossFight.add(p1);
         bossFight.add(p2);
         bossFight.add(Yalin);
-        bossFight.add(controller);
+        bossFight.add(controller1);
+        bossFight.add(controller2);
 
         bullets = new CopyOnWriteArrayList<ShipBullet>();
 
@@ -136,32 +122,48 @@ import java.util.concurrent.CopyOnWriteArrayList;
         return pNum;
     }
 
-    public boolean checkBulletHitboxes() {
-        for(ShipBullet i: controller.getshipBulletArray()){
+    public void checkBulletHitboxes() {
+        for(ShipBullet i: controller1.getshipBulletArray()) {
             if (i.getX() >= Yalin.getHitbox().getX() && 
                 i.getX() <= Yalin.getHitbox().getX() + Yalin.getHitbox().getWidth() &&
                 i.getY() >= Yalin.getHitbox().getY() &&
                 i.getY() <= Yalin.getHitbox().getY() + Yalin.getHitbox().getHeight() ){
-                System.out.println("HIT");
+                //System.out.println("HIT");
                 Yalin.gotHit();
-                controller.removeBullet(i);
-                return true;
+                controller1.removeBullet(i);
             }
         }
-        /* for(ShipBullet i: controller2.getshipBulletArray()){
-            if (i.getX() >= Yalin.getHitbox().getX() || 
-                i.getX() <= Yalin.getHitbox().getX() + Yalin.getHitbox().getWidth() ||
-                i.getY() >= Yalin.getHitbox().getY() ||
+        for(ShipBullet i: controller2.getshipBulletArray()) {
+            if (i.getX() >= Yalin.getHitbox().getX() && 
+                i.getX() <= Yalin.getHitbox().getX() + Yalin.getHitbox().getWidth() &&
+                i.getY() >= Yalin.getHitbox().getY() &&
                 i.getY() <= Yalin.getHitbox().getY() + Yalin.getHitbox().getHeight() ){
+                //System.out.println("HIT");
+                Yalin.gotHit();
                 controller2.removeBullet(i);
-                return true;
             }
-        } */
+        }
+    }
+
+    public boolean checkBulletHitboxes2() {
+        
         return false;
     }
 
     public BulletController getController(){
-        return controller;
+        if(pNum == 1) {
+            return controller1;
+        } else {
+            return controller2;
+        } 
+    }
+
+    public BulletController getBC1() {
+        return controller1;
+    }
+
+    public BulletController getBC2() {
+        return controller2;
     }
 
     public Player getPlayer1() {

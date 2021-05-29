@@ -21,6 +21,7 @@ public class GameCanvas extends JComponent {
     private Game game;
     public Player p1, p2;
     public Boss Yalin;
+    public BulletController controller1,controller2;
     private int pNum;
     private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
@@ -42,8 +43,8 @@ public class GameCanvas extends JComponent {
         height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
         
-        
         findServer();
+
         //Game Stuff
         game = new Game(false);
         drawLoop();
@@ -51,11 +52,15 @@ public class GameCanvas extends JComponent {
         isServerSelection = false;
         isClassSelection = false;
         isBossFight = true;
+
+
         game.startThread();
 
         p1 = game.getPlayer1();
         p2 = game.getPlayer2();
         Yalin = game.getYalin();
+        controller1 = game.getBC1();
+        controller2 = game.getBC2();
         
         drawTimer.start();
         rfsLoop.startThread();
@@ -120,8 +125,6 @@ public class GameCanvas extends JComponent {
      */
     public void findServer() {
         try {
-            /* Random random = new Random();
-            int ranPort = 1023 + random.nextInt(64331);//gets a random int from 1023 to 65353. */
             clientSocket = new DatagramSocket();
             
             InetAddress ip = InetAddress.getByName("ginks.ml");
@@ -171,10 +174,12 @@ public class GameCanvas extends JComponent {
             while (true) {
                 if (pNum == 1) {
                     send(p1.getCompressedData());
+                    send(controller1.getCompressedData());
                 } else {
                     send(p2.getCompressedData());
+                    send(controller2.getCompressedData());
                 }
-
+                
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
                     System.out.println("InterruptedException at WTC run()\n\n" + ex);
@@ -228,16 +233,19 @@ public class GameCanvas extends JComponent {
                     String sDataIn = new String(packet.getData(), StandardCharsets.UTF_8);
                     sDataIn = sDataIn.trim();
 
-                    if(sDataIn.startsWith("p1")) {
+                    if(sDataIn.startsWith("p1_")) {
                         p1.receiveCompressedData(sDataIn);
-                    } else if(sDataIn.startsWith("p2")) {
+                    } else if(sDataIn.startsWith("p2_")) {
                         p2.receiveCompressedData(sDataIn);
-                    } else if(sDataIn.startsWith("Yalin")){
+                    } else if(sDataIn.startsWith("Yalin_")) {
                         Yalin.receiveCompressedData(sDataIn);
+                    } else if(sDataIn.startsWith("p1BC_")) {
+                        controller1.receiveCompressedData(sDataIn);
+                    } else if(sDataIn.startsWith("p2BC_")) {
+                        controller2.receiveCompressedData(sDataIn);
                     } else {
                         System.out.println("Data bad: " + sDataIn);
-                    }
-                        
+                    }   
                     
                 }
             } catch(IOException ex) {

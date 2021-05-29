@@ -14,6 +14,7 @@ public class GameServer {
     //GameRelated
     private Player p1, p2;
     private Boss Yalin;
+    private BulletController controller1, controller2;
 
     private static final int MAX_PLAYERS = 2;
 
@@ -31,10 +32,7 @@ public class GameServer {
         gameMaster = new Game(true);
         initGame();
         
-
-        /**
-         * Creates a DatagramSocket using a specific port
-         */
+        //Creates a DatagramSocket using a specific port
         try {
             serverSocket = new DatagramSocket(serverPort);
         } catch(IOException ex) {
@@ -43,12 +41,14 @@ public class GameServer {
     }
 
     /**
-     * 
+     * Initializes important game objects.
      */
     private void initGame() {
         p1 = gameMaster.getPlayer1();
         p2 = gameMaster.getPlayer2();
         Yalin = gameMaster.getYalin();
+        controller1 = gameMaster.getBC1();
+        controller2 = gameMaster.getBC2();
     }
 
     public void acceptConnections() {
@@ -117,10 +117,14 @@ public class GameServer {
             while(true) {
                 if (pNum == 1) {
                     send(p2.getCompressedData());
+                    send(controller2.getCompressedData());
                 } else if (pNum == 2) {
                     send(p1.getCompressedData());
+                    send(controller1.getCompressedData());
                 }
                 send(Yalin.getCompressedData());
+                
+                
                 
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
@@ -191,10 +195,14 @@ public class GameServer {
                     String sDataIn = new String(packet.getData(), StandardCharsets.UTF_8);
                     sDataIn = sDataIn.trim();
 
-                    if(sDataIn.startsWith("p1")) {
+                    if(sDataIn.startsWith("p1_")) {
                         p1.receiveCompressedData(sDataIn);
-                    } else if(sDataIn.startsWith("p2")) {
+                    } else if(sDataIn.startsWith("p2_")) {
                         p2.receiveCompressedData(sDataIn);
+                    } else if(sDataIn.startsWith("p1BC_")) {
+                        controller1.receiveCompressedData(sDataIn);
+                    } else if(sDataIn.startsWith("p2BC_")) {
+                        controller2.receiveCompressedData(sDataIn);
                     } else {
                         System.out.println("Data bad: " + sDataIn);
                     }
