@@ -18,23 +18,23 @@ public class GameServer {
     private static final int MAX_PLAYERS = 2;
 
     //Network Stuff
-    private boolean isRunning;
     private DatagramSocket serverSocket;
     private static final int bufMax = 512;
     private static final int serverPort = 25570;
 
-    //private InetAddress p1Address, p2Address;
-    //private int p1Port, p2Port;
-    
-
+    /**
+     * Initializes the GameServer class.
+     */
     public GameServer() {
         System.out.println("===========================================\nShoot and Scoot!");
         numPlayers = 0;
-
         gameMaster = new Game(true);
-        gameMaster.startThread();
-        initGameObjects();
+        initGame();
+        
 
+        /**
+         * Creates a DatagramSocket using a specific port
+         */
         try {
             serverSocket = new DatagramSocket(serverPort);
         } catch(IOException ex) {
@@ -42,7 +42,10 @@ public class GameServer {
         }
     }
 
-    private void initGameObjects() {
+    /**
+     * 
+     */
+    private void initGame() {
         p1 = gameMaster.getPlayer1();
         p2 = gameMaster.getPlayer2();
         Yalin = gameMaster.getYalin();
@@ -71,6 +74,7 @@ public class GameServer {
                 InetAddress address = packet.getAddress();
                 int port = packet.getPort();
                 System.out.println("Player "+ numPlayers+ "'s port is "+ port);
+                System.out.println("Player "+ numPlayers+ "'s IP Address is "+ address.toString());
                 
                 if(numPlayers == 1) {
                     p1wtcLoop = new WriteToClient(numPlayers, address, port, 20);
@@ -89,6 +93,7 @@ public class GameServer {
             sSoc.close();
             System.out.println("===========================================\nNo longer accepting connections.");
             System.out.println("TIME TO SHOOT AND SCOOT!");
+            gameMaster.startThread();
 
         } catch(IOException ex) {
             System.out.println("IOException from acceptConnections().");
@@ -97,6 +102,8 @@ public class GameServer {
 
     /**
      * A private class that writes information to the server.
+     * 
+     * <p>Currently sending via UDP.
      */
     private class WriteToClient implements Runnable {
         private int pNum;
@@ -105,9 +112,6 @@ public class GameServer {
         private long sleepTime;
         private Thread WTCloop;
 
-        /**
-         * The thread that continuously sends data to the client.
-         */
         @Override
         public void run() {
             while(true) {
@@ -127,16 +131,11 @@ public class GameServer {
         }
 
         /**
-         * Initializes the WriteToServer class
+         * A method that sends over a byte array to a specific
+         * address and port given by WriteToClient's constructor.
+         * 
+         * @param buf the byte array
          */
-        public WriteToClient(int pNum, InetAddress address, int port, int sleepTime) {
-            this.pNum = pNum;
-            this.address = address;
-            this.port = port;
-            this.sleepTime = sleepTime;
-            WTCloop = new Thread(this);
-        }
-
         public void send(byte[] buf) {
             DatagramPacket packet = new DatagramPacket(buf,buf.length,address,port);
             try {
@@ -146,8 +145,25 @@ public class GameServer {
             }
         }
 
+       /**
+        * Initializes the WritetoClient class.
+        *
+        * @param pNum The player that receives whatever is sent.
+        * @param address The ip address of the player
+        * @param port The port of the player
+        * @param sleepTime The delay in milliseconds in between the sending of data
+        */
+        public WriteToClient(int pNum, InetAddress address, int port, int sleepTime) {
+            this.pNum = pNum;
+            this.address = address;
+            this.port = port;
+            this.sleepTime = sleepTime;
+            WTCloop = new Thread(this);
+        }
+
+
         /**
-         * Starts the WTC thread
+         * Starts the WriteToClient thread.
          */
         public void startThread() {
             WTCloop.start();
@@ -155,6 +171,12 @@ public class GameServer {
 
     }
 
+    /**
+     * A private class that contionuously accepts/receives data
+     * as fast as they arrive.
+     * 
+     * <p>Currently receiving via UDP.
+     */
     private class ReadFromClient implements Runnable {
         private Thread RFCloop;
 
@@ -184,10 +206,16 @@ public class GameServer {
             }
         }
 
+        /**
+         * Initializes the ReadFromClientClass.
+         */
         public ReadFromClient() {
             RFCloop = new Thread(this);
         }
 
+        /**
+         * Starts the ReadFromClient's Thread.
+         */
         public void startThread() {
             RFCloop.start();
         }
