@@ -24,23 +24,18 @@ public class KeyAction extends KeyAdapter {
         switch(keyCode) {
             case KeyEvent.VK_W:
                 playerShip.mUp = true;
-                System.out.println("W");
                 break;
             case KeyEvent.VK_A:
                 playerShip.mLeft = true;
-                System.out.println("A");
                 break;
             case KeyEvent.VK_S:
                 playerShip.mDown = true;
-                System.out.println("S");
                 break;
             case KeyEvent.VK_D:
                 playerShip.mRight = true;
-                System.out.println("D");
                 break;
             case KeyEvent.VK_SPACE:
-                game.getController1().addBullet();
-                System.out.println("SPACE");
+                game.getController().addBullet();
                 break;
         }
 

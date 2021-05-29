@@ -143,6 +143,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
                 i.getY() >= Yalin.getHitbox().getY() &&
                 i.getY() <= Yalin.getHitbox().getY() + Yalin.getHitbox().getHeight() ){
                 System.out.println("HIT");
+                Yalin.gotHit();
                 controller.removeBullet(i);
                 return true;
             }
@@ -159,7 +160,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
         return false;
     }
 
-    public BulletController getController1(){
+    public BulletController getController(){
         return controller;
     }
 

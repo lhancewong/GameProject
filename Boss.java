@@ -14,7 +14,7 @@ public class Boss implements GameObject{
     private double moveSpeed;
     private boolean isAlive;
     private boolean mUp, mDown, movingLeft, movingRight;
-    private BufferedImage img;
+    private BufferedImage boss1, boss2;
     private Hitbox box;
     private String sDataOut, sDataIn;
     private double hitPoints;
@@ -25,7 +25,7 @@ public class Boss implements GameObject{
         xPos = (GameUtils.get().getWidth()/2)+150;
         yPos = GameUtils.get().getHeight() - 460;
         moveSpeed = 400;
-        hitPoints = 100;
+        hitPoints = 10;
         isAlive = true;
         mUp = true;
         mDown = false;
@@ -39,12 +39,12 @@ public class Boss implements GameObject{
     @Override
     public void draw(Graphics2D g2d) {
         if (isAlive) {
-            img = null;
-            try {
-                img = ImageIO.read(new File("sprites/boss1.png"));
-            } catch (IOException e) {
+            if (hitPoints > 5) {
+                boss1(g2d);
             }
-            g2d.drawImage(img, (int) xPos, (int) yPos, null, null);
+            else {
+                boss2(g2d);
+            }
         }
         box = new Hitbox(xPos + 102, yPos + 98, 198, 160);
         box.draw(g2d);
@@ -90,6 +90,24 @@ public class Boss implements GameObject{
         }   
     }
 
+    public void boss1(Graphics2D g2d){
+        boss1 = null;
+        try {
+            boss1 = ImageIO.read(new File("sprites/boss1.png"));
+        } catch (IOException e) {
+        }
+        g2d.drawImage(boss1, (int) xPos, (int) yPos, null, null);
+    }
+
+    public void boss2(Graphics2D g2d){
+        boss2 = null;
+        try {
+            boss2 = ImageIO.read(new File("sprites/boss2.png"));
+        } catch (IOException e) {
+        }
+        g2d.drawImage(boss2, (int) xPos, (int) yPos, null, null);
+    }
+
     public Hitbox getHitbox(){
         return box;
     }
@@ -114,8 +132,13 @@ public class Boss implements GameObject{
         }
     }
 
-    public void incrementHitPoints(double amnt) {
-        hitPoints += amnt;
+    public void gotHit(){
+        hitPoints -= 1;
+        System.out.println(hitPoints);
+    }
+
+    public double getBossHP(){
+        return hitPoints;
     }
 
     @Override
