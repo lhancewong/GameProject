@@ -1,12 +1,9 @@
 import java.awt.Graphics2D;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class BulletController implements GameObject{
-    private ShipBullet bullet;
-    private CopyOnWriteArrayList<ShipBullet> shipBulletArray, tempArray;
+    private CopyOnWriteArrayList<ShipBullet> shipBulletArray;
     private CopyOnWriteArrayList<BossBullet> bossBulletArray;
     private String sDataOut, sDataIn;
     private int max;
@@ -52,19 +49,11 @@ public class BulletController implements GameObject{
     public void draw(Graphics2D g2d) {
         if (isPlayer){
             for (ShipBullet i : shipBulletArray){
-                if (i.getX() > GameUtils.get().getWidth()){
-                    shipBulletArray.remove(i);
-                    continue;
-                }
                 i.draw(g2d);
             }
         }
         else {
             for (BossBullet i : bossBulletArray){
-                if (i.getX() < 0){
-                    bossBulletArray.remove(i);
-                    continue;
-                }
                 i.draw(g2d);
             }
         }
@@ -73,31 +62,41 @@ public class BulletController implements GameObject{
 
     @Override
     public void update(double deltaTime) {
-
         bossTimer += deltaTime;
         if (isPlayer){
             sDataOut = player.getPlayerName() + "BC_";
             if (shipBulletArray.size() > 0){
                 for (ShipBullet i : shipBulletArray){
+                    if (i.getX() > GameUtils.get().getWidth()){
+                        shipBulletArray.remove(i);
+                        continue;
+                    }
                     i.update(deltaTime);
                     sDataOut = sDataOut.concat(String.format("%.2f_%.2f_",i.getX(),i.getY()));
                 }
-        }
-        }
-        else {
+            }
+        } else {
+            sDataOut = "BBC_";
             bossTimer += deltaTime;
             if (bossBulletArray.size() > 0){
                 for (BossBullet i : bossBulletArray){
+                    if (i.getX() < -100){
+                        bossBulletArray.remove(i);
+                        continue;
+                    }
                     i.update(deltaTime);
+                    sDataOut = sDataOut.concat(String.format("%.2f_%.2f_%d_",i.getX(),i.getY(),i.getAtkType()));
                 }
             }
             if (bossTimer > 3){
                 if (boss.getBossHP() > 5){
                     addBullet();
+                    sDataOut = sDataOut.concat(String.format("%.2f_%.2f_%d_",boss.getX()+100,boss.getY()+175,1));
                     bossTimer = 0;
                 }
                 else if (boss.getBossHP() <= 5){
                     addBullet();
+                    sDataOut = sDataOut.concat(String.format("%.2f_%.2f_%d_",boss.getX()+100,boss.getY()+175,2));
                 }
             }
         }
@@ -106,18 +105,28 @@ public class BulletController implements GameObject{
 
     @Override
     public void readStringData(String s) {
-        if(!s.equals("") && !s.equals("p1BC_") && !s.equals("p2BC_")) {
-            String[] data = s.split("_");
-            shipBulletArray.clear();
-            for(int i = 1; i < data.length; i += 2) {
-                double x = Double.parseDouble(data[i]);
-                double y = Double.parseDouble(data[i+1]);
-                //System.out.println("|x:"+x+"|y:"+y+"|");
-                shipBulletArray.add(new ShipBullet(x,y));
-            }
+        if(!s.equals("") && !s.equals("p1BC_") && 
+           !s.equals("p2BC_") && !s.equals("BBC_") ) {
+            if(isPlayer) {
+                String[] data = s.split("_");
+                shipBulletArray.clear();
+                for(int i = 1; i < data.length; i += 2) {
+                    double x = Double.parseDouble(data[i]);
+                    double y = Double.parseDouble(data[i+1]);
+                    shipBulletArray.add(new ShipBullet(x,y));
+                }
 
-        } 
-        
+            } else {
+                String[] data = s.split("_");
+                bossBulletArray.clear();
+                for(int i = 1; i < data.length; i += 3) {
+                    double x = Double.parseDouble(data[i]);
+                    double y = Double.parseDouble(data[i+1]);
+                    int z = Integer.parseInt(data[i+2]);
+                    bossBulletArray.add(new BossBullet(x,y,z));
+                }
+            }
+        }
     }
 
     public void addBullet(){

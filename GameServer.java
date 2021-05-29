@@ -14,13 +14,13 @@ public class GameServer {
     //GameRelated
     private Player p1, p2;
     private Boss Yalin;
-    private BulletController controller1, controller2;
+    private BulletController controller1, controller2,bossController;
 
     private static final int MAX_PLAYERS = 2;
 
     //Network Stuff
     private DatagramSocket serverSocket;
-    private static final int bufMax = 512;
+    private static final int bufMax = 16384;
     private static final int serverPort = 25570;
 
     /**
@@ -49,6 +49,7 @@ public class GameServer {
         Yalin = gameMaster.getYalin();
         controller1 = gameMaster.getBC1();
         controller2 = gameMaster.getBC2();
+        bossController = gameMaster.getBBC();
     }
 
     public void acceptConnections() {
@@ -81,7 +82,6 @@ public class GameServer {
                 } else {
                     p2wtcLoop = new WriteToClient(numPlayers, address, port, 20);
                 }
-                
                 
             }
 
@@ -122,8 +122,9 @@ public class GameServer {
                     send(p1.getCompressedData());
                     send(controller1.getCompressedData());
                 }
+
                 send(Yalin.getCompressedData());
-                
+                send(bossController.getCompressedData());
                 
                 
                 try { Thread.sleep(sleepTime); }
