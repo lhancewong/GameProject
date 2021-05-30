@@ -1,3 +1,25 @@
+/**
+	This is a template for a Java file.
+	
+	@author Wilbert Meinard L. Chen (201153)
+    @author Lhance Christian S. Wong (205467)
+	@version May 31, 2021
+**/
+
+/*
+	I have not discussed the Java language code in my program 
+	with anyone other than my instructor or the teaching assistants 
+	assigned to this course.
+
+	I have not used Java language code obtained from another student, 
+	or any other unauthorized source, either modified or unmodified.
+
+	If any Java language code or documentation used in my program 
+	was obtained from another source, such as a textbook or website, 
+	that has been clearly noted with a proper citation in the comments 
+	of my program.
+*/
+
 import java.awt.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -141,14 +163,27 @@ public class Boss implements GameObject{
         }
     }
 
+    /**
+     * Returns the x position of the boss.
+     * 
+     * @return x position of boss
+     */
     public double getX(){
         return xPos;
     }
 
+    /**
+     * Returns the y position of the boss.
+     * 
+     * @return y position of the boss
+     */
     public double getY(){
         return yPos;
     }
 
+    /**
+     * Swaps the direction of the boss's movements.
+     */
     public void changeDirection(){
         if (mUp){
             mDown = !mDown;
@@ -162,10 +197,17 @@ public class Boss implements GameObject{
         }
     }
 
+    /**
+     * Deducts the boss's hitpoints by 1.
+     */
     public void gotHit(){
         hitPoints -= 1;
     }
 
+    /**
+     * Returns the boss's current hitpoints.
+     * @return
+     */
     public double getBossHP(){
         return hitPoints;
     }
