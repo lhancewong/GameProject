@@ -68,8 +68,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
         bg1 = new Background(1);
         bg2 = new Background(2);
         Yalin = new Boss();
-        p1 = new Player(210,280,1);
-        p2 = new Player(210,440,3);
+        p1 = new Player(210,280,2);
+        p2 = new Player(210,440,2);
         controller1 = new BulletController(p1);
         controller2 = new BulletController(p2);
         bosscontroller = new BulletController(Yalin);
@@ -101,6 +101,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
         g2d.setColor(Color.BLACK);
         g2d.drawString("P1 HP:"+String.valueOf(p1.getHitPoints()),10,710);
         g2d.drawString("P2 HP:"+String.valueOf(p2.getHitPoints()),1100,710);
+
+        if (!(Yalin.isAlive)){
+            Font font2 = new Font("Elephant", Font.PLAIN, 100);
+            g2d.setFont(font2);
+            g2d.drawString("YOU WIN",GameUtils.get().getWidth()/2 - g2d.getFontMetrics(font2).stringWidth("YOU WIN") /2 ,360);
+        }
     }
 
     /**
@@ -133,6 +139,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
     public void changeClass(int shipType){
         p1.setShip(shipType);
+        controller1.setNewMax(shipType);
     }
 
     /**

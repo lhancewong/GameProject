@@ -36,6 +36,7 @@ public class ClassSelection extends MouseAdapter {
     public boolean active;
     private Font font;
     private Font font2;
+    private Font titleFont;
     private Game game;
     public boolean readyState;
     private String sDataOut;
@@ -44,19 +45,21 @@ public class ClassSelection extends MouseAdapter {
     private BufferedImage ship3Image;
     private BufferedImage bg;
 
+    private String title = "Choose Your Class";
+
     //Class 1: Offensive
     private Rectangle ofsBtn;
-    private String ofsTxt = "Offensive";
+    private String ofsTxt = "Glass Cannon";
     private boolean ofsHighlight = false;
 
     //Class 2: Balanced
     private Rectangle balBtn;
-    private String balTxt = "Balanced";
-    private boolean balHighlight = false;
+    private String balTxt = "Jack of All Trades";
+    private boolean balHighlight = true;
 
     //Class 3: Defensive
     private Rectangle defBtn;
-    private String defTxt = "Defensive";
+    private String defTxt = "Flying Tank";
     private boolean defHighlight = false;
 
     //Ready Button
@@ -113,8 +116,9 @@ public class ClassSelection extends MouseAdapter {
         x = GameUtils.get().getWidth() * 3 / 4 - 200; 
         rdyBtn = new Rectangle(x, y, w, h);
 
-        font = new Font("Comic Sans", Font.PLAIN, 40);
-        font2 = new Font("Comic Sans", Font.PLAIN, 20);
+        titleFont = new Font("SansSerif", Font.PLAIN, 100);
+        font = new Font("SansSerif", Font.PLAIN, 35);
+        font2 = new Font("SansSerif", Font.PLAIN, 20);
     }
     
     
@@ -159,14 +163,21 @@ public class ClassSelection extends MouseAdapter {
 
         int strWidth, strHeight;
 
+        g2d.setColor(Color.black);
+        g2d.setFont(titleFont);
+        strWidth = g2d.getFontMetrics(titleFont).stringWidth(title);
+		strHeight = g2d.getFontMetrics(titleFont).getHeight();
+        g2d.drawString(title, (int) (GameUtils.get().getWidth() / 2 - strWidth / 2),
+				(int) (strHeight * 3/4)); 
+
         //Offensive class text
         health = "Health: Low";
         speed = "Speed: Fast";
-        maxBullets = "Max Bullets: 5";
+        maxBullets = "Firepower: Strong";
         
+        g2d.setFont(font);
         strWidth = g2d.getFontMetrics(font).stringWidth(ofsTxt);
 		strHeight = g2d.getFontMetrics(font).getHeight();
-        
         g2d.drawImage(ship1Image, (int) (ofsBtn.getX() + ofsBtn.getWidth() / 2 - 94), 
         (int) (ofsBtn.getY() + ofsBtn.getHeight() / 4 - 50), null, null);
         g2d.setColor(Color.blue);
@@ -192,7 +203,7 @@ public class ClassSelection extends MouseAdapter {
         //Balanced class text
         health = "Health: Normal";
         speed = "Speed: Normal";
-        maxBullets = "Max Bullets: 3";
+        maxBullets = "Firepower: Normal";
 
         g2d.setFont(font);
         strWidth = g2d.getFontMetrics(font).stringWidth(balTxt);
@@ -219,7 +230,7 @@ public class ClassSelection extends MouseAdapter {
         //Defensive class text
         health = "Health: High";
         speed = "Speed: Slow";
-        maxBullets = "Max Bullets: 1";
+        maxBullets = "Firepower: Weak";
 
         g2d.setFont(font);
         strWidth = g2d.getFontMetrics(font).stringWidth(defTxt);
