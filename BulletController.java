@@ -34,6 +34,9 @@ public class BulletController implements GameObject{
     private boolean isPlayer;
     private double bossTimer;
 
+    /*
+    Instantiates variables if a Player is given  
+    */
     public BulletController (Player player){
         switch(player.getShipType()) {
                 case 1: //offensive
@@ -58,6 +61,9 @@ public class BulletController implements GameObject{
         bossTimer = 0;
     }
 
+    /*
+    Instantiates variables if a Boss is given  
+    */
     public BulletController (Boss boss){
         this.boss = boss;
         isPlayer = false;
@@ -68,21 +74,35 @@ public class BulletController implements GameObject{
         sDataIn = "";
     }
 
+    /*
+    Draws all the created bullets,
+    all ShipBullets if Player,
+    all BossBullets if Boss.
+    */
     @Override
     public void draw(Graphics2D g2d) {
         if (isPlayer){
-            for (ShipBullet i : shipBulletArray){
-                i.draw(g2d);
+            if (player.isAlive){
+                for (ShipBullet i : shipBulletArray){
+                    i.draw(g2d);
+                }
             }
         }
         else {
-            for (BossBullet i : bossBulletArray){
-                i.draw(g2d);
+            if (boss.isAlive){
+                for (BossBullet i : bossBulletArray){
+                    i.draw(g2d);
+                }
             }
         }
         
     }
 
+    /*
+    This moves all the bullets and removes them if they either collide with
+    an opposing hitbox or leave window borders.
+    It also creates a string of data to be sent to the server
+    */
     @Override
     public void update(double deltaTime) {
         bossTimer += deltaTime;
@@ -129,6 +149,10 @@ public class BulletController implements GameObject{
         readStringData(sDataIn);
     }
 
+    /*
+    This receives data from the server which contains the 
+    bullet locations of the ShipBullets and BossBullets.
+    */
     @Override
     public void readStringData(String s) {
         String[] data = s.split("_");
@@ -156,6 +180,11 @@ public class BulletController implements GameObject{
         }
     }
 
+    /*
+    If Player, This checks if the player already has created the max amount of bullets possible
+    for its corresponding ship type. If not, it will create a ShipBullet.
+    If Boss, it will make a corresponding BossBullet depending on its current health.
+    */
     public void addBullet(){
         if (isPlayer){
             if(player.isAlive) {
@@ -191,6 +220,10 @@ public class BulletController implements GameObject{
 
     }
 
+    /*
+    This sets the new maximum amount of bullets the Player can shoot
+    depending on the ship type.
+    */
     public void setNewMax(int shipType){
         switch(shipType) {
                 case 1: //offensive
@@ -207,19 +240,31 @@ public class BulletController implements GameObject{
                     break;
         }
     }
-    
+
+    /*
+    Removes a ShipBullet
+    */
     public void removeShipBullet(ShipBullet bullet){
         shipBulletArray.remove(bullet);
     }
 
+    /*
+    Removes a BossBullet
+    */
     public void removeBossBullet(BossBullet bullet){
         bossBulletArray.remove(bullet);
     }
 
+    /*
+    This returns the shipBulletArray.
+    */
     public CopyOnWriteArrayList<ShipBullet> getshipBulletArray(){
         return shipBulletArray;
     }
 
+    /*
+    returns bossBulletArray
+    */
     public CopyOnWriteArrayList<BossBullet> getbossBulletArray(){
         return bossBulletArray;
     }
@@ -229,6 +274,7 @@ public class BulletController implements GameObject{
     public String getCompressedData() {
         return sDataOut;
     }
+
 
     @Override
     public void receiveCompressedData(String sDataIn) {

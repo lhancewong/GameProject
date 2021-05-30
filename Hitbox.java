@@ -41,9 +41,9 @@ public class Hitbox implements GameObject{
 
     @Override
     public void draw(Graphics2D g2d) {
-        box = new Rectangle2D.Double(xPos, yPos, width, height);
+        /* box = new Rectangle2D.Double(xPos, yPos, width, height);
         g2d.setColor(Color.RED);
-        g2d.draw(box);
+        g2d.draw(box); */
     }
 
     @Override

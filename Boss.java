@@ -47,7 +47,7 @@ public class Boss implements GameObject{
         xPos = (GameUtils.get().getWidth()/2)+150;
         yPos = GameUtils.get().getHeight() - 460;
         moveSpeed = 400;
-        hitPoints = 40;
+        hitPoints = 500;
         isAlive = true;
         mUp = true;
         mDown = false;
@@ -61,7 +61,7 @@ public class Boss implements GameObject{
     @Override
     public void draw(Graphics2D g2d) {
         if (isAlive) {
-            if (hitPoints > 30) {
+            if (hitPoints > 100) {
                 boss1(g2d);
             }
             else {

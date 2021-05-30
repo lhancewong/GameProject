@@ -76,6 +76,9 @@ public class ClassSelection extends MouseAdapter {
     private String speed;
     private String maxBullets;
 
+    /*
+    Instantiates variables  
+    */
     public ClassSelection(Game game) {
         active = true;
         this.game = game;
@@ -121,7 +124,12 @@ public class ClassSelection extends MouseAdapter {
         font2 = new Font("SansSerif", Font.PLAIN, 20);
     }
     
-    
+    /*  
+    This draws all the "Buttons" and the texts inside them. 
+    Each ship type has its own button and descriptions in them.
+    The buttons get highlighted white when selected.
+    */
+
     public void draw(Graphics2D g2d) {
 
         g2d.drawImage(bg, 0, 0, null, null);
@@ -271,6 +279,11 @@ public class ClassSelection extends MouseAdapter {
 
     }
 
+    /* 
+    This is the method that checks what "Button" gets clicked
+    and gives the appropriate response when clicked.
+    The ship type changes to whichever button gets selected correspondingly. 
+    */
     @Override
 	public void mouseClicked(MouseEvent e) {
         if (active) {
