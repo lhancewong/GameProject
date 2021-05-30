@@ -22,6 +22,7 @@ public class GameCanvas extends JComponent {
     public Player p1, p2;
     public Boss Yalin;
     public BulletController controller1,controller2;
+    private ClassSelection classSelect;
     private int pNum;
     private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
@@ -44,14 +45,15 @@ public class GameCanvas extends JComponent {
         setPreferredSize(new Dimension(width,height));
         
         
-        findServer();
+        /* findServer(); */
         //Game Stuff
         game = new Game(false);
+        classSelect = new ClassSelection(game);
         drawLoop();
         isRunning = true;
         isServerSelection = false;
-        isClassSelection = false;
-        isBossFight = true;
+        isClassSelection = true;
+        isBossFight = false;
 
 
         
@@ -61,10 +63,10 @@ public class GameCanvas extends JComponent {
         controller1 = game.getBC1();
         controller2 = game.getBC2();
         
-        game.startThread();
+        /* game.startThread(); */
         drawTimer.start();
-        rfsLoop.startThread();
-        wtsLoop.startThread();
+        /* rfsLoop.startThread();
+        wtsLoop.startThread(); */
     }
 
     /**
@@ -73,7 +75,13 @@ public class GameCanvas extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         g2d = (Graphics2D) g;
-        game.draw(g2d);
+        if (classSelect.active){
+            classSelect.draw(g2d);
+        } 
+        else {
+            game.draw(g2d);
+        }
+
     }
     
 
@@ -81,6 +89,9 @@ public class GameCanvas extends JComponent {
         return game;
     }
 
+    public ClassSelection getCSelection(){
+        return classSelect;
+    }
     /**
      * The display thread. It calculates fps and calls repaint to ideally
      * reach the FPS_CAP;

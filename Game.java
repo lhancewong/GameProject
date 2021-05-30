@@ -39,7 +39,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
         isRunning = true;
         isBossFight = true;
         pNum = GameUtils.get().getPlayerNum();
-        initBossFight();
         initMenuSelection();
 
         this.isMaster = isMaster;
@@ -79,13 +78,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
     }
     
     
-    private void initBossFight() {
+    public void initBossFight() {
         bossFight = new ArrayList<GameObject>();
         bg1 = new Background(1);
         bg2 = new Background(2);
         Yalin = new Boss();
-        p1 = new Player("p1",210,180,30,1);
-        p2 = new Player("p2",210,540,30,3);
+        pNum = 1;
+        
         controller1 = new BulletController(p1);
         controller2 = new BulletController(p2);
         bosscontroller = new BulletController(Yalin);
@@ -107,7 +106,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
      * Initializes the menu screen.
      */
     private void initMenuSelection() {
+        p1 = new Player("p1",210,180,30,1);
+        p2 = new Player("p2",210,540,30,3);
+    }
 
+
+    public void changeClass(int pNum, int shipType){
+        if (pNum == 1){
+            p1.setShip(shipType);
+        }
+        if (pNum == 2){
+            p2.setShip(shipType);
+        }
     }
 
     public void draw(Graphics2D g2d){
@@ -121,10 +131,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
         }
     }
 
-    public int getPlayerNumber() {
-        return pNum;
-    }
-
+    
     public void checkBulletHitboxes() {
         for(ShipBullet i: controller1.getshipBulletArray()) {
             if (Yalin.checkHitbox(i)){
@@ -155,8 +162,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
             }
         }
     }
-
-
+    
+    public int getPlayerNumber() {
+        return pNum;
+    }
+    
     public BulletController getController(){
         if(pNum == 1) {
             return controller1;
@@ -164,11 +174,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
             return controller2;
         } 
     }
-
+    
     public BulletController getBC1() {
         return controller1;
     }
-
+    
     public BulletController getBC2() {
         return controller2;
     }
