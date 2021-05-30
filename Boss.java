@@ -33,7 +33,7 @@ public class Boss implements GameObject{
 
         sDataIn = "";
         sDataOut = "";
-        box = new Hitbox(xPos + 102, yPos + 98, 198, 160);
+        box = new Hitbox(xPos + 30, yPos + 50, 180, 155);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class Boss implements GameObject{
         }
         
         if(isAlive) {
-        box = new Hitbox(xPos + 102, yPos + 98, 198, 160);
+        box = new Hitbox(xPos + 30, yPos + 50, 180, 155);
         if(mUp) {
             if (yPos >= randomDistance){
                 yPos -= moveSpeed*d;

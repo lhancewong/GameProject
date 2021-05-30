@@ -66,7 +66,7 @@ public class BulletController implements GameObject{
         bossTimer += deltaTime;
 
         if (isPlayer){
-            sDataOut = "BC_";
+            sDataOut = "BC_" + String.valueOf(max) + "_";
             if (shipBulletArray.size() > 0){
                 for (ShipBullet i : shipBulletArray){
                     if (i.getX() > GameUtils.get().getWidth()){
@@ -109,19 +109,20 @@ public class BulletController implements GameObject{
 
     @Override
     public void readStringData(String s) {
-        if(!s.equals("") && !s.equals("p1BC_") && 
-           !s.equals("p2BC_") && !s.equals("BBC_") ) {
+        String[] data = s.split("_");
+        /* if(!s.equals("") && !s.equals("p1BC_") && 
+           !s.equals("p2BC_") && !s.equals("BBC_") ) { */
+        if (data.length > 2){
             if(isPlayer) {
-                String[] data = s.split("_");
+                max = Integer.parseInt(data[1]);
                 shipBulletArray.clear();
-                for(int i = 1; i < data.length; i += 2) {
+                for(int i = 2; i < data.length; i += 2) {
                     double x = Double.parseDouble(data[i]);
                     double y = Double.parseDouble(data[i+1]);
                     shipBulletArray.add(new ShipBullet(x,y));
                 }
 
             } else {
-                String[] data = s.split("_");
                 bossBulletArray.clear();
                 for(int i = 1; i < data.length; i += 3) {
                     double x = Double.parseDouble(data[i]);
@@ -168,6 +169,23 @@ public class BulletController implements GameObject{
 
     }
 
+    public void setNewMax(int shipType){
+        switch(shipType) {
+                case 1: //offensive
+                    max = 5;
+                    break;
+                case 2: //balanced
+                    max = 3;
+                    break;
+                case 3: //defensive
+                    max = 1;
+                    break;
+                default:
+                    max = 1;
+                    break;
+        }
+    }
+    
     public void removeShipBullet(ShipBullet bullet){
         shipBulletArray.remove(bullet);
     }
