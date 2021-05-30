@@ -8,13 +8,16 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.imageio.*;
 import java.awt.image.*;
+import java.io.*;
 
 public class ClassSelection extends MouseAdapter{
     
     public boolean active;
     private Font font;
     private Game game;
+    private int pNum;
     public boolean readyState;
+    private DataOutputStream dataOut;
 
     //Class 1: Offensive
     private Rectangle ofsBtn;
@@ -41,9 +44,11 @@ public class ClassSelection extends MouseAdapter{
 	private String quitTxt = "Quit";
 	private boolean qHighlight = false;
 
-    public ClassSelection(Game game) {
+    public ClassSelection(Game game,DataOutputStream dataOut, GameCanvas gameCanvas) {
         active = true;
         this.game = game;
+        this.dataOut = dataOut;
+        pNum = GameUtils.get().getPlayerNum();
         int x, y, w, h;
          
         w = 150;
@@ -168,8 +173,17 @@ public class ClassSelection extends MouseAdapter{
             if (rdyBtn.contains(p)){
                 System.out.println("rdy");
                 game.initBossFight();
-                game.startThread();
                 isReady();
+                try {
+                    if(ofsHighlight) {
+                        dataOut.writeInt(1);
+                    } else if(balHighlight) {
+                        dataOut.writeInt(2);
+                    } else if (defHighlight) {
+                        dataOut.writeInt(3);
+                    }
+                } catch(IOException ex) {}
+
                 rdyHighlight = true;
                 active = false;
             }

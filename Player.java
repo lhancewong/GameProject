@@ -170,7 +170,7 @@ public class Player implements GameObject {
         }
 
 
-        sDataOut = String.format("%s_%.1f_%.1f_%b_%b_%b_%b_%d_",pName,xPos,yPos,mUp,mDown,mLeft,mRight,hitPoints);
+        sDataOut = String.format("%s_%.1f_%.1f_%b_%b_%b_%b_%d_%d_",pName,xPos,yPos,mUp,mDown,mLeft,mRight,hitPoints,shipType);
         readStringData(sDataIn);
     }
 
@@ -184,6 +184,7 @@ public class Player implements GameObject {
             mLeft = Boolean.parseBoolean(data[5]);
             mRight = Boolean.parseBoolean(data[6]);
             hitPoints = Integer.parseInt(data[7]);
+            shipType = Integer.parseInt(data[8]);
         }  
     }
 
@@ -246,24 +247,20 @@ public class Player implements GameObject {
             case 1: //offensive
                 hitPoints = 1;
                 moveSpeed = 500;
-                projectileDamage = 5;
                 break;
 
             case 2: //balanced
                 hitPoints = 3;
                 moveSpeed = 400;
-                projectileDamage = 3;
                 break;
 
             case 3: //defensive
                 hitPoints = 5;
                 moveSpeed = 300;
-                projectileDamage = 1;
                 break;
             default:
                 hitPoints = 100;
                 moveSpeed = 400;
-                projectileDamage = 1;
                 break;
         } 
     }

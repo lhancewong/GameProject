@@ -15,6 +15,7 @@ public class GameServer {
     private Player p1, p2;
     private Boss Yalin;
     private BulletController controller1, controller2,bossController;
+    private boolean startp1, startp2;
 
     private static final int MAX_PLAYERS = 2;
 
@@ -30,7 +31,9 @@ public class GameServer {
         System.out.println("===========================================\nShoot and Scoot!");
         numPlayers = 0;
         gameMaster = new Game(true);
-        initGame();
+
+        startp1 = false;
+        startp2 = false;
         
         //Creates a DatagramSocket using a specific port
         try {
@@ -57,20 +60,20 @@ public class GameServer {
             WriteToClient p1wtcLoop = null;
             WriteToClient p2wtcLoop = null;
             ServerSocket sSoc = new ServerSocket(serverPort);
+            //while loop to wait for players
             while(numPlayers < MAX_PLAYERS) {
                 System.out.println("===========================================\nWaiting for players..");
                 numPlayers++;
-                Socket cSoc = sSoc.accept();
+                //Uses TCP to give the player a player number
+                Socket cSoc = sSoc.accept(); //accepts connecting request of player thru tcp
 
-                new DataOutputStream(cSoc.getOutputStream()).writeInt(numPlayers); 
+                DataInputStream dataIn = new DataInputStream(cSoc.getInputStream());
+                new DataOutputStream(cSoc.getOutputStream()).writeInt(numPlayers); //send the player their number
                 System.out.println("Player " + numPlayers + " has received a number.");
 
                 byte[] buf = new byte[256];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 serverSocket.receive(packet);
-                String request = new String(packet.getData(), StandardCharsets.UTF_8);
-                request.trim();
-                System.out.println(request);
                 
                 InetAddress address = packet.getAddress();
                 int port = packet.getPort();
@@ -78,23 +81,27 @@ public class GameServer {
                 System.out.println("Player "+ numPlayers+ "'s IP Address is "+ address.toString());
                 
                 if(numPlayers == 1) {
-                    p1wtcLoop = new WriteToClient(numPlayers, address, port, 20);
+                    p1wtcLoop = new WriteToClient(numPlayers, address, port, 20, dataIn);
                 } else {
-                    p2wtcLoop = new WriteToClient(numPlayers, address, port, 20);
+                    p2wtcLoop = new WriteToClient(numPlayers, address, port, 20, dataIn);
                 }
                 
             }
+            System.out.println("===========================================\nNo longer accepting connections.");
+            //both players have connected
+            initGame();
+            gameMaster.initBossFight();
 
             ReadFromClient rfcLoop = new ReadFromClient();
             rfcLoop.startThread();
             p1wtcLoop.startThread();
             p2wtcLoop.startThread();
 
-            sSoc.close();
-            System.out.println("===========================================\nNo longer accepting connections.");
+            while(startp1 && startp2) {
+                continue;
+            }
             System.out.println("TIME TO SHOOT AND SCOOT!");
             gameMaster.startThread();
-
         } catch(IOException ex) {
             System.out.println("IOException from acceptConnections().");
         }
@@ -110,10 +117,21 @@ public class GameServer {
         private InetAddress address;
         private int port;
         private long sleepTime;
+        private DataInputStream dataIn;
         private Thread WTCloop;
 
         @Override
         public void run() {
+            try {
+                int shipType = dataIn.readInt();
+                gameMaster.changeClass(pNum, shipType);
+                if(pNum == 1) {
+                    startp1 = true;
+                } else {
+                    startp2 = true;
+                }
+
+            } catch (IOException ex) {}
             while(true) {
                 if (pNum == 1) {
                     send(p2.getCompressedData());
@@ -125,7 +143,6 @@ public class GameServer {
 
                 send(Yalin.getCompressedData());
                 send(bossController.getCompressedData());
-                
                 
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
@@ -158,17 +175,18 @@ public class GameServer {
         * @param port The port of the player
         * @param sleepTime The delay in milliseconds in between the sending of data
         */
-        public WriteToClient(int pNum, InetAddress address, int port, int sleepTime) {
+        public WriteToClient(int pNum, InetAddress address, int port, int sleepTime, DataInputStream dataIn) {
             this.pNum = pNum;
             this.address = address;
             this.port = port;
             this.sleepTime = sleepTime;
+            this.dataIn = dataIn;
             WTCloop = new Thread(this);
         }
 
 
         /**
-         * Starts the WriteToClient thread.
+         * Starts the WriteToClient thread after the player sends a shipType .
          */
         public void startThread() {
             WTCloop.start();

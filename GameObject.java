@@ -31,5 +31,5 @@ public interface GameObject {
      * Receives the compressed string data.
      */
     void receiveCompressedData(String sDataIn);
-    
+
 }

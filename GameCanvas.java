@@ -24,7 +24,7 @@ public class GameCanvas extends JComponent {
     private ClassSelection classSelect;
     public BulletController controller1,controller2,bossController;
     private int pNum;
-    private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
+    private boolean isRunning;
     private static final int FPS_CAP = 60;
     private javax.swing.Timer drawTimer;
 
@@ -43,31 +43,9 @@ public class GameCanvas extends JComponent {
         width = GameUtils.get().getWidth();
         height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
-        
-        
-        /* findServer(); */
-        //Game Stuff
-        game = new Game(false);
-        classSelect = new ClassSelection(game);
-        drawLoop();
-        isRunning = true;
-        isServerSelection = false;
-        isClassSelection = true;
-        isBossFight = false;
 
-
+        findServer();
         
-        p1 = game.getPlayer1();
-        p2 = game.getPlayer2();
-        Yalin = game.getYalin();
-        controller1 = game.getBC1();
-        controller2 = game.getBC2();
-        bossController = game.getBBC();
-        
-        /* game.startThread(); */
-        drawTimer.start();
-        /* rfsLoop.startThread();
-        wtsLoop.startThread(); */
     }
 
     /**
@@ -82,7 +60,6 @@ public class GameCanvas extends JComponent {
         else {
             game.draw(g2d);
         }
-
     }
     
 
@@ -93,6 +70,7 @@ public class GameCanvas extends JComponent {
     public ClassSelection getCSelection(){
         return classSelect;
     }
+
     /**
      * The display thread. It calculates fps and calls repaint to ideally
      * reach the FPS_CAP;
@@ -149,6 +127,7 @@ public class GameCanvas extends JComponent {
 
             System.out.println("Requesting for Player number from server...");
 
+            //reads an int
             pNum = new DataInputStream(cSoc.getInputStream()).readInt();
             GameUtils.get().setPlayerNum(pNum);
             System.out.println("You are Player " + pNum + "!");
@@ -157,19 +136,44 @@ public class GameCanvas extends JComponent {
             DatagramPacket packet = new DatagramPacket(buf,buf.length,ip,port);
             clientSocket.send(packet);
 
-            System.out.println("Waiting for other Player...");
-            byte[] start = new byte[bufMax];
-            DatagramPacket startPacket = new DatagramPacket(start, start.length);
-            clientSocket.receive(startPacket);
+            game = new Game(false);
+            drawLoop();
+            drawTimer.start();
+            classSelect = new ClassSelection(game, new DataOutputStream(cSoc.getOutputStream()), this);
+
 
             cSoc.close();
         } catch(IOException ex) {
           System.out.println("IOException from connectToServer() method.");
         }
+    }
 
-      }
-    
-      /**
+    public void postConnection() {
+        try {
+            //after the player presses readi
+            System.out.println("Waiting for other Player...");
+            byte[] start = new byte[bufMax];
+            DatagramPacket startPacket = new DatagramPacket(start, start.length);
+            clientSocket.receive(startPacket);
+        } catch(IOException ex) {}
+
+        //Game Stuff
+        isRunning = true;
+        
+        p1 = game.getPlayer1();
+        p2 = game.getPlayer2();
+        Yalin = game.getYalin();
+        controller1 = game.getBC1();
+        controller2 = game.getBC2();
+        bossController = game.getBBC();
+        
+        game.startThread();
+        rfsLoop.startThread();
+        wtsLoop.startThread();
+        
+    }
+
+    /**
      * A private class that writes information to the server.
      */
     private class WriteToServer implements Runnable {
@@ -208,6 +212,7 @@ public class GameCanvas extends JComponent {
                 System.out.println("IOException from WTC send()");
             }
         }
+
 
         /**
          * Initializes the WriteToServer class
