@@ -43,19 +43,16 @@ public class GameCanvas extends JComponent {
         width = GameUtils.get().getWidth();
         height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
+        GameUtils.get().setGameCanvas(this);
         
-        
-        /* findServer(); */
         //Game Stuff
         game = new Game(false);
         classSelect = new ClassSelection(game);
-        drawLoop();
+        
         isRunning = true;
         isServerSelection = false;
         isClassSelection = true;
         isBossFight = false;
-
-
         
         p1 = game.getPlayer1();
         p2 = game.getPlayer2();
@@ -63,11 +60,9 @@ public class GameCanvas extends JComponent {
         controller1 = game.getBC1();
         controller2 = game.getBC2();
         bossController = game.getBBC();
-        
-        /* game.startThread(); */
+
+        drawLoop();
         drawTimer.start();
-        /* rfsLoop.startThread();
-        wtsLoop.startThread(); */
     }
 
     /**
@@ -84,7 +79,13 @@ public class GameCanvas extends JComponent {
         }
 
     }
-    
+
+    public void joinServer() {
+        findServer();
+        rfsLoop.startThread();
+        wtsLoop.startThread();
+        game.startThread();
+    }
 
     public Game getGame() {
         return game;
@@ -184,14 +185,16 @@ public class GameCanvas extends JComponent {
         @Override
         public void run() {
             while (true) {
+                String header,pdata,cdata;
                 if (pNum == 1) {
-                    send(p1.getCompressedData());
-                    send(controller1.getCompressedData());
+                    header = "p1";
                 } else {
-                    send(p2.getCompressedData());
-                    send(controller2.getCompressedData());
+                    header = "p2";
                 }
-                
+                pdata = header + "_" + p1.getCompressedData();
+                cdata = header + controller1.getCompressedData();
+                send(pdata);
+                send(cdata);
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
                     System.out.println("InterruptedException at WTC run()\n\n" + ex);
@@ -200,7 +203,8 @@ public class GameCanvas extends JComponent {
             }
         }
 
-        public void send(byte[] buf) {
+        public void send(String data) {
+            byte[] buf = data.getBytes();
             DatagramPacket packet = new DatagramPacket(buf,buf.length,address,port);
             try {
                 clientSocket.send(packet);
@@ -245,15 +249,11 @@ public class GameCanvas extends JComponent {
                     String sDataIn = new String(packet.getData(), StandardCharsets.UTF_8);
                     sDataIn = sDataIn.trim();
 
-                    if(sDataIn.startsWith("p1_")) {
-                        p1.receiveCompressedData(sDataIn);
-                    } else if(sDataIn.startsWith("p2_")) {
+                    if(sDataIn.startsWith("p_")) {
                         p2.receiveCompressedData(sDataIn);
                     } else if(sDataIn.startsWith("Yalin_")) {
                         Yalin.receiveCompressedData(sDataIn);
-                    } else if(sDataIn.startsWith("p1BC_")) {
-                        controller1.receiveCompressedData(sDataIn);
-                    } else if(sDataIn.startsWith("p2BC_")) {
+                    } else if(sDataIn.startsWith("BC_")) {
                         controller2.receiveCompressedData(sDataIn);
                     } else if(sDataIn.startsWith("BBC_")){
                         bossController.receiveCompressedData(sDataIn);

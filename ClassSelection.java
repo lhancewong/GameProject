@@ -155,10 +155,6 @@ public class ClassSelection extends MouseAdapter{
 
     }
 
-    public void isReady(){
-        readyState = true;
-    }
-
     @Override
 	public void mouseClicked(MouseEvent e) {
         if (active) {
@@ -167,9 +163,7 @@ public class ClassSelection extends MouseAdapter{
     
             if (rdyBtn.contains(p)){
                 System.out.println("rdy");
-                game.initBossFight();
-                game.startThread();
-                isReady();
+                GameUtils.get().getGameCanvas().joinServer();
                 rdyHighlight = true;
                 active = false;
             }
@@ -179,21 +173,21 @@ public class ClassSelection extends MouseAdapter{
             }
             else if (ofsBtn.contains(p)){
                 System.out.println("Offense");
-                game.changeClass(game.getPlayerNumber(), 1);
+                game.changeClass(1);
                 ofsHighlight = true;
                 balHighlight = false;
                 defHighlight = false;
             }
             else if (balBtn.contains(p)){
                 System.out.println("bal");
-                game.changeClass(game.getPlayerNumber(), 2);
+                game.changeClass(2);
                 ofsHighlight = false;
                 balHighlight = true;
                 defHighlight = false;
             }
             else if (defBtn.contains(p)){
                 System.out.println("def");
-                game.changeClass(game.getPlayerNumber(), 3);
+                game.changeClass(3);
                 ofsHighlight = false;
                 balHighlight = false;
                 defHighlight = true;

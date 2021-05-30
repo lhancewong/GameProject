@@ -78,13 +78,12 @@ public class GameServer {
                 System.out.println("Player "+ numPlayers+ "'s IP Address is "+ address.toString());
                 
                 if(numPlayers == 1) {
-                    p1wtcLoop = new WriteToClient(numPlayers, address, port, 20);
+                    p1wtcLoop = new WriteToClient(numPlayers, address, port, 16);
                 } else {
-                    p2wtcLoop = new WriteToClient(numPlayers, address, port, 20);
+                    p2wtcLoop = new WriteToClient(numPlayers, address, port, 16);
                 }
                 
             }
-
             ReadFromClient rfcLoop = new ReadFromClient();
             rfcLoop.startThread();
             p1wtcLoop.startThread();
@@ -116,10 +115,10 @@ public class GameServer {
         public void run() {
             while(true) {
                 if (pNum == 1) {
-                    send(p2.getCompressedData());
+                    send(("p_"+p2.getCompressedData()));
                     send(controller2.getCompressedData());
                 } else if (pNum == 2) {
-                    send(p1.getCompressedData());
+                    send(("p_"+p1.getCompressedData()));
                     send(controller1.getCompressedData());
                 }
 
@@ -141,7 +140,8 @@ public class GameServer {
          * 
          * @param buf the byte array
          */
-        public void send(byte[] buf) {
+        public void send(String data) {
+            byte[] buf = data.getBytes();
             DatagramPacket packet = new DatagramPacket(buf,buf.length,address,port);
             try {
                 serverSocket.send(packet);
@@ -165,7 +165,6 @@ public class GameServer {
             this.sleepTime = sleepTime;
             WTCloop = new Thread(this);
         }
-
 
         /**
          * Starts the WriteToClient thread.
@@ -205,7 +204,7 @@ public class GameServer {
                     } else if(sDataIn.startsWith("p2BC_")) {
                         controller2.receiveCompressedData(sDataIn);
                     } else {
-                        System.out.println("Data bad: " + sDataIn);
+                        //System.out.println("Data bad: " + sDataIn);
                     }
 
                 }

@@ -43,22 +43,14 @@ public class GameFrame {
      */
     public void setUpKeyActions() {
         KeyAction ka;
-        if (GameUtils.get().getPlayerNum() == 2) {
-            ka = new KeyAction(gameCanvas.p2, game);
-        } else {
-            ka = new KeyAction(gameCanvas.p1, game);
-        }
+        ka = new KeyAction(gameCanvas.p1, game);
         mainPanel.addKeyListener(ka);
     }
 
-<<<<<<< HEAD
-    
-=======
     public void setUpClassSelection() {
         mainPanel.addMouseListener(gameCanvas.getCSelection());
     }
 
->>>>>>> c5daca06b1881cea98d338f87226cfb48fb5c632
     /**
      * Starts the game.
      */

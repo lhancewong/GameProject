@@ -8,8 +8,6 @@ import java.awt.image.*;
  * This class contains the code that manages the player's appearance and functionality.
  */
 public class Player implements GameObject {
-    private String pName;
-
     //appearance related
     private double xPos, yPos;
     private double size;
@@ -35,8 +33,7 @@ public class Player implements GameObject {
      * @param yPos y coordinate of ship
      * @param shipType 1 for offense, 2 for balance, 3 for defense
      */
-    public Player(String pName, double xPos, double yPos, int shipType) {
-        this.pName = pName;
+    public Player(double xPos, double yPos, int shipType) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.shipType = shipType;
@@ -113,9 +110,6 @@ public class Player implements GameObject {
                     g2d.fillRect((int)xPos,(int)yPos,(int)size,(int)size);
             }
         }
-
-        
-
     }
 
     /**
@@ -125,11 +119,9 @@ public class Player implements GameObject {
      */
     @Override
     public void update(double d) {
-        //System.out.printf("[U_%.1f_%.1f_%b_%b_%b_%b]\n",xPos,yPos,mUp,mDown,mLeft,mRight);
         if (hitPoints <= 0) {
             isAlive = false;
         }
-
         switch (shipType) {
             case 1:
                 box = new Hitbox(xPos + 30, yPos + 12, 134, 46);
@@ -170,13 +162,13 @@ public class Player implements GameObject {
         }
 
 
-        sDataOut = String.format("%s_%.1f_%.1f_%b_%b_%b_%b_%d_",pName,xPos,yPos,mUp,mDown,mLeft,mRight,hitPoints);
+        sDataOut = String.format("%.1f_%.1f_%b_%b_%b_%b_%d_%d_",xPos,yPos,mUp,mDown,mLeft,mRight,hitPoints,shipType);
         readStringData(sDataIn);
     }
 
     public void readStringData(String s) {
-        if(!s.equals("")) {
-            String[] data = s.split("_");
+        String[] data = s.split("_");
+        if(!s.equals("") && data.length == 9) {
             xPos = Double.parseDouble(data[1]);
             yPos = Double.parseDouble(data[2]);
             mUp = Boolean.parseBoolean(data[3]);
@@ -184,6 +176,7 @@ public class Player implements GameObject {
             mLeft = Boolean.parseBoolean(data[5]);
             mRight = Boolean.parseBoolean(data[6]);
             hitPoints = Integer.parseInt(data[7]);
+            shipType = Integer.parseInt(data[8]);
         }  
     }
 
@@ -246,24 +239,20 @@ public class Player implements GameObject {
             case 1: //offensive
                 hitPoints = 1;
                 moveSpeed = 500;
-                projectileDamage = 5;
                 break;
 
             case 2: //balanced
                 hitPoints = 3;
                 moveSpeed = 400;
-                projectileDamage = 3;
                 break;
 
             case 3: //defensive
                 hitPoints = 5;
                 moveSpeed = 300;
-                projectileDamage = 1;
                 break;
             default:
                 hitPoints = 100;
                 moveSpeed = 400;
-                projectileDamage = 1;
                 break;
         } 
     }
@@ -277,8 +266,8 @@ public class Player implements GameObject {
     }
 
     @Override
-    public byte[] getCompressedData() {   
-        return sDataOut.getBytes();
+    public String getCompressedData() {   
+        return sDataOut;
     }
 
     @Override
@@ -293,9 +282,4 @@ public class Player implements GameObject {
     public double getY() {
         return yPos;
     }
-
-    public String getPlayerName() {
-        return pName;
-    }
-
 }

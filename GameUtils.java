@@ -8,6 +8,7 @@ public class GameUtils {
     
     //Objects
     private JFrame frame;
+    private GameCanvas gc;
     //Variables
     private int width, height;
     private int pNum;
@@ -81,5 +82,13 @@ public class GameUtils {
      */
     public int getHeight() {
         return height;
+    }
+
+    public void setGameCanvas(GameCanvas gc) {
+        this.gc = gc;
+    }
+
+    public GameCanvas getGameCanvas() {
+        return gc;
     }
 }
