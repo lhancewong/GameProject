@@ -27,22 +27,24 @@ import java.nio.charset.StandardCharsets;
 /**
  * This class contains the code that manages the game server's functionality. It also
  * contains the main method that instantiates and starts the server.
+ * 
+ * <p> Since there is no real benefit to using TCP for this type
+ * of application, UDP was used instead. GameServer also has its own instance of
+ * Game to sync up both players. It updates its own game and sends over the necessary data 
+ * to the two GameCanvas clients. Note that the server will not draw the game, it will only
+ * update it.
  */
 public class GameServer {
-    
-    private int numPlayers;
+    //Game Object
     private Game gameMaster;
-
-    //GameRelated
     private Player p1, p2;
     private Boss Yalin;
     private BulletController controller1, controller2,bossController;
-
-    private static final int MAX_PLAYERS = 2;
-
     //Network Stuff
     private DatagramSocket serverSocket;
-    private static final int bufMax = 16384;
+    private int numPlayers;
+    private static final int MAX_PLAYERS = 2;
+    private static final int bufMax = 8192;
     private static final int serverPort = 25570;
 
     /**
@@ -57,9 +59,7 @@ public class GameServer {
         //Creates a DatagramSocket using a specific port
         try {
             serverSocket = new DatagramSocket(serverPort);
-        } catch(IOException ex) {
-            System.out.println("IOException from GameServer constructor.");
-        }
+        } catch(IOException ex) {}
     }
 
     /**
@@ -74,46 +74,56 @@ public class GameServer {
         bossController = gameMaster.getBBC();
     }
 
+    /**
+     * This method first waits for connections. Once someone has connected, the method gives the player client
+     * their player number and waits for the next player. After that it passes both player's
+     * InetAddress and port to a class that sends them data.
+     */
     public void acceptConnections() {
         try {
+            //WTC thread of p1 and p2
             WriteToClient p1wtcLoop = null;
             WriteToClient p2wtcLoop = null;
             ServerSocket sSoc = new ServerSocket(serverPort);
             while(numPlayers < MAX_PLAYERS) {
                 System.out.println("===========================================\nWaiting for players..");
                 numPlayers++;
+                //Accepts a TCP connection request from a client
                 Socket cSoc = sSoc.accept();
 
+                //Used tcp to ensure the clients get their player number
                 new DataOutputStream(cSoc.getOutputStream()).writeInt(numPlayers); 
                 System.out.println("Player " + numPlayers + " has received a number.");
 
+                //Receives an DatagramPacket to save their InetAddress and port.
                 byte[] buf = new byte[256];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 serverSocket.receive(packet);
-                String request = new String(packet.getData(), StandardCharsets.UTF_8);
-                request.trim();
-                System.out.println(request);
-                
                 InetAddress address = packet.getAddress();
                 int port = packet.getPort();
+
+                //Some console output
                 System.out.println("Player "+ numPlayers+ "'s port is "+ port);
                 System.out.println("Player "+ numPlayers+ "'s IP Address is "+ address.toString());
                 
+                //Initializes the correct WTC loop
                 if(numPlayers == 1) {
                     p1wtcLoop = new WriteToClient(numPlayers, address, port, 16);
                 } else {
                     p2wtcLoop = new WriteToClient(numPlayers, address, port, 16);
                 }
-                
             }
+            //Initializes one RFC thread and starts the other two WTC threads of both players
             ReadFromClient rfcLoop = new ReadFromClient();
             rfcLoop.startThread();
             p1wtcLoop.startThread();
             p2wtcLoop.startThread();
 
+            //Closes an unused socket
             sSoc.close();
             System.out.println("===========================================\nNo longer accepting connections.");
             System.out.println("TIME TO SHOOT AND SCOOT!");
+            //start game update thread
             gameMaster.startThread();
 
         } catch(IOException ex) {
@@ -124,7 +134,9 @@ public class GameServer {
     /**
      * A private class that writes information to the server.
      * 
-     * <p>Currently sending via UDP.
+     * <p>Currently sending via UDP. Based on the player number(the number that
+     * determines who this thread is sending data to), it will
+     * send over the correct information.
      */
     private class WriteToClient implements Runnable {
         private int pNum;
@@ -137,20 +149,22 @@ public class GameServer {
         public void run() {
             while(true) {
                 if (pNum == 1) {
+                    //Sends p2's data and bullets to p1
                     send(("p_"+p2.getCompressedData()));
-                    send(controller2.getCompressedData());
+                    send(controller2.getCompressedData()); 
                 } else if (pNum == 2) {
+                    //Sends p1's data and bullets to p2
                     send(("p_"+p1.getCompressedData()));
                     send(controller1.getCompressedData());
                 }
-
+                //Sends the boss's data and bullets to both players
                 send(Yalin.getCompressedData());
                 send(bossController.getCompressedData());
                 
-                
+                //waits for sleepTime amount of time in millseconds in between loops
                 try { Thread.sleep(sleepTime); }
                 catch(InterruptedException ex) {
-                    System.out.println("InterruptedException at WTC run()\n\n" + ex);
+                    System.out.println("IOException at WTC run()\n\n" + ex);
                     System.exit(1);
                 }
             }
@@ -201,7 +215,9 @@ public class GameServer {
      * A private class that contionuously accepts/receives data
      * as fast as they arrive.
      * 
-     * <p>Currently receiving via UDP.
+     * <p>Currently receiving via UDP. Since clients constantly bombard the server with data,
+     * it receives packets as fast as it can. It then segregates the data into their
+     * respective game objects to be processed.
      */
     private class ReadFromClient implements Runnable {
         private Thread RFCloop;
@@ -214,9 +230,11 @@ public class GameServer {
                     DatagramPacket packet = new DatagramPacket(buf, buf.length);
                     serverSocket.receive(packet);
 
+                    //turns the byte array into string
                     String sDataIn = new String(packet.getData(), StandardCharsets.UTF_8);
                     sDataIn = sDataIn.trim();
 
+                    //passes the string into the correct game object
                     if(sDataIn.startsWith("p1_")) {
                         p1.receiveCompressedData(sDataIn);
                     } else if(sDataIn.startsWith("p2_")) {
@@ -231,7 +249,7 @@ public class GameServer {
 
                 }
             } catch(IOException ex) {
-                System.out.println("IOException at WTC run()\n\n" + ex);
+                System.out.println("IOException at RFC run()\n\n" + ex);
                 System.exit(1);
             }
         }
@@ -252,6 +270,11 @@ public class GameServer {
            
     }
 
+    /**
+     * Starts the server
+     * 
+     * @param args
+     */
     public static void main(String args[]) {
         GameServer gs = new GameServer();
         gs.acceptConnections();
