@@ -183,6 +183,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
         return controller2;
     }
 
+    public BulletController getBBC() {
+        return bosscontroller;
+    }
+
     public Player getPlayer1() {
         return p1;
     }

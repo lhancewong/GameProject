@@ -92,7 +92,7 @@ public class Player implements GameObject {
 
         
 
-        sDataOut = "dud";
+        sDataOut = "";
         sDataIn = "";
     }
 
@@ -129,7 +129,22 @@ public class Player implements GameObject {
     @Override
     public void update(double d) {
         //System.out.printf("[U_%.1f_%.1f_%b_%b_%b_%b]\n",xPos,yPos,mUp,mDown,mLeft,mRight);
-        
+        if (hitPoints <= 0) {
+            isAlive = false;
+        }
+
+        switch (shipType) {
+            case 1:
+                box = new Hitbox(xPos + 30, yPos + 12, 134, 46);
+                break;
+            case 2:
+                box = new Hitbox(xPos + 2, yPos + 6, 112, 72);
+                break;
+            case 3:
+                box = new Hitbox(xPos + 14, yPos + 10, 106, 50);
+                break;
+        }
+
         double c = moveSpeed*d;
         if(xPos+size >= xBorder-c) {
             mRight = false;
@@ -190,7 +205,6 @@ public class Player implements GameObject {
     private void offensiveShip(Graphics2D g2d) {
         if (isAlive){
             g2d.drawImage(ship1Image, (int) xPos, (int) yPos, null, null);
-            box = new Hitbox(xPos + 30, yPos + 12, 134, 46);
             box.draw(g2d);
         }
         
@@ -202,7 +216,6 @@ public class Player implements GameObject {
     private void defensiveShip(Graphics2D g2d) {
         if (isAlive){
             g2d.drawImage(ship2Image, (int) xPos, (int) yPos, null, null);
-            box = new Hitbox(xPos + 2, yPos + 6, 112, 72);
             box.draw(g2d);
         }
     }
@@ -213,7 +226,6 @@ public class Player implements GameObject {
     private void balancedShip(Graphics2D g2d) {
         if (isAlive){
             g2d.drawImage(ship3Image, (int) xPos, (int) yPos, null, null);
-            box = new Hitbox(xPos + 14, yPos + 10, 106, 50);
             box.draw(g2d);
         }
     }
@@ -232,7 +244,6 @@ public class Player implements GameObject {
 
     public void gotHit(){
         hitPoints -= 1;
-        System.out.println(hitPoints);
     }
 
     /**

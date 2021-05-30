@@ -6,9 +6,9 @@ public class BossBullet implements GameObject{
     private double xPos, yPos; 
     private double width, height;
     private double speed;
-    private double attackType;
+    private int attackType;
 
-    public BossBullet (double xPos, double yPos, double attackType){
+    public BossBullet (double xPos, double yPos, int attackType){
         this.xPos = xPos;
         this.yPos = yPos;
         this.attackType = attackType;
@@ -60,7 +60,7 @@ public class BossBullet implements GameObject{
         return height;
     }
 
-    public double getAtkType(){
+    public int getAtkType(){
         return attackType;
     }
 

@@ -21,8 +21,8 @@ public class GameCanvas extends JComponent {
     private Game game;
     public Player p1, p2;
     public Boss Yalin;
-    public BulletController controller1,controller2;
     private ClassSelection classSelect;
+    public BulletController controller1,controller2,bossController;
     private int pNum;
     private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
     private static final int FPS_CAP = 60;
@@ -30,7 +30,7 @@ public class GameCanvas extends JComponent {
 
     //Network Stuff
     private DatagramSocket clientSocket;
-    private static final int bufMax = 512;
+    private static final int bufMax = 16384;
     
     //private MenuObjects serverSelectionMenu;
     //private MenuObjects classSelectionMenu;
@@ -62,6 +62,7 @@ public class GameCanvas extends JComponent {
         Yalin = game.getYalin();
         controller1 = game.getBC1();
         controller2 = game.getBC2();
+        bossController = game.getBBC();
         
         /* game.startThread(); */
         drawTimer.start();
@@ -138,10 +139,10 @@ public class GameCanvas extends JComponent {
         try {
             clientSocket = new DatagramSocket();
             
-            InetAddress ip = InetAddress.getByName("localhost");
+            InetAddress ip = InetAddress.getByName("ginks.ml");
             int port = 25570;
 
-            Socket cSoc = new Socket("localhost",port);
+            Socket cSoc = new Socket("ginks.ml",port);
             
             wtsLoop = new WriteToServer(ip, port, 20);
             rfsLoop = new ReadFromServer();
@@ -254,9 +255,11 @@ public class GameCanvas extends JComponent {
                         controller1.receiveCompressedData(sDataIn);
                     } else if(sDataIn.startsWith("p2BC_")) {
                         controller2.receiveCompressedData(sDataIn);
+                    } else if(sDataIn.startsWith("BBC_")){
+                        bossController.receiveCompressedData(sDataIn);
                     } else {
                         System.out.println("Data bad: " + sDataIn);
-                    }   
+                    }
                     
                 }
             } catch(IOException ex) {

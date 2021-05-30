@@ -54,6 +54,11 @@ public class Boss implements GameObject{
     public void update(double d) {
         
         box = new Hitbox(xPos + 102, yPos + 98, 198, 160);
+
+        if(hitPoints <= 0) {
+            isAlive = false;
+        }
+
         if(mUp) {
             if (yPos >= randomDistance){
                 yPos -= moveSpeed*d;
@@ -154,7 +159,6 @@ public class Boss implements GameObject{
 
     public void gotHit(){
         hitPoints -= 1;
-        System.out.println(hitPoints);
     }
 
     public double getBossHP(){
