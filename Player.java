@@ -242,6 +242,30 @@ public class Player implements GameObject {
      */
     public void setShip(int shipType) {
         this.shipType = shipType;
+        switch (shipType) {
+            case 1: //offensive
+                hitPoints = 1;
+                moveSpeed = 500;
+                projectileDamage = 5;
+                break;
+
+            case 2: //balanced
+                hitPoints = 3;
+                moveSpeed = 400;
+                projectileDamage = 3;
+                break;
+
+            case 3: //defensive
+                hitPoints = 5;
+                moveSpeed = 300;
+                projectileDamage = 1;
+                break;
+            default:
+                hitPoints = 100;
+                moveSpeed = 400;
+                projectileDamage = 1;
+                break;
+        } 
     }
 
     public int getHitPoints() {

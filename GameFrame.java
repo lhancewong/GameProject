@@ -51,13 +51,21 @@ public class GameFrame {
         mainPanel.addKeyListener(ka);
     }
 
+<<<<<<< HEAD
     
+=======
+    public void setUpClassSelection() {
+        mainPanel.addMouseListener(gameCanvas.getCSelection());
+    }
+
+>>>>>>> c5daca06b1881cea98d338f87226cfb48fb5c632
     /**
      * Starts the game.
      */
     public void startGame() {
         setUpGUI();
         setUpKeyActions();
+        setUpClassSelection();
         mainPanel.requestFocus();
     }
     
