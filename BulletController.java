@@ -66,7 +66,7 @@ public class BulletController implements GameObject{
         bossTimer += deltaTime;
 
         if (isPlayer){
-            sDataOut = player.getPlayerName() + "BC_";
+            sDataOut = "BC_";
             if (shipBulletArray.size() > 0){
                 for (ShipBullet i : shipBulletArray){
                     if (i.getX() > GameUtils.get().getWidth()){
@@ -186,8 +186,8 @@ public class BulletController implements GameObject{
 
 
     @Override
-    public byte[] getCompressedData() {
-        return sDataOut.getBytes();
+    public String getCompressedData() {
+        return sDataOut;
     }
 
     @Override

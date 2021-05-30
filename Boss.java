@@ -171,8 +171,8 @@ public class Boss implements GameObject{
     }
 
     @Override
-    public byte[] getCompressedData() {
-        return sDataOut.getBytes();
+    public String getCompressedData() {
+        return sDataOut;
     }
 
     @Override

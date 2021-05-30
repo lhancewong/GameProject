@@ -90,7 +90,7 @@ public class BossBullet implements GameObject{
     }
 
     @Override
-    public byte[] getCompressedData() {
+    public String getCompressedData() {
         return null;
     }
 

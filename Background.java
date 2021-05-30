@@ -69,7 +69,7 @@ public class Background implements GameObject {
         
     }
     @Override
-    public byte[] getCompressedData() {
+    public String getCompressedData() {
         // TODO Auto-generated method stub
         return null;
     }

@@ -25,7 +25,7 @@ public interface GameObject {
     /**
      * Gets the compressed data of the GameObject.
      */
-    byte[] getCompressedData();
+    String getCompressedData();
 
     /**
      * Receives the compressed string data.
