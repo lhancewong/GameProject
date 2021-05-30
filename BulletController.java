@@ -41,6 +41,7 @@ public class BulletController implements GameObject{
         isPlayer = false;
         bossBulletArray = new CopyOnWriteArrayList<BossBullet>();
         bossTimer = 0;
+
         sDataOut = "";
         sDataIn = "";
     }
@@ -63,6 +64,7 @@ public class BulletController implements GameObject{
     @Override
     public void update(double deltaTime) {
         bossTimer += deltaTime;
+
         if (isPlayer){
             sDataOut = player.getPlayerName() + "BC_";
             if (shipBulletArray.size() > 0){
@@ -89,17 +91,18 @@ public class BulletController implements GameObject{
                 }
             }
             if (bossTimer > 3){
-                if (boss.getBossHP() > 5){
+                if (boss.getBossHP() > 30){
                     addBullet();
                     sDataOut = sDataOut.concat(String.format("%.2f_%.2f_%d_",boss.getX()+100,boss.getY()+175,1));
                     bossTimer = 0;
                 }
-                else if (boss.getBossHP() <= 5){
+                else if (boss.getBossHP() <= 30){
                     addBullet();
                     sDataOut = sDataOut.concat(String.format("%.2f_%.2f_%d_",boss.getX()+100,boss.getY()+175,2));
                 }
             }
         }
+
         readStringData(sDataIn);
     }
 
@@ -131,29 +134,33 @@ public class BulletController implements GameObject{
 
     public void addBullet(){
         if (isPlayer){
-            if (shipBulletArray.size() < max){
-                switch(player.getShipType()) {
-                    case 1: //offensive
-                        shipBulletArray.add(new ShipBullet(player.getX() + 180, player.getY() + 37));
-                        break;
-                    case 2: //balanced
-                        shipBulletArray.add(new ShipBullet(player.getX() + 130, player.getY() + 50));
-                        break;
-                    case 3: //defensive
-                        shipBulletArray.add(new ShipBullet(player.getX() + 130, player.getY() + 55));
-                        break;
-                    default:
-                        shipBulletArray.add(new ShipBullet(player.getX() + 130, player.getY() + 50));
-                        break;
+            if(player.isAlive) {
+                if (shipBulletArray.size() < max){
+                    switch(player.getShipType()) {
+                        case 1: //offensive
+                            shipBulletArray.add(new ShipBullet(player.getX() + 180, player.getY() + 37));
+                            break;
+                        case 2: //balanced
+                            shipBulletArray.add(new ShipBullet(player.getX() + 130, player.getY() + 50));
+                            break;
+                        case 3: //defensive
+                            shipBulletArray.add(new ShipBullet(player.getX() + 130, player.getY() + 55));
+                            break;
+                        default:
+                            shipBulletArray.add(new ShipBullet(player.getX() + 130, player.getY() + 50));
+                            break;
+                    }
                 }
             }
         }
         else {
-            if (boss.getBossHP() > 5){
-                bossBulletArray.add(new BossBullet(boss.getX() + 100, boss.getY() + 175, 1) );
-            }
-            else if ( boss.getBossHP() <= 5){
-                bossBulletArray.add(new BossBullet(boss.getX() + 100, boss.getY() + 175, 2) );
+            if(boss.isAlive) {
+                if (boss.getBossHP() > 30){
+                    bossBulletArray.add(new BossBullet(boss.getX() + 100, boss.getY() + 175, 1) );
+                }
+                else if ( boss.getBossHP() <= 30){
+                    bossBulletArray.add(new BossBullet(boss.getX() + 100, boss.getY() + 175, 2) );
+                }
             }
         }
 

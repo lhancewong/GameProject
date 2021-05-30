@@ -51,6 +51,7 @@ public class GameFrame {
         mainPanel.addKeyListener(ka);
     }
 
+    
     /**
      * Starts the game.
      */

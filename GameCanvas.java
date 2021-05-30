@@ -131,7 +131,7 @@ public class GameCanvas extends JComponent {
 
             Socket cSoc = new Socket("ginks.ml",port);
             
-            wtsLoop = new WriteToServer(ip, port, 20);
+            wtsLoop = new WriteToServer(ip, port, 16);
             rfsLoop = new ReadFromServer();
 
             System.out.println("Requesting for Player number from server...");

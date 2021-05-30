@@ -5,7 +5,7 @@ import java.awt.event.*;
  */
 public class KeyAction extends KeyAdapter {
     private Player playerShip;
-    Game game;
+    private Game game;
 
     /**
      * Initializes KeyActions.
@@ -21,6 +21,14 @@ public class KeyAction extends KeyAdapter {
 	public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
+        /**
+         * W to move up
+         * A to move left
+         * S to move down
+         * D to move right
+         * 
+         * Space to shoot a bullet
+         */
         switch(keyCode) {
             case KeyEvent.VK_W:
                 playerShip.mUp = true;
@@ -35,7 +43,7 @@ public class KeyAction extends KeyAdapter {
                 playerShip.mRight = true;
                 break;
             case KeyEvent.VK_SPACE:
-                game.getController().addBullet();
+                game.getMainController().addBullet();
                 break;
         }
 
@@ -45,6 +53,12 @@ public class KeyAction extends KeyAdapter {
     public void keyReleased(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
+        /**
+         * Release W to stop moving up
+         * Release A to stop moving up
+         * Release S to stop moving up
+         * Release D to stop moving up
+         */
         switch(keyCode) {
             case KeyEvent.VK_W:
                 playerShip.mUp = false;

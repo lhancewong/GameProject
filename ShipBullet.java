@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.io.*;
+import javax.imageio.*;
+import java.awt.image.*;
 
 /**
  * The projectiles of the player ship.
@@ -7,6 +9,7 @@ import java.io.*;
 public class ShipBullet implements GameObject, Projectile {
     private double xPos, yPos; 
     private double speed;
+    private BufferedImage bullet;
 
     public ShipBullet(double xPos, double yPos) {
         this.xPos = xPos;
@@ -21,8 +24,12 @@ public class ShipBullet implements GameObject, Projectile {
 
     @Override
     public void draw(Graphics2D g2d) {
-        g2d.setColor(Color.black);
-        g2d.fillRect( (int) xPos, (int) yPos, 4, 4);
+        bullet = null;
+        try {
+            bullet = ImageIO.read(new File("sprites/bollet.png"));
+        } catch (IOException e) {
+        }
+        g2d.drawImage(bullet, (int) xPos, (int) yPos, null, null);
 
     }
 

@@ -1,6 +1,4 @@
 import java.awt.Graphics2D;
-import java.io.*;
-import java.net.DatagramSocket;
 
 /**
  * All drawn game objects will implement this class. It has methods that every game

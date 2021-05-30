@@ -1,14 +1,11 @@
 import java.awt.*;
 import java.awt.geom.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 
 public class Hitbox implements GameObject{
     private double xPos;
     private double yPos;
     private double width;
     private double height;
-    private double moveSpeed;
     private Rectangle2D box;
 
 

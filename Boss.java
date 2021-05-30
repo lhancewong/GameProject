@@ -12,7 +12,7 @@ public class Boss implements GameObject{
     private double xPos, yPos;
     private int randomDistance;
     private double moveSpeed;
-    private boolean isAlive;
+    public boolean isAlive;
     private boolean mUp, mDown, movingLeft, movingRight;
     private BufferedImage boss1, boss2;
     private Hitbox box;
@@ -25,7 +25,7 @@ public class Boss implements GameObject{
         xPos = (GameUtils.get().getWidth()/2)+150;
         yPos = GameUtils.get().getHeight() - 460;
         moveSpeed = 400;
-        hitPoints = 10;
+        hitPoints = 70;
         isAlive = true;
         mUp = true;
         mDown = false;
@@ -39,7 +39,7 @@ public class Boss implements GameObject{
     @Override
     public void draw(Graphics2D g2d) {
         if (isAlive) {
-            if (hitPoints > 5) {
+            if (hitPoints > 30) {
                 boss1(g2d);
             }
             else {
@@ -52,13 +52,12 @@ public class Boss implements GameObject{
     
     @Override
     public void update(double d) {
-        
-        box = new Hitbox(xPos + 102, yPos + 98, 198, 160);
-
         if(hitPoints <= 0) {
             isAlive = false;
         }
-
+        
+        if(isAlive) {
+        box = new Hitbox(xPos + 102, yPos + 98, 198, 160);
         if(mUp) {
             if (yPos >= randomDistance){
                 yPos -= moveSpeed*d;
@@ -79,6 +78,7 @@ public class Boss implements GameObject{
         //mUp_mDown_randomDistance_hitPoints_
         sDataOut = String.format("Yalin_%.1f_%.1f_%b_%b_%d_%.1f_",xPos,yPos,mUp,mDown,randomDistance,hitPoints);
         readStringData(sDataIn);
+        }
 
     }
 
@@ -113,10 +113,21 @@ public class Boss implements GameObject{
         g2d.drawImage(boss2, (int) xPos, (int) yPos, null, null);
     }
 
+    /**
+     * Returns the boss's hitbox
+     * 
+     * @return hitbox
+     */
     public Hitbox getHitbox(){
         return box;
     }
 
+    /**
+     * Checks if the bullet is inside the boss's hitbox
+     * 
+     * @param i the bullet to be tested
+     * @return true if the bullet is inside the hitbox and false if it isn't
+     */
     public boolean checkHitbox(ShipBullet i){
         if (i.getX() >= box.getX() && 
             i.getX() <= box.getX() + box.getWidth() &&
@@ -129,12 +140,6 @@ public class Boss implements GameObject{
         }
     }
 
-    //encapsulate all movement things under this function
-    public void movementPattern(){
-        
-        
-    }
-
     public double getX(){
         return xPos;
     }
@@ -144,7 +149,6 @@ public class Boss implements GameObject{
     }
 
     public void changeDirection(){
-
         if (mUp){
             mDown = !mDown;
             mUp =  !mUp;

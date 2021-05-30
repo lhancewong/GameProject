@@ -1,5 +1,8 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 
 public class BossBullet implements GameObject{
 
@@ -7,12 +10,18 @@ public class BossBullet implements GameObject{
     private double width, height;
     private double speed;
     private int attackType;
+    private BufferedImage bullet1, bullet2;
 
     public BossBullet (double xPos, double yPos, int attackType){
         this.xPos = xPos;
         this.yPos = yPos;
         this.attackType = attackType;
-        speed = 500;
+        if (attackType == 1) {
+            speed = 650;
+        } else {
+            speed = 500;
+        }
+        
     }
 
     @Override
@@ -30,18 +39,26 @@ public class BossBullet implements GameObject{
     }
 
     public void bullet1(Graphics2D g2d){
-        g2d.setColor(Color.red);
-        g2d.fillRoundRect((int)xPos, (int)yPos, (int) width, (int) height, 10, 10);
+        bullet1 = null;
+        try {
+            bullet1 = ImageIO.read(new File("sprites/fireball.png"));
+        } catch (IOException e) {
+        }
+        g2d.drawImage(bullet1, (int) xPos, (int) yPos, null, null);
     }
 
     public void bullet2(Graphics2D g2d){
-        g2d.setColor(Color.red);
-        g2d.fillRoundRect((int)xPos, (int)yPos, (int) width, (int) height, 10, 10);
+        bullet2 = null;
+        try {
+            bullet2 = ImageIO.read(new File("sprites/gordo.png"));
+        } catch (IOException e) {
+        }
+        g2d.drawImage(bullet2, (int) xPos, (int) yPos, null, null);
     }
 
     @Override
     public void update(double deltaTime) {
-        xPos -= 500 *deltaTime;
+        xPos -= speed *deltaTime;
     }
 
     public double getX() {

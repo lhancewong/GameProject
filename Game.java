@@ -1,11 +1,5 @@
 import java.util.ArrayList;
 import java.awt.*;
-import javax.swing.*;
-import java.awt.geom.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 //====================== Game Stuff ============================//
@@ -18,13 +12,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
     private Background bg1;
     private Background bg2;
     private Thread logicLoop;
-    private long sleepTime;
     public Player p1, p2;
     public Boss Yalin;
     public int pNum;
     private boolean isRunning, isMaster, isBossFight, isServerSelection, isClassSelection;
     private BulletController controller1,controller2;
     private BulletController bosscontroller;
+
     public CopyOnWriteArrayList<ShipBullet> bullets;
     private ArrayList<GameObject> bossFight;
     
@@ -41,6 +35,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
         pNum = GameUtils.get().getPlayerNum();
         initBossFight();
         initMenuSelection();
+        initServerSelection();
 
         this.isMaster = isMaster;
     }
@@ -69,6 +64,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
             checkBulletHitboxes();
             
+            
             previousTime = currentTime;
 
             try { Thread.sleep(16); }
@@ -84,8 +80,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
         bg1 = new Background(1);
         bg2 = new Background(2);
         Yalin = new Boss();
-        p1 = new Player("p1",210,180,30,1);
-        p2 = new Player("p2",210,540,30,3);
+        p1 = new Player("p1",210,180,1);
+        p2 = new Player("p2",210,540,3);
         controller1 = new BulletController(p1);
         controller2 = new BulletController(p2);
         bosscontroller = new BulletController(Yalin);
@@ -110,6 +106,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
     }
 
+    /**
+     * Initializes the server selection screen.
+     */
+    private void initServerSelection() {
+
+    }
+
     public void draw(Graphics2D g2d){
         g2d = (Graphics2D) g2d;
         g2d.setColor(new Color(100,150,150));
@@ -119,6 +122,21 @@ import java.util.concurrent.CopyOnWriteArrayList;
                 i.draw(g2d);
             }
         }
+
+        if(pNum == 1) {
+            Font font = new Font("Serif", Font.PLAIN, 40);
+            g2d.setFont(font);
+            g2d.setColor(Color.BLACK);
+            g2d.drawString("P1 HP:"+String.valueOf(p1.getHitPoints()),10,710);
+            g2d.drawString("P2 HP:"+String.valueOf(p2.getHitPoints()),1100,710);
+        } else {
+            Font font = new Font("Serif", Font.PLAIN, 40);
+            g2d.setFont(font);
+            g2d.setColor(Color.BLACK);
+            g2d.drawString("P2 HP:"+String.valueOf(p2.getHitPoints()),10,710);
+            g2d.drawString("P1 HP:"+String.valueOf(p1.getHitPoints()),1100,710);
+        }
+
     }
 
     public int getPlayerNumber() {
@@ -126,38 +144,47 @@ import java.util.concurrent.CopyOnWriteArrayList;
     }
 
     public void checkBulletHitboxes() {
-        for(ShipBullet i: controller1.getshipBulletArray()) {
-            if (Yalin.checkHitbox(i)){
-                //System.out.println("HIT");
-                Yalin.gotHit();
-                controller1.removeShipBullet(i);
+        if(Yalin.isAlive) {
+            for(ShipBullet i: controller1.getshipBulletArray()) {
+                if (Yalin.checkHitbox(i)){
+                    //System.out.println("HIT");
+                    Yalin.gotHit();
+                    controller1.removeShipBullet(i);
+                }
+            }
+
+            for(ShipBullet i: controller2.getshipBulletArray()) {
+                if (Yalin.checkHitbox(i)){
+                    //System.out.println("HIT");
+                    Yalin.gotHit();
+                    controller2.removeShipBullet(i);
+                }
             }
         }
-        for(ShipBullet i: controller2.getshipBulletArray()) {
-            if (Yalin.checkHitbox(i)){
-                //System.out.println("HIT");
-                Yalin.gotHit();
-                controller2.removeShipBullet(i);
+
+        if(p1.isAlive) {
+            for(BossBullet i: bosscontroller.getbossBulletArray()) {
+                if (p1.checkHitbox(i)){
+                    //System.out.println("HIT");
+                    p1.gotHit();
+                    bosscontroller.removeBossBullet(i);
+                }
             }
         }
-        for(BossBullet i: bosscontroller.getbossBulletArray()) {
-            if (p1.checkHitbox(i)){
-                //System.out.println("HIT");
-                p1.gotHit();
-                bosscontroller.removeBossBullet(i);
-            }
-        }
-        for(BossBullet i: bosscontroller.getbossBulletArray()) {
-            if (p2.checkHitbox(i)){
-                //System.out.println("HIT");
-                p2.gotHit();
-                bosscontroller.removeBossBullet(i);
+        
+        if(p2.isAlive) {
+            for(BossBullet i: bosscontroller.getbossBulletArray()) {
+                if (p2.checkHitbox(i)){
+                    //System.out.println("HIT");
+                    p2.gotHit();
+                    bosscontroller.removeBossBullet(i);
+                }
             }
         }
     }
 
 
-    public BulletController getController(){
+    public BulletController getMainController(){
         if(pNum == 1) {
             return controller1;
         } else {

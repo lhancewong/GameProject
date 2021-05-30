@@ -13,18 +13,15 @@ public class Player implements GameObject {
     //appearance related
     private double xPos, yPos;
     private double size;
-    private double width, height;
     private int shipType;
     private BufferedImage ship1Image;
     private BufferedImage ship2Image;
     private BufferedImage ship3Image;
     private Hitbox box;
-
     //game related
-    private double hitPoints;
+    private int hitPoints;
     private double moveSpeed;
-    private int projectileDamage; //?
-    private boolean isAlive;
+    public boolean isAlive;
     //movements related
     public boolean mUp, mDown, mLeft, mRight; //not sure yet
     private String sDataOut, sDataIn;
@@ -38,11 +35,10 @@ public class Player implements GameObject {
      * @param yPos y coordinate of ship
      * @param shipType 1 for offense, 2 for balance, 3 for defense
      */
-    public Player(String pName, double xPos, double yPos, double size, int shipType) {
+    public Player(String pName, double xPos, double yPos, int shipType) {
         this.pName = pName;
         this.xPos = xPos;
         this.yPos = yPos;
-        this.size = size;
         this.shipType = shipType;
         box = new Hitbox(xPos + 30, yPos + 12, 134, 46);
 
@@ -54,24 +50,23 @@ public class Player implements GameObject {
             case 1: //offensive
                 hitPoints = 1;
                 moveSpeed = 500;
-                projectileDamage = 5;
+                size = 30;
                 break;
 
             case 2: //balanced
                 hitPoints = 3;
                 moveSpeed = 400;
-                projectileDamage = 3;
+                size = 2;
                 break;
 
             case 3: //defensive
                 hitPoints = 5;
                 moveSpeed = 300;
-                projectileDamage = 1;
+                size = 14;
                 break;
             default:
                 hitPoints = 100;
                 moveSpeed = 400;
-                projectileDamage = 1;
                 break;
         } 
 
@@ -84,13 +79,12 @@ public class Player implements GameObject {
             ship3Image = ImageIO.read(new File("sprites/Ship3.png"));
         } catch (IOException e) {
         }
+
         isAlive = true;
         mUp = false;
         mDown = false;
         mLeft = false;
         mRight = false;
-
-        
 
         sDataOut = "";
         sDataIn = "";
@@ -103,7 +97,7 @@ public class Player implements GameObject {
      */
     @Override
     public void draw(Graphics2D g2d) {
-        if (isAlive)
+        if (isAlive) {
             switch(shipType) {
                 case 1: //offensive
                     offensiveShip(g2d);
@@ -118,6 +112,9 @@ public class Player implements GameObject {
                     g2d.setColor(Color.BLACK);
                     g2d.fillRect((int)xPos,(int)yPos,(int)size,(int)size);
             }
+        }
+
+        
 
     }
 
@@ -173,7 +170,7 @@ public class Player implements GameObject {
         }
 
 
-        sDataOut = String.format("%s_%.1f_%.1f_%b_%b_%b_%b_%.1f_",pName,xPos,yPos,mUp,mDown,mLeft,mRight,hitPoints);
+        sDataOut = String.format("%s_%.1f_%.1f_%b_%b_%b_%b_%d_",pName,xPos,yPos,mUp,mDown,mLeft,mRight,hitPoints);
         readStringData(sDataIn);
     }
 
@@ -186,17 +183,8 @@ public class Player implements GameObject {
             mDown = Boolean.parseBoolean(data[4]);
             mLeft = Boolean.parseBoolean(data[5]);
             mRight = Boolean.parseBoolean(data[6]);
-            hitPoints = Double.parseDouble(data[7]);
+            hitPoints = Integer.parseInt(data[7]);
         }  
-    }
-
-    /**
-     * Increments the player's amount of hitpoints.
-     * 
-     * @param amnt
-     */
-    public void incrementHitPoints(double amnt) {
-        hitPoints += amnt;
     }
 
     /**
@@ -256,8 +244,8 @@ public class Player implements GameObject {
         this.shipType = shipType;
     }
 
-    public Hitbox getHitbox(){
-        return box;
+    public int getHitPoints() {
+        return hitPoints;
     }
 
     public int getShipType(){
