@@ -32,9 +32,12 @@ public class BossBullet implements GameObject{
             bullet1(g2d);
         }
         else if (attackType == 2){
-            width = 20;
+            width = 150;
+            height = 60;
+            bullet1(g2d);
+            /* width = 20;
             height = 10;
-            bullet2(g2d);
+            bullet2(g2d); */
         }
     }
 

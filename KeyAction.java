@@ -43,7 +43,7 @@ public class KeyAction extends KeyAdapter {
                 playerShip.mRight = true;
                 break;
             case KeyEvent.VK_SPACE:
-                game.getMainController().addBullet();
+                game.getController().addBullet();
                 break;
         }
 

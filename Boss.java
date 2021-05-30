@@ -25,7 +25,7 @@ public class Boss implements GameObject{
         xPos = (GameUtils.get().getWidth()/2)+150;
         yPos = GameUtils.get().getHeight() - 460;
         moveSpeed = 400;
-        hitPoints = 70;
+        hitPoints = 40;
         isAlive = true;
         mUp = true;
         mDown = false;
@@ -43,6 +43,7 @@ public class Boss implements GameObject{
                 boss1(g2d);
             }
             else {
+                moveSpeed = 500;
                 boss2(g2d);
             }
         }
@@ -152,12 +153,12 @@ public class Boss implements GameObject{
         if (mUp){
             mDown = !mDown;
             mUp =  !mUp;
-            randomDistance = (int)Math.floor(Math.random()*(383-yPos+1)+yPos);
+            randomDistance = (int)Math.floor(Math.random()*(383-yPos+1)+yPos) + 50;
         }
         else{
             mDown = !mDown;
             mUp =  !mUp;
-            randomDistance = (int)Math.floor(Math.random()*(yPos-0+1)+0);
+            randomDistance = (int)Math.floor(Math.random()*(yPos-0+1)+0) - 50;
         }
     }
 

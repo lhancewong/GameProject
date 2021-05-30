@@ -79,13 +79,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
         bg1 = new Background(1);
         bg2 = new Background(2);
         Yalin = new Boss();
-<<<<<<< HEAD
-        p1 = new Player("p1",210,180,1);
-        p2 = new Player("p2",210,540,3);
-=======
         pNum = 1;
         
->>>>>>> c5daca06b1881cea98d338f87226cfb48fb5c632
         controller1 = new BulletController(p1);
         controller2 = new BulletController(p2);
         bosscontroller = new BulletController(Yalin);
@@ -107,8 +102,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
      * Initializes the menu screen.
      */
     private void initMenuSelection() {
-        p1 = new Player("p1",210,180,30,1);
-        p2 = new Player("p2",210,540,30,3);
+        p1 = new Player("p1",210,180,2);
+        p2 = new Player("p2",210,540,2);
     }
 
 
@@ -150,6 +145,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
             g2d.setColor(Color.BLACK);
             g2d.drawString("P2 HP:"+String.valueOf(p2.getHitPoints()),10,710);
             g2d.drawString("P1 HP:"+String.valueOf(p1.getHitPoints()),1100,710);
+        }
+
+        if (!(Yalin.isAlive)){
+            Font font = new Font("Elephant", Font.PLAIN, 100);
+            g2d.setFont(font);
+            g2d.setColor(Color.BLACK);
+            g2d.drawString("YOU WIN", GameUtils.get().getWidth()/2 - g2d.getFontMetrics(font).stringWidth("YOU WIN") / 2, 360);
         }
 
     }
@@ -194,18 +196,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
             }
         }
     }
-<<<<<<< HEAD
 
-
-    public BulletController getMainController(){
-=======
     
     public int getPlayerNumber() {
         return pNum;
     }
     
     public BulletController getController(){
->>>>>>> c5daca06b1881cea98d338f87226cfb48fb5c632
         if(pNum == 1) {
             return controller1;
         } else {

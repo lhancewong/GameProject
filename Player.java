@@ -135,7 +135,7 @@ public class Player implements GameObject {
                 box = new Hitbox(xPos + 30, yPos + 12, 134, 46);
                 break;
             case 2:
-                box = new Hitbox(xPos + 2, yPos + 6, 112, 72);
+                box = new Hitbox(xPos + 5, yPos + 6, 112, 50);
                 break;
             case 3:
                 box = new Hitbox(xPos + 14, yPos + 10, 106, 50);
@@ -246,24 +246,20 @@ public class Player implements GameObject {
             case 1: //offensive
                 hitPoints = 1;
                 moveSpeed = 500;
-                projectileDamage = 5;
                 break;
 
             case 2: //balanced
                 hitPoints = 3;
                 moveSpeed = 400;
-                projectileDamage = 3;
                 break;
 
             case 3: //defensive
                 hitPoints = 5;
                 moveSpeed = 300;
-                projectileDamage = 1;
                 break;
             default:
                 hitPoints = 100;
                 moveSpeed = 400;
-                projectileDamage = 1;
                 break;
         } 
     }

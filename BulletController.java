@@ -99,6 +99,7 @@ public class BulletController implements GameObject{
                 else if (boss.getBossHP() <= 30){
                     addBullet();
                     sDataOut = sDataOut.concat(String.format("%.2f_%.2f_%d_",boss.getX()+100,boss.getY()+175,2));
+                    bossTimer = 2;
                 }
             }
         }

@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -8,13 +7,20 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.imageio.*;
 import java.awt.image.*;
+import java.io.*;
 
-public class ClassSelection extends MouseAdapter{
+public class ClassSelection extends MouseAdapter {
     
     public boolean active;
     private Font font;
+    private Font font2;
     private Game game;
     public boolean readyState;
+    private String sDataOut;
+    private BufferedImage ship1Image;
+    private BufferedImage ship2Image;
+    private BufferedImage ship3Image;
+    private BufferedImage bg;
 
     //Class 1: Offensive
     private Rectangle ofsBtn;
@@ -41,13 +47,29 @@ public class ClassSelection extends MouseAdapter{
 	private String quitTxt = "Quit";
 	private boolean qHighlight = false;
 
+    private String health;
+    private String speed;
+    private String maxBullets;
+
     public ClassSelection(Game game) {
         active = true;
         this.game = game;
         int x, y, w, h;
-         
-        w = 150;
-		h = 300;
+        
+        ship1Image = null;
+        ship2Image = null;
+        ship3Image = null;
+        bg = null;
+        try {
+            ship1Image = ImageIO.read(new File("sprites/Ship1.png"));
+            ship2Image = ImageIO.read(new File("sprites/Ship2.png"));
+            ship3Image = ImageIO.read(new File("sprites/Ship3.png"));
+            bg = ImageIO.read(new File("sprites/bg3.jpg"));
+        } catch (IOException e) {
+        }
+        
+        w = 300;
+		h = 500;
 
         y = GameUtils.get().getHeight() / 2 - h / 2;
 
@@ -60,8 +82,8 @@ public class ClassSelection extends MouseAdapter{
         x = GameUtils.get().getWidth() * 3 / 4 - w / 2; 
         defBtn = new Rectangle(x, y, w, h);
 
-        w = 200;
-		h = 100;
+        w = 180;
+		h = 80;
         x = GameUtils.get().getWidth() * 3 / 4; 
         y = GameUtils.get().getHeight() - 50 - h / 2 ;
         quitBtn = new Rectangle(x, y, w, h);
@@ -69,12 +91,14 @@ public class ClassSelection extends MouseAdapter{
         x = GameUtils.get().getWidth() * 3 / 4 - 200; 
         rdyBtn = new Rectangle(x, y, w, h);
 
-        font = new Font("Comic Sans", Font.PLAIN, 100);
+        font = new Font("Comic Sans", Font.PLAIN, 40);
+        font2 = new Font("Comic Sans", Font.PLAIN, 20);
     }
     
     
     public void draw(Graphics2D g2d) {
-        
+
+        g2d.drawImage(bg, 0, 0, null, null);
         g2d.setFont(font);
 
         // draw buttons
@@ -114,32 +138,92 @@ public class ClassSelection extends MouseAdapter{
         int strWidth, strHeight;
 
         //Offensive class text
+        health = "Health: Low";
+        speed = "Speed: Fast";
+        maxBullets = "Max Bullets: 5";
+        
         strWidth = g2d.getFontMetrics(font).stringWidth(ofsTxt);
 		strHeight = g2d.getFontMetrics(font).getHeight();
-
+        
+        g2d.drawImage(ship1Image, (int) (ofsBtn.getX() + ofsBtn.getWidth() / 2 - 94), 
+        (int) (ofsBtn.getY() + ofsBtn.getHeight() / 4 - 50), null, null);
         g2d.setColor(Color.blue);
 		g2d.drawString(ofsTxt, (int) (ofsBtn.getX() + ofsBtn.getWidth() / 2 - strWidth / 2),
-				(int) (ofsBtn.getY() + ofsBtn.getHeight() / 2 + strHeight / 4));
+				(int) (ofsBtn.getY() + ofsBtn.getHeight() / 2 + strHeight / 4)); 
+
+
+        g2d.setFont(font2);
+        g2d.setColor(Color.ORANGE);
+        strWidth = g2d.getFontMetrics(font2).stringWidth(health);
+        g2d.drawString(health, (int) (ofsBtn.getX() + ofsBtn.getWidth() / 2 - strWidth / 2),
+				(int) (ofsBtn.getY() + ofsBtn.getHeight() * 3 / 4 )); 
+
+        strWidth = g2d.getFontMetrics(font2).stringWidth(speed);
+        g2d.drawString(speed, (int) (ofsBtn.getX() + ofsBtn.getWidth() / 2 - strWidth / 2),
+				(int) (ofsBtn.getY() + ofsBtn.getHeight() * 3 / 4 + 50)); 
+        
+        strWidth = g2d.getFontMetrics(font2).stringWidth(maxBullets);
+        g2d.drawString(maxBullets, (int) (ofsBtn.getX() + ofsBtn.getWidth() / 2 - strWidth / 2),
+				(int) (ofsBtn.getY() + ofsBtn.getHeight() * 3 / 4 + 100)); 
+
 
         //Balanced class text
-        strWidth = g2d.getFontMetrics(font).stringWidth(balTxt);
-		strHeight = g2d.getFontMetrics(font).getHeight();
+        health = "Health: Normal";
+        speed = "Speed: Normal";
+        maxBullets = "Max Bullets: 3";
 
+        g2d.setFont(font);
+        strWidth = g2d.getFontMetrics(font).stringWidth(balTxt);
+        g2d.drawImage(ship3Image, (int) (balBtn.getX() + balBtn.getWidth() / 2 - 69), 
+        (int) (balBtn.getY() + balBtn.getHeight() / 4 - 50), null, null);
         g2d.setColor(Color.blue);
 		g2d.drawString(balTxt, (int) (balBtn.getX() + balBtn.getWidth() / 2 - strWidth / 2),
 				(int) (balBtn.getY() + balBtn.getHeight() / 2 + strHeight / 4));
 
-        //Defensive class text
-        strWidth = g2d.getFontMetrics(font).stringWidth(defTxt);
-		strHeight = g2d.getFontMetrics(font).getHeight();
+        g2d.setFont(font2);
+        g2d.setColor(Color.ORANGE);
+        strWidth = g2d.getFontMetrics(font2).stringWidth(health);
+        g2d.drawString(health, (int) (balBtn.getX() + balBtn.getWidth() / 2 - strWidth / 2),
+				(int) (balBtn.getY() + balBtn.getHeight() * 3 / 4));
 
+        strWidth = g2d.getFontMetrics(font2).stringWidth(speed);
+        g2d.drawString(speed, (int) (balBtn.getX() + balBtn.getWidth() / 2 - strWidth / 2),
+				(int) (balBtn.getY() + balBtn.getHeight() * 3 / 4 + 50));
+
+        strWidth = g2d.getFontMetrics(font2).stringWidth(maxBullets);
+        g2d.drawString(maxBullets, (int) (balBtn.getX() + balBtn.getWidth() / 2 - strWidth / 2),
+				(int) (balBtn.getY() + balBtn.getHeight() * 3 / 4 + 100));
+
+        //Defensive class text
+        health = "Health: High";
+        speed = "Speed: Slow";
+        maxBullets = "Max Bullets: 1";
+
+        g2d.setFont(font);
+        strWidth = g2d.getFontMetrics(font).stringWidth(defTxt);
+        g2d.drawImage(ship2Image, (int) (defBtn.getX() + defBtn.getWidth() / 2 - 68), 
+        (int) (defBtn.getY() + defBtn.getHeight() / 4 - 50), null, null);
         g2d.setColor(Color.blue);
 		g2d.drawString(defTxt, (int) (defBtn.getX() + defBtn.getWidth() / 2 - strWidth / 2),
 				(int) (defBtn.getY() + defBtn.getHeight() / 2 + strHeight / 4));
 
+        g2d.setFont(font2);
+        g2d.setColor(Color.ORANGE);
+        strWidth = g2d.getFontMetrics(font2).stringWidth(health);
+        g2d.drawString(health, (int) (defBtn.getX() + defBtn.getWidth() / 2 - strWidth / 2),
+				(int) (defBtn.getY() + defBtn.getHeight() * 3 / 4));
+
+        strWidth = g2d.getFontMetrics(font2).stringWidth(speed);
+        g2d.drawString(speed, (int) (defBtn.getX() + defBtn.getWidth() / 2 - strWidth / 2),
+				(int) (defBtn.getY() + defBtn.getHeight() * 3 / 4 + 50));
+
+        strWidth = g2d.getFontMetrics(font2).stringWidth(maxBullets);
+        g2d.drawString(maxBullets, (int) (defBtn.getX() + defBtn.getWidth() / 2 - strWidth / 2),
+				(int) (defBtn.getY() + defBtn.getHeight() * 3 / 4 + 100));
+
         //Ready Button text
+        g2d.setFont(font);
         strWidth = g2d.getFontMetrics(font).stringWidth(rdyTxt);
-		strHeight = g2d.getFontMetrics(font).getHeight();
 
         g2d.setColor(Color.green);
 		g2d.drawString(rdyTxt, (int) (rdyBtn.getX() + rdyBtn.getWidth() / 2 - strWidth / 2),
@@ -147,7 +231,6 @@ public class ClassSelection extends MouseAdapter{
 
         //Quit Button text
         strWidth = g2d.getFontMetrics(font).stringWidth(quitTxt);
-		strHeight = g2d.getFontMetrics(font).getHeight();
 
         g2d.setColor(Color.red);
 		g2d.drawString(quitTxt, (int) (quitBtn.getX() + quitBtn.getWidth() / 2 - strWidth / 2),
@@ -215,4 +298,9 @@ public class ClassSelection extends MouseAdapter{
 		qHighlight = quitBtn.contains(p);
 
 	}
+
+    public byte[] getCompressedData() {   
+        return sDataOut.getBytes();
+    }
+
 }

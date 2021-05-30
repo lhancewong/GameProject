@@ -93,6 +93,7 @@ public class GameCanvas extends JComponent {
     public ClassSelection getCSelection(){
         return classSelect;
     }
+    
     /**
      * The display thread. It calculates fps and calls repaint to ideally
      * reach the FPS_CAP;
