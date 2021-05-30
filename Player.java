@@ -46,10 +46,9 @@ public class Player implements GameObject {
     public boolean mUp, mDown, mLeft, mRight; //not sure yet
     private String sDataOut, sDataIn;
     private double xBorder, yBorder;
-    
 
     /**
-     * Initializes the some variables.
+     * Initializes the player class.
      * 
      * @param xPos x coordinate of ship
      * @param yPos y coordinate of ship
@@ -61,6 +60,7 @@ public class Player implements GameObject {
         this.shipType = shipType;
         box = new Hitbox(xPos + 30, yPos + 12, 134, 46);
 
+        //window borders
         xBorder = GameUtils.get().getWidth();
         yBorder = GameUtils.get().getHeight();
 
@@ -69,19 +69,19 @@ public class Player implements GameObject {
             case 1: //offensive
                 hitPoints = 1;
                 moveSpeed = 500;
-                size = 30;
+                size = 46;
                 break;
 
             case 2: //balanced
-                hitPoints = 3;
+                hitPoints = 9;
                 moveSpeed = 400;
-                size = 2;
+                size = 50;
                 break;
 
             case 3: //defensive
-                hitPoints = 5;
+                hitPoints = 15;
                 moveSpeed = 300;
-                size = 14;
+                size = 50;
                 break;
             default:
                 hitPoints = 100;
@@ -110,7 +110,7 @@ public class Player implements GameObject {
     }
 
     /**
-     * Draws the player's ship.
+     * Draws the player's ship based on their ship type.
      * 
      * @param g2d
      */
@@ -183,11 +183,13 @@ public class Player implements GameObject {
             xPos += moveSpeed*d;
         }
 
-
+        //The data that will be sent over to the server/client.
         sDataOut = String.format("%.1f_%.1f_%b_%b_%b_%b_%d_%d_",xPos,yPos,mUp,mDown,mLeft,mRight,hitPoints,shipType);
         readStringData(sDataIn);
     }
 
+    
+    @Override
     public void readStringData(String s) {
         String[] data = s.split("_");
         if(!s.equals("") && data.length == 9) {
@@ -233,6 +235,12 @@ public class Player implements GameObject {
         }
     }
     
+    /**
+     * Checks if the player is getting hit by a projectile.
+     * 
+     * @param i the bullet to be checked
+     * @return true if the player is being hit and false if not
+     */
     public boolean checkHitbox(BossBullet i){
         if (i.getX() + i.getWidth() >= box.getX() && 
             i.getX() <= box.getX() + box.getWidth() &&
@@ -245,13 +253,16 @@ public class Player implements GameObject {
         }
     }
 
+    /**
+     * Reduces the player's hitpoints by 1.
+     */
     public void gotHit(){
         hitPoints -= 1;
     }
 
     /**
-     * Ideally this can only be called once the player
-     * dies.
+     * Sets the ship of the player. It also updates the player's stats 
+     * based on that.
      * 
      * @param shipType 1 for offense, 2 for balance, 3 for defense
      */
@@ -264,12 +275,12 @@ public class Player implements GameObject {
                 break;
 
             case 2: //balanced
-                hitPoints = 3;
+                hitPoints = 9;
                 moveSpeed = 400;
                 break;
 
             case 3: //defensive
-                hitPoints = 5;
+                hitPoints = 15;
                 moveSpeed = 300;
                 break;
             default:
@@ -279,12 +290,40 @@ public class Player implements GameObject {
         } 
     }
 
+    /**
+     * Returns the player's hitpoints.
+     * 
+     * @return the player's hitpoints
+     */
     public int getHitPoints() {
         return hitPoints;
     }
 
+    /**
+     * Returns the player's ship type.
+     * 
+     * @return the player's ship type
+     */
     public int getShipType(){
         return shipType;
+    }
+
+    /**
+     * Returns the player's x position.
+     * 
+     * @return the player's x position
+     */
+    public double getX() {
+        return xPos;
+    }
+
+    /**
+     * Returns the player's y position.
+     * 
+     * @return the player's x position
+     */
+    public double getY() {
+        return yPos;
     }
 
     @Override
@@ -295,13 +334,5 @@ public class Player implements GameObject {
     @Override
     public void receiveCompressedData(String sDataIn) {
         this.sDataIn = sDataIn;
-    }
-
-    public double getX() {
-        return xPos;
-    }
-
-    public double getY() {
-        return yPos;
     }
 }
