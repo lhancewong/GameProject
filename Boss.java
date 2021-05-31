@@ -69,7 +69,6 @@ public class Boss implements GameObject{
                 boss2(g2d);
             }
         }
-        box.draw(g2d);
         
     }
     

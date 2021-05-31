@@ -57,7 +57,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
         isRunning = true;
         isBossFight = true;
         initBossFight();
-        initServerSelection();
         
         GameUtils.get().setIsMaster(isMaster);
         this.isMaster = isMaster;
@@ -143,13 +142,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
     public void changeClass(int shipType){
         p1.setShip(shipType);
         controller1.setNewMax(shipType);
-    }
-
-    /**
-     * Initializes the server selection screen.
-     */
-    private void initServerSelection() {
-
     }
 
     /**
