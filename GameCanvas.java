@@ -1,6 +1,4 @@
-/**
-	This is a template for a Java file.
-	
+/**	
 	@author Wilbert Meinard L. Chen (201153)
     @author Lhance Christian S. Wong (205467)
 	@version May 31, 2021

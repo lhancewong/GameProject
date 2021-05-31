@@ -1,6 +1,4 @@
-/**
-	This is a template for a Java file.
-	
+/**	
 	@author Wilbert Meinard L. Chen (201153)
     @author Lhance Christian S. Wong (205467)
 	@version May 31, 2021
@@ -116,10 +114,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
         g2d.drawString("P1 HP:"+String.valueOf(p1.getHitPoints()),10,710);
         g2d.drawString("P2 HP:"+String.valueOf(p2.getHitPoints()),1100,710);
 
+        Font font2 = new Font("Elephant", Font.PLAIN, 100);
         if (!(Yalin.isAlive)){
-            Font font2 = new Font("Elephant", Font.PLAIN, 100);
             g2d.setFont(font2);
             g2d.drawString("YOU WIN",GameUtils.get().getWidth()/2 - g2d.getFontMetrics(font2).stringWidth("YOU WIN") /2 ,360);
+        }
+
+        if (!(p1.isAlive) && !(p2.isAlive)){
+            g2d.setFont(font2);
+            g2d.drawString("YOU LOSE",GameUtils.get().getWidth()/2 - g2d.getFontMetrics(font2).stringWidth("YOU LOSE") /2 ,360);
         }
     }
 
