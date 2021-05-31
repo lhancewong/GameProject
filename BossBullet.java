@@ -28,7 +28,7 @@ import java.io.*;
 /**
  * 
  */
-public class BossBullet implements GameObject{
+public class BossBullet {
 
     //Dimensions
     private double xPos, yPos; 
@@ -61,7 +61,10 @@ public class BossBullet implements GameObject{
         
     }
 
-    @Override
+    public void update(double deltaTime) {
+        xPos -= speed *deltaTime;
+    }
+
     public void draw(Graphics2D g2d) {
         if (attackType == 1) {
             width = 150;
@@ -97,11 +100,6 @@ public class BossBullet implements GameObject{
         } catch (IOException e) {
         }
         g2d.drawImage(bullet2, (int) xPos, (int) yPos, null, null);
-    }
-
-    @Override
-    public void update(double deltaTime) {
-        xPos -= speed *deltaTime;
     }
 
     /** 
@@ -149,20 +147,4 @@ public class BossBullet implements GameObject{
     public int getAtkType(){
         return attackType;
     }
-
-    @Override
-    public void readStringData(String s) {
-        
-    }
-
-    @Override
-    public String getCompressedData() {
-        return null;
-    }
-
-    @Override
-    public void receiveCompressedData(String sDataIn) {
-        
-    }
-    
 }

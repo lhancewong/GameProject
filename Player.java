@@ -20,7 +20,6 @@
 	of my program.
 */
 
-import java.awt.geom.*;
 import java.awt.*;
 import java.io.*;
 import javax.imageio.*;
@@ -37,12 +36,12 @@ public class Player implements GameObject {
     private BufferedImage ship1Image;
     private BufferedImage ship2Image;
     private BufferedImage ship3Image;
-    private Hitbox box;
     //game related
     private int hitPoints;
-    private double moveSpeed;
+    private Hitbox box;
     public boolean isAlive;
     //movements related
+    private double moveSpeed;
     public boolean mUp, mDown, mLeft, mRight; //not sure yet
     private String sDataOut, sDataIn;
     private double xBorder, yBorder;
@@ -89,6 +88,7 @@ public class Player implements GameObject {
                 break;
         } 
 
+        //ship sprites
         ship1Image = null;
         ship2Image = null;
         ship3Image = null;
@@ -107,31 +107,6 @@ public class Player implements GameObject {
 
         sDataOut = "";
         sDataIn = "";
-    }
-
-    /**
-     * Draws the player's ship based on their ship type.
-     * 
-     * @param g2d
-     */
-    @Override
-    public void draw(Graphics2D g2d) {
-        if (isAlive) {
-            switch(shipType) {
-                case 1: //offensive
-                    offensiveShip(g2d);
-                    break;
-                case 2: //balanced
-                    balancedShip(g2d);
-                    break;
-                case 3: //defensive
-                    defensiveShip(g2d);
-                    break;
-                default:
-                    g2d.setColor(Color.BLACK);
-                    g2d.fillRect((int)xPos,(int)yPos,(int)size,(int)size);
-            }
-        }
     }
 
     /**
@@ -188,10 +163,13 @@ public class Player implements GameObject {
         readStringData(sDataIn);
     }
 
-    
     @Override
     public void readStringData(String s) {
         String[] data = s.split("_");
+        /**
+         * Checks if the string/array size is suitable for the player.
+         * this is to avoid Index out of bounds errors.
+         */
         if(!s.equals("") && data.length == 9) {
             xPos = Double.parseDouble(data[1]);
             yPos = Double.parseDouble(data[2]);
@@ -205,24 +183,38 @@ public class Player implements GameObject {
     }
 
     /**
+     * Draws the player's ship based on their ship type.
+     * 
+     * @param g2d
+     */
+    @Override
+    public void draw(Graphics2D g2d) {
+        if (isAlive) {
+            switch(shipType) {
+                case 1: //offensive
+                    offensiveShip(g2d);
+                    break;
+                case 2: //balanced
+                    balancedShip(g2d);
+                    break;
+                case 3: //defensive
+                    defensiveShip(g2d);
+                    break;
+                default:
+                    g2d.setColor(Color.BLACK);
+                    g2d.fillRect((int)xPos,(int)yPos,(int)size,(int)size);
+            }
+        }
+    }
+
+    /**
      * Draws the offensive ship's sprite.
      */
     private void offensiveShip(Graphics2D g2d) {
         if (isAlive){
             g2d.drawImage(ship1Image, (int) xPos, (int) yPos, null, null);
-            box.draw(g2d);
         }
         
-    }
-    
-    /**
-     * Draws the defensive ship's sprite.
-     */
-    private void defensiveShip(Graphics2D g2d) {
-        if (isAlive){
-            g2d.drawImage(ship2Image, (int) xPos, (int) yPos, null, null);
-            box.draw(g2d);
-        }
     }
 
     /**
@@ -231,33 +223,16 @@ public class Player implements GameObject {
     private void balancedShip(Graphics2D g2d) {
         if (isAlive){
             g2d.drawImage(ship3Image, (int) xPos, (int) yPos, null, null);
-            box.draw(g2d);
         }
     }
     
     /**
-     * Checks if the player is getting hit by a projectile.
-     * 
-     * @param i the bullet to be checked
-     * @return true if the player is being hit and false if not
+     * Draws the defensive ship's sprite.
      */
-    public boolean checkHitbox(BossBullet i){
-        if (i.getX() + i.getWidth() >= box.getX() && 
-            i.getX() <= box.getX() + box.getWidth() &&
-            i.getY() + i.getHeight()>= box.getY() &&
-            i.getY() <= box.getY() + box.getHeight() ){
-            return true;
+    private void defensiveShip(Graphics2D g2d) {
+        if (isAlive){
+            g2d.drawImage(ship2Image, (int) xPos, (int) yPos, null, null);
         }
-        else {
-            return false;
-        }
-    }
-
-    /**
-     * Reduces the player's hitpoints by 1.
-     */
-    public void gotHit(){
-        hitPoints -= 1;
     }
 
     /**
@@ -291,23 +266,30 @@ public class Player implements GameObject {
     }
 
     /**
-     * Returns the player's hitpoints.
+     * Checks if the player is getting hit by a projectile.
      * 
-     * @return the player's hitpoints
+     * @param i the bullet to be checked
+     * @return true if the player is being hit and false if not
      */
-    public int getHitPoints() {
-        return hitPoints;
+    public boolean checkHitbox(BossBullet i){
+        if (i.getX() + i.getWidth() >= box.getX() && 
+            i.getX() <= box.getX() + box.getWidth() &&
+            i.getY() + i.getHeight()>= box.getY() &&
+            i.getY() <= box.getY() + box.getHeight() ){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
-     * Returns the player's ship type.
-     * 
-     * @return the player's ship type
+     * Reduces the player's hitpoints by 1.
      */
-    public int getShipType(){
-        return shipType;
+    public void gotHit(){
+        hitPoints -= 1;
     }
-
+    
     /**
      * Returns the player's x position.
      * 
@@ -324,6 +306,24 @@ public class Player implements GameObject {
      */
     public double getY() {
         return yPos;
+    }
+
+    /**
+     * Returns the player's hitpoints.
+     * 
+     * @return the player's hitpoints
+     */
+    public int getHitPoints() {
+        return hitPoints;
+    }
+
+    /**
+     * Returns the player's ship type.
+     * 
+     * @return the player's ship type
+     */
+    public int getShipType(){
+        return shipType;
     }
 
     @Override

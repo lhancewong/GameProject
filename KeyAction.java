@@ -28,7 +28,6 @@ import java.awt.event.*;
 public class KeyAction extends KeyAdapter {
     private Player playerShip;
     private Game game;
-    private AudioPlayer ap;
 
     /**
      * Initializes KeyActions.
@@ -38,7 +37,6 @@ public class KeyAction extends KeyAdapter {
     public KeyAction(Player p, Game game) {
         playerShip = p;
         this.game = game;
-        ap = new AudioPlayer();
     }
 
     @Override
