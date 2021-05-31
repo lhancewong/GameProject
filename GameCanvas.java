@@ -46,7 +46,7 @@ public class GameCanvas extends JComponent {
     private ClassSelection classSelect;
     public BulletController controller1,controller2,bossController;
     private int pNum;
-    private boolean isRunning, isBossFight, isServerSelection, isClassSelection;
+    private boolean isRunning, hasReceived, startGame;
     private static final int FPS_CAP = 60;
     private javax.swing.Timer drawTimer;
 
@@ -72,9 +72,8 @@ public class GameCanvas extends JComponent {
         classSelect = new ClassSelection(game);
         
         isRunning = true;
-        isServerSelection = false;
-        isClassSelection = true;
-        isBossFight = false;
+        hasReceived = false;
+        startGame = false;
         
         p1 = game.getPlayer1();
         p2 = game.getPlayer2();
@@ -104,8 +103,8 @@ public class GameCanvas extends JComponent {
 
     public void joinServer() {
         findServer();
-        rfsLoop.startThread();
         wtsLoop.startThread();
+        rfsLoop.startThread();
         game.startThread();
     }
 
@@ -162,11 +161,11 @@ public class GameCanvas extends JComponent {
     public void findServer() {
         try {
             clientSocket = new DatagramSocket();
-            
-            InetAddress ip = InetAddress.getByName("ginks.ml");
-            int port = 25570;
+            //54.226.230.243
+            InetAddress ip = InetAddress.getByName("54.226.230.243");
+            int port = 42069;
 
-            Socket cSoc = new Socket("ginks.ml",port);
+            Socket cSoc = new Socket("54.226.230.243",port);
             
             wtsLoop = new WriteToServer(ip, port, 16);
             rfsLoop = new ReadFromServer();
@@ -177,9 +176,11 @@ public class GameCanvas extends JComponent {
             GameUtils.get().setPlayerNum(pNum);
             System.out.println("You are Player " + pNum + "!");
 
-            byte[] buf = new byte[256];
-            DatagramPacket packet = new DatagramPacket(buf,buf.length,ip,port);
-            clientSocket.send(packet);
+            //while(!hasReceived) {
+                byte[] buf = new byte[256];
+                DatagramPacket packet = new DatagramPacket(buf,buf.length,ip,port);
+                clientSocket.send(packet);
+            //}
 
             System.out.println("Waiting for other Player...");
             byte[] start = new byte[bufMax];
@@ -280,7 +281,7 @@ public class GameCanvas extends JComponent {
                         controller2.receiveCompressedData(sDataIn);
                     } else if(sDataIn.startsWith("BBC_")){
                         bossController.receiveCompressedData(sDataIn);
-                    } else {
+                    } else /*if(sDataIn.startsWith("RECEIVED"))*/{
                         System.out.println("Data bad: " + sDataIn);
                     }
                     

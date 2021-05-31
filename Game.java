@@ -126,7 +126,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
             checkBulletHitboxes();
             
-            
             previousTime = currentTime;
 
             try { Thread.sleep(16); }

@@ -20,13 +20,8 @@
 	of my program.
 */
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import javax.imageio.*;
 import java.awt.image.*;
 import java.io.*;
@@ -39,32 +34,38 @@ public class ClassSelection extends MouseAdapter {
     private Font titleFont;
     private Game game;
     public boolean readyState;
-    private String sDataOut;
     private BufferedImage ship1Image;
     private BufferedImage ship2Image;
     private BufferedImage ship3Image;
     private BufferedImage bg;
 
-    private String title = "Choose Your Class";
+    private String title = "Choose Your Ship";
 
-    //Class 1: Offensive
+    //Ship 1: Offensive
     private Rectangle ofsBtn;
     private String ofsTxt = "Glass Cannon";
     private boolean ofsHighlight = false;
 
-    //Class 2: Balanced
+    //Ship 2: Balanced
     private Rectangle balBtn;
     private String balTxt = "Jack of All Trades";
     private boolean balHighlight = true;
 
-    //Class 3: Defensive
+    //Ship 3: Defensive
     private Rectangle defBtn;
     private String defTxt = "Flying Tank";
     private boolean defHighlight = false;
 
+    //Server
+    private Rectangle serverSelection;
+    private TextField ipTxtfld; //Ip Address TextField
+    private String ipTxt;
+    private TextField portTxtfld; //Port TextField
+    private String portTxt;
+
     //Ready Button
     private Rectangle rdyBtn;
-    private String rdyTxt = "Ready";
+    private String rdyTxt = "Join";
     private boolean rdyHighlight = false;
 
     //Quit Button
@@ -279,11 +280,11 @@ public class ClassSelection extends MouseAdapter {
 
     }
 
-    /* 
-    This is the method that checks what "Button" gets clicked
-    and gives the appropriate response when clicked.
-    The ship type changes to whichever button gets selected correspondingly. 
-    */
+    /**
+     * This is the method that checks what "Button" gets clicked
+     * and gives the appropriate response when clicked.
+     * The ship type changes to whichever button gets selected correspondingly. 
+     */
     @Override
 	public void mouseClicked(MouseEvent e) {
         if (active) {
@@ -291,7 +292,6 @@ public class ClassSelection extends MouseAdapter {
             Point p = e.getPoint();
     
             if (rdyBtn.contains(p)){
-                System.out.println("rdy");
                 GameUtils.get().getGameCanvas().joinServer();
                 rdyHighlight = true;
                 active = false;
@@ -301,21 +301,18 @@ public class ClassSelection extends MouseAdapter {
                 System.exit(0);
             }
             else if (ofsBtn.contains(p)){
-                System.out.println("Offense");
                 game.changeClass(1);
                 ofsHighlight = true;
                 balHighlight = false;
                 defHighlight = false;
             }
             else if (balBtn.contains(p)){
-                System.out.println("bal");
                 game.changeClass(2);
                 ofsHighlight = false;
                 balHighlight = true;
                 defHighlight = false;
             }
             else if (defBtn.contains(p)){
-                System.out.println("def");
                 game.changeClass(3);
                 ofsHighlight = false;
                 balHighlight = false;
@@ -336,11 +333,11 @@ public class ClassSelection extends MouseAdapter {
         defHighlight = defBtn.contains(p);
 		rdyHighlight = rdyBtn.contains(p);
 		qHighlight = quitBtn.contains(p);
-
 	}
 
-    public byte[] getCompressedData() {   
-        return sDataOut.getBytes();
-    }
-
+    /* @Override
+    public void actionPerformed(ActionEvent e) {
+        // TODO Auto-generated method stub
+        
+    } */
 }
