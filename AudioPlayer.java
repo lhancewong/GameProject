@@ -23,6 +23,7 @@ import java.io.*;
 
 public class AudioPlayer {
     private File audioFile;
+    private Clip bossClip;
 
     public AudioPlayer() {
 
@@ -39,16 +40,29 @@ public class AudioPlayer {
             @Override
             public void run() {
                 if(!isMaster) {
-                    audioFile = new File(filePath);
                     try {
-                        AudioInputStream audio = AudioSystem.getAudioInputStream(audioFile);
-                        Clip clip = AudioSystem.getClip();
-                        clip.open(audio);
-                        clip.start();
+                        audioFile = new File(filePath);
+                        if(filePath == "sounds/bossmusic.wav") {
+                            AudioInputStream bossAudio = AudioSystem.getAudioInputStream(audioFile);
+                            bossClip = AudioSystem.getClip();
+                            bossClip.open(bossAudio);
+                            bossClip.start();
+                        } else {
+                            AudioInputStream audio = AudioSystem.getAudioInputStream(audioFile);
+                            Clip clip = AudioSystem.getClip();
+                            clip.open(audio);
+                            clip.start();
+                        }
                     } catch(Exception e) {}
                 } 
             }
         }; thread.start();
     }
-    
+
+    /**
+     * Stops the boss music.
+     */
+    public void stopBossMusic() {
+        bossClip.stop();
+    }
 }

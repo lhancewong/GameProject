@@ -119,6 +119,7 @@ public class Player implements GameObject {
         if (hitPoints <= 0) {
             isAlive = false;
         }
+
         switch (shipType) {
             case 1:
                 box = new Hitbox(xPos + 30, yPos + 12, 134, 46);
@@ -213,8 +214,7 @@ public class Player implements GameObject {
     private void offensiveShip(Graphics2D g2d) {
         if (isAlive){
             g2d.drawImage(ship1Image, (int) xPos, (int) yPos, null, null);
-        }
-        
+        } 
     }
 
     /**

@@ -20,13 +20,24 @@
 	of my program.
 */
 
+/**
+ * A class to store the hitbox of any gameobject
+ * that may need one.
+ */
 public class Hitbox {
     private double xPos;
     private double yPos;
     private double width;
     private double height;
 
-
+    /**
+     * Initializes the HitBox clas.
+     * 
+     * @param xPos upper left x value of hitbox
+     * @param yPos upper left y value of hitbox
+     * @param width width of hitbox
+     * @param height height of hitbox
+     */
     public Hitbox(double xPos, double yPos, double width, double height){
         this.xPos = xPos;
         this.yPos = yPos;
@@ -34,18 +45,38 @@ public class Hitbox {
         this.height = height;
     }
 
+    /**
+     * Returns the x position of the hitbox.
+     * 
+     * @return the x position of the hitbox
+     */
     public double getX(){
         return xPos;
     }
 
+    /**
+     * Returns the y position of the hitbox.
+     * 
+     * @return the y position of the hitbox
+     */
     public double getY(){
         return yPos;
     }
 
+    /**
+     * Returns the width of the hitbox.
+     * 
+     * @return the width of the hitbox
+     */
     public double getWidth(){
         return width;
     }
 
+    /**
+     * Returns the height of the hitbox.
+     * 
+     * @return the height of the hitbox
+     */
     public double getHeight(){
         return height;
     }

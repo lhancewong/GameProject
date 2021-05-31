@@ -35,6 +35,9 @@ public class GameUtils {
     private int width, height;
     private boolean isMaster;
 
+    /**
+     * Contructs GameUtils
+     */
     private GameUtils() {
         width = 1280;
         height = 720;
@@ -88,18 +91,38 @@ public class GameUtils {
         return height;
     }
 
+    /**
+     * Sets the GameCanvas of GameUtils.
+     * 
+     * @param gc the GameCanvas
+     */
     public void setGameCanvas(GameCanvas gc) {
         this.gc = gc;
     }
 
+    /**
+     * Returns the GameCanvas of GameUtils
+     * 
+     * @return the GameCanvas
+     */
     public GameCanvas getGameCanvas() {
         return gc;
     }
 
+    /**
+     * Sets the isMaster boolean of GameUtils.
+     * 
+     * @param isMaster the value for isMaster
+     */
     public void setIsMaster(boolean isMaster) {
         this.isMaster = isMaster;
     }
 
+    /**
+     * Returns the isMaster boolean of GameUtils.
+     * 
+     * @return the value of isMaster 
+     */
     public boolean getIsMaster() {
         return isMaster;
     }

@@ -40,15 +40,16 @@ public class ShipBullet {
     }
 
     /**
+     * Updates the ship bullet.
      * 
-     * @param deltaTime
+     * @param deltaTime the time passed in between updates
      */
     public void update(double deltaTime) {
         xPos += speed *deltaTime;
     }
 
     /**
-     * 
+     * Draws the ship bullet.
      * 
      * @param g2d
      */

@@ -23,6 +23,7 @@
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.net.*;
@@ -50,6 +51,7 @@ public class GameCanvas extends JComponent {
     private javax.swing.Timer drawTimer;
 
     //Network Stuff
+    private Scanner console;
     private DatagramSocket clientSocket;
     private static final int bufMax = 16384;
     
@@ -63,7 +65,8 @@ public class GameCanvas extends JComponent {
         height = GameUtils.get().getHeight();
         setPreferredSize(new Dimension(width,height));
         GameUtils.get().setGameCanvas(this);
-        
+        console = new Scanner(System.in);
+
         //Game Stuff
         game = new Game(false);
         classSelect = new ClassSelection(game);
@@ -96,6 +99,9 @@ public class GameCanvas extends JComponent {
 
     }
 
+    /**
+     * Joins a server and starts the important threads.
+     */
     public void joinServer() {
         findServer();
         wtsLoop.startThread();
@@ -103,10 +109,20 @@ public class GameCanvas extends JComponent {
         game.startThread();
     }
 
+    /**
+     * Returns the GameCanvas's Game instance.
+     * 
+     * @return the Game instance of GameCanvas
+     */
     public Game getGame() {
         return game;
     }
 
+    /**
+     * Returns the class selection menu.
+     * 
+     * @return the class selection menu of game canvas.
+     */
     public ClassSelection getCSelection(){
         return classSelect;
     }
@@ -130,10 +146,10 @@ public class GameCanvas extends JComponent {
                  */ 
                 if (currentTime - previousTime >= 1000) {
                     if (isRunning) {
-                        String titleFPS = "Shoot and Scoot | FPS: " + frames + "   ";
+                        String titleFPS = "shoot n' scoot | FPS: " + frames + "   ";
                         GameUtils.get().setJFrameTitle(titleFPS);
                     } else {
-                        String titleFPS = "Shoot and Scoot";
+                        String titleFPS = "shoot n' scoot";
                         GameUtils.get().setJFrameTitle(titleFPS);
                     }
                     frames = 0;
@@ -156,11 +172,13 @@ public class GameCanvas extends JComponent {
     public void findServer() {
         try {
             clientSocket = new DatagramSocket();
-            
-            InetAddress ip = InetAddress.getByName("ginks.ml");
-            int port = 25570;
+            System.out.print("Please input the server's IP Address: ");
+            String ipAddress = console.nextLine();
+            InetAddress ip = InetAddress.getByName(ipAddress);
+            System.out.print("Please input the port number: ");
+            int port = Integer.parseInt(console.nextLine());
 
-            Socket cSoc = new Socket("ginks.ml",port);
+            Socket cSoc = new Socket(ipAddress,port);
             
             wtsLoop = new WriteToServer(ip, port, 16);
             rfsLoop = new ReadFromServer();
@@ -186,7 +204,7 @@ public class GameCanvas extends JComponent {
 
       }
     
-      /**
+    /**
      * A private class that writes information to the server.
      */
     private class WriteToServer implements Runnable {
@@ -195,7 +213,7 @@ public class GameCanvas extends JComponent {
         private long sleepTime;
         private Thread WTSloop;
 
-         /**
+        /**
          * The thread that continuously sends data to the server.
          */
         @Override
