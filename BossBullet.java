@@ -49,9 +49,9 @@ public class BossBullet implements GameObject{
         this.yPos = yPos;
         this.attackType = attackType;
         if (attackType == 1) {
-            speed = 650;
+            speed = 700;
         } else {
-            speed = 500;
+            speed = 625;
         }
         
     }

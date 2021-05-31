@@ -162,10 +162,10 @@ public class GameCanvas extends JComponent {
         try {
             clientSocket = new DatagramSocket();
             
-            InetAddress ip = InetAddress.getByName("localhost");
+            InetAddress ip = InetAddress.getByName("ginks.ml");
             int port = 25570;
 
-            Socket cSoc = new Socket("localhost",port);
+            Socket cSoc = new Socket("ginks.ml",port);
             
             wtsLoop = new WriteToServer(ip, port, 16);
             rfsLoop = new ReadFromServer();

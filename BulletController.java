@@ -136,16 +136,16 @@ public class BulletController implements GameObject{
                     sDataOut = sDataOut.concat(String.format("%.2f_%.2f_%d_",i.getX(),i.getY(),i.getAtkType()));
                 }
             }
-            if (bossTimer > 3){
-                if (boss.getBossHP() > 30){
+            if (bossTimer > 2){
+                if (boss.getBossHP() > 100){
                     addBullet();
                     sDataOut = sDataOut.concat(String.format("%.2f_%.2f_%d_",boss.getX()+100,boss.getY()+175,1));
-                    bossTimer = 0;
+                    bossTimer = Math.random();
                 }
-                else if (boss.getBossHP() <= 30){
+                else if (boss.getBossHP() <= 100){
                     addBullet();
                     sDataOut = sDataOut.concat(String.format("%.2f_%.2f_%d_",boss.getX()+100,boss.getY()+175,2));
-                    bossTimer = 2;
+                    bossTimer = 1;
                 }
             }
         }
