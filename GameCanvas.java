@@ -161,11 +161,11 @@ public class GameCanvas extends JComponent {
     public void findServer() {
         try {
             clientSocket = new DatagramSocket();
-            //54.226.230.243
-            InetAddress ip = InetAddress.getByName("ginks.ml");
+            
+            InetAddress ip = InetAddress.getByName("localhost");
             int port = 25570;
 
-            Socket cSoc = new Socket("ginks.ml",port);
+            Socket cSoc = new Socket("localhost",port);
             
             wtsLoop = new WriteToServer(ip, port, 16);
             rfsLoop = new ReadFromServer();

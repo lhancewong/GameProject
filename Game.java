@@ -118,6 +118,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
     @Override
     public void run() {
         long previousTime = System.currentTimeMillis()-1;
+        ap.playSound("sounds/bossmusic.wav", isMaster);
         while(isRunning) {
             long currentTime = System.currentTimeMillis();
 

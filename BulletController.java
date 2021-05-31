@@ -35,9 +35,10 @@ public class BulletController implements GameObject{
     private boolean isPlayer;
     private double bossTimer;
 
-    /*
-    Instantiates variables if a Player is given  
-    */
+    /**
+     * Instantiates variables if a Player is given  
+     * @param player 
+     */
     public BulletController (Player player){
         switch(player.getShipType()) {
                 case 1: //offensive
@@ -63,9 +64,10 @@ public class BulletController implements GameObject{
         bossTimer = 0;
     }
 
-    /*
-    Instantiates variables if a Boss is given  
-    */
+    /**
+     * Instantiates variables if a Boss is given  
+     * @param boss 
+     */
     public BulletController (Boss boss){
         this.boss = boss;
         isPlayer = false;
@@ -225,10 +227,11 @@ public class BulletController implements GameObject{
 
     }
 
-    /*
-    This sets the new maximum amount of bullets the Player can shoot
-    depending on the ship type.
-    */
+    /**
+     * This sets the new maximum amount of bullets the Player can shoot
+     * depending on the ship type.
+     * @param shipType determines the type of ship to change the max into
+     */
     public void setNewMax(int shipType){
         switch(shipType) {
                 case 1: //offensive
@@ -246,30 +249,37 @@ public class BulletController implements GameObject{
         }
     }
 
-    /*
-    Removes a ShipBullet
-    */
+    
+    /**
+     * Removes a ShipBullet
+     * @param bullet 
+     */
     public void removeShipBullet(ShipBullet bullet){
         shipBulletArray.remove(bullet);
     }
 
-    /*
-    Removes a BossBullet
-    */
+
+    /**
+     * Removes a BossBullet
+     * @param bullet 
+     */
     public void removeBossBullet(BossBullet bullet){
         bossBulletArray.remove(bullet);
     }
 
-    /*
-    This returns the shipBulletArray.
-    */
+
+    /**
+     * returns the shipBulletArray.
+     * @return
+     */
     public CopyOnWriteArrayList<ShipBullet> getshipBulletArray(){
         return shipBulletArray;
     }
 
-    /*
-    returns bossBulletArray
-    */
+    /**
+     * returns the bossBulletArray.
+     * @return
+     */
     public CopyOnWriteArrayList<BossBullet> getbossBulletArray(){
         return bossBulletArray;
     }

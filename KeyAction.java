@@ -68,7 +68,6 @@ public class KeyAction extends KeyAdapter {
                 break;
             case KeyEvent.VK_SPACE:
                 game.getController().addBullet();
-                ap.playSound("sounds/shoot.wav");
                 break;
         }
 

@@ -34,12 +34,16 @@ public class ClassSelection extends MouseAdapter {
     private Font titleFont;
     private Game game;
     public boolean readyState;
+    private String sDataOut;
     private BufferedImage ship1Image;
     private BufferedImage ship2Image;
     private BufferedImage ship3Image;
     private BufferedImage bg;
 
     private String title = "Choose Your Ship";
+
+    private TextField ipField;
+    private TextField portField;
 
     //Ship 1: Offensive
     private Rectangle ofsBtn;
@@ -73,6 +77,7 @@ public class ClassSelection extends MouseAdapter {
     /*
     Instantiates variables  
     */
+    
     public ClassSelection(Game game) {
         active = true;
         this.game = game;
@@ -113,17 +118,23 @@ public class ClassSelection extends MouseAdapter {
         x = GameUtils.get().getWidth() * 3 / 4 - 200; 
         rdyBtn = new Rectangle(x, y, w, h);
 
+        ipField = new TextField("Server IP: ");
+        portField = new TextField("Server Port: ");
+        ipField.setBounds(x - 200, y, 150, 25);
+        portField.setBounds(x - 200, y + 30, 150, 25);
+
         titleFont = new Font("SansSerif", Font.PLAIN, 100);
         font = new Font("SansSerif", Font.PLAIN, 35);
         font2 = new Font("SansSerif", Font.PLAIN, 20);
     }
     
-    /*  
-    This draws all the "Buttons" and the texts inside them. 
-    Each ship type has its own button and descriptions in them.
-    The buttons get highlighted white when selected.
-    */
-
+    /**
+     This draws all the "Buttons" and the texts inside them. 
+     Each ship type has its own button and descriptions in them.
+     The buttons get highlighted white when selected.
+     * 
+     * @param g2d 
+     */
     public void draw(Graphics2D g2d) {
 
         g2d.drawImage(bg, 0, 0, null, null);
@@ -326,5 +337,11 @@ public class ClassSelection extends MouseAdapter {
         defHighlight = defBtn.contains(p);
 		rdyHighlight = rdyBtn.contains(p);
 		qHighlight = quitBtn.contains(p);
+
 	}
+
+    public byte[] getCompressedData() {   
+        return sDataOut.getBytes();
+    }
+
 }
