@@ -21,13 +21,14 @@
 import javax.sound.sampled.*;
 import java.io.*;
 
+/**
+ * This class is in charge of playing audio.
+ */
 public class AudioPlayer {
     private File audioFile;
     private Clip bossClip;
 
-    public AudioPlayer() {
-
-    }
+    public AudioPlayer() {}
 
     /**
      * Plays a wav file using the pathfile

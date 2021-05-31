@@ -20,7 +20,6 @@
 
 import java.util.ArrayList;
 import java.awt.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 //====================== Game Stuff ============================//
 
@@ -45,7 +44,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
     public Boss Yalin;
 
     //player number
-    public int pNum;
+    public int z = 0;
 
     //booleans
     private boolean isRunning, isMaster, isBossFight;
@@ -122,7 +121,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
         if (!(p1.isAlive) && !(p2.isAlive)){
             g2d.setFont(font2);
-            g2d.drawString("YOU LOSE",GameUtils.get().getWidth()/2 - g2d.getFontMetrics(font2).stringWidth("YOU LOSE") /2 ,360);
+            g2d.drawString("LOL YOU DIED",GameUtils.get().getWidth()/2 - g2d.getFontMetrics(font2).stringWidth("LOL YOU DIED") /2 ,360);
+            while(z==0){
+                ap.stopBossMusic();
+                ap.playSound("sounds/losemusic.wav", isMaster);
+                z++;
+            } 
+            
         }
     }
 
