@@ -33,7 +33,7 @@ public class GameUtils {
     private GameCanvas gc;
     //Variables
     private int width, height;
-    private int pNum;
+    private boolean isMaster;
 
     private GameUtils() {
         width = 1280;
@@ -71,24 +71,6 @@ public class GameUtils {
     }
 
     /**
-     * Sets the player number of GameUtils.
-     * 
-     * @param pNum the player number
-     */
-    public void setPlayerNum(int pNum) {
-        this.pNum = pNum;
-    }
-
-    /**
-     * Returns the player number of GameUtils
-     * 
-     * @return player number
-     */
-    public int getPlayerNum() {
-        return pNum;
-    }
-
-    /**
      * Returns the width of the game window.
      * 
      * @return the width of the window
@@ -112,5 +94,13 @@ public class GameUtils {
 
     public GameCanvas getGameCanvas() {
         return gc;
+    }
+
+    public void setIsMaster(boolean isMaster) {
+        this.isMaster = isMaster;
+    }
+
+    public boolean getIsMaster() {
+        return isMaster;
     }
 }

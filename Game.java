@@ -40,6 +40,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
     private boolean isRunning, isMaster, isBossFight, isServerSelection, isClassSelection;
     private BulletController controller1,controller2;
     private BulletController bosscontroller;
+    private AudioPlayer ap;
 
     public CopyOnWriteArrayList<ShipBullet> bullets;
     private ArrayList<GameObject> bossFight;
@@ -52,11 +53,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
      */
     public Game(boolean isMaster) {
         logicLoop = new Thread(this);
+        ap = new AudioPlayer();
         isRunning = true;
         isBossFight = true;
         initBossFight();
         initServerSelection();
-
+        
+        GameUtils.get().setIsMaster(isMaster);
         this.isMaster = isMaster;
     }
 
@@ -162,6 +165,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
                 if (Yalin.checkHitbox(i)){
                     //System.out.println("HIT");
                     Yalin.gotHit();
+                    ap.playSound("sounds/bosshit.wav",isMaster);
                     controller1.removeShipBullet(i);
                 }
             }
@@ -170,6 +174,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
                 if (Yalin.checkHitbox(i)){
                     //System.out.println("HIT");
                     Yalin.gotHit();
+                    ap.playSound("sounds/bosshit.wav", isMaster);
                     controller2.removeShipBullet(i);
                 }
             }
@@ -180,6 +185,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
                 if (p1.checkHitbox(i)){
                     //System.out.println("HIT");
                     p1.gotHit();
+                    ap.playSound("sounds/shiphit.wav", isMaster);
                     bosscontroller.removeBossBullet(i);
                 }
             }
@@ -190,6 +196,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
                 if (p2.checkHitbox(i)){
                     //System.out.println("HIT");
                     p2.gotHit();
+                    ap.playSound("sounds/shiphit.wav", isMaster);
                     bosscontroller.removeBossBullet(i);
                 }
             }

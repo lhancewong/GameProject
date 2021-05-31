@@ -162,10 +162,10 @@ public class GameCanvas extends JComponent {
         try {
             clientSocket = new DatagramSocket();
             //54.226.230.243
-            InetAddress ip = InetAddress.getByName("54.226.230.243");
-            int port = 42069;
+            InetAddress ip = InetAddress.getByName("ginks.ml");
+            int port = 25570;
 
-            Socket cSoc = new Socket("54.226.230.243",port);
+            Socket cSoc = new Socket("ginks.ml",port);
             
             wtsLoop = new WriteToServer(ip, port, 16);
             rfsLoop = new ReadFromServer();
@@ -173,7 +173,6 @@ public class GameCanvas extends JComponent {
             System.out.println("Requesting for Player number from server...");
 
             pNum = new DataInputStream(cSoc.getInputStream()).readInt();
-            GameUtils.get().setPlayerNum(pNum);
             System.out.println("You are Player " + pNum + "!");
 
             //while(!hasReceived) {

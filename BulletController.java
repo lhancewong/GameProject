@@ -28,6 +28,7 @@ public class BulletController implements GameObject{
     private CopyOnWriteArrayList<ShipBullet> shipBulletArray;
     private CopyOnWriteArrayList<BossBullet> bossBulletArray;
     private String sDataOut, sDataIn;
+    private AudioPlayer ap;
     private int max;
     private Player player;
     private Boss boss;
@@ -54,6 +55,7 @@ public class BulletController implements GameObject{
         }
         this.player = player;
         isPlayer = true;
+        ap = new AudioPlayer();
         shipBulletArray = new CopyOnWriteArrayList<ShipBullet>();
 
         sDataOut = "";
@@ -69,7 +71,7 @@ public class BulletController implements GameObject{
         isPlayer = false;
         bossBulletArray = new CopyOnWriteArrayList<BossBullet>();
         bossTimer = 0;
-
+        ap = new AudioPlayer();
         sDataOut = "";
         sDataIn = "";
     }
@@ -203,16 +205,19 @@ public class BulletController implements GameObject{
                             shipBulletArray.add(new ShipBullet(player.getX() + 130, player.getY() + 50));
                             break;
                     }
+                    ap.playSound("sounds/shoot.wav",GameUtils.get().getIsMaster());
                 }
             }
         }
         else {
             if(boss.isAlive) {
-                if (boss.getBossHP() > 30){
+                if (boss.getBossHP() > 100){
                     bossBulletArray.add(new BossBullet(boss.getX() + 100, boss.getY() + 175, 1) );
+                    ap.playSound("sounds/fireball.wav", GameUtils.get().getIsMaster());
                 }
-                else if ( boss.getBossHP() <= 30){
+                else if ( boss.getBossHP() <= 100){
                     bossBulletArray.add(new BossBullet(boss.getX() + 100, boss.getY() + 175, 2) );
+                    ap.playSound("sounds/fireball.wav", GameUtils.get().getIsMaster());
                 }
             }
         }

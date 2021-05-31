@@ -28,6 +28,7 @@ import java.awt.event.*;
 public class KeyAction extends KeyAdapter {
     private Player playerShip;
     private Game game;
+    private AudioPlayer ap;
 
     /**
      * Initializes KeyActions.
@@ -37,6 +38,7 @@ public class KeyAction extends KeyAdapter {
     public KeyAction(Player p, Game game) {
         playerShip = p;
         this.game = game;
+        ap = new AudioPlayer();
     }
 
     @Override
@@ -66,6 +68,7 @@ public class KeyAction extends KeyAdapter {
                 break;
             case KeyEvent.VK_SPACE:
                 game.getController().addBullet();
+                ap.playSound("sounds/shoot.wav");
                 break;
         }
 

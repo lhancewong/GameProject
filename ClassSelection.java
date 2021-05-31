@@ -56,13 +56,6 @@ public class ClassSelection extends MouseAdapter {
     private String defTxt = "Flying Tank";
     private boolean defHighlight = false;
 
-    //Server
-    private Rectangle serverSelection;
-    private TextField ipTxtfld; //Ip Address TextField
-    private String ipTxt;
-    private TextField portTxtfld; //Port TextField
-    private String portTxt;
-
     //Ready Button
     private Rectangle rdyBtn;
     private String rdyTxt = "Join";
@@ -334,10 +327,4 @@ public class ClassSelection extends MouseAdapter {
 		rdyHighlight = rdyBtn.contains(p);
 		qHighlight = quitBtn.contains(p);
 	}
-
-    /* @Override
-    public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
-        
-    } */
 }
