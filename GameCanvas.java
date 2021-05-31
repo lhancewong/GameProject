@@ -26,7 +26,6 @@ import java.awt.event.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.net.*;
-import java.util.*;
 
 /**
  * This class extends JComponent and overrides the paintComponent method in
@@ -46,7 +45,7 @@ public class GameCanvas extends JComponent {
     private ClassSelection classSelect;
     public BulletController controller1,controller2,bossController;
     private int pNum;
-    private boolean isRunning, hasReceived, startGame;
+    private boolean isRunning;
     private static final int FPS_CAP = 60;
     private javax.swing.Timer drawTimer;
 
@@ -54,8 +53,6 @@ public class GameCanvas extends JComponent {
     private DatagramSocket clientSocket;
     private static final int bufMax = 16384;
     
-    //private MenuObjects serverSelectionMenu;
-    //private MenuObjects classSelectionMenu;
     
     /**
      * Initializes the GameCanvas object.
@@ -72,8 +69,6 @@ public class GameCanvas extends JComponent {
         classSelect = new ClassSelection(game);
         
         isRunning = true;
-        hasReceived = false;
-        startGame = false;
         
         p1 = game.getPlayer1();
         p2 = game.getPlayer2();
@@ -175,11 +170,9 @@ public class GameCanvas extends JComponent {
             pNum = new DataInputStream(cSoc.getInputStream()).readInt();
             System.out.println("You are Player " + pNum + "!");
 
-            //while(!hasReceived) {
-                byte[] buf = new byte[256];
-                DatagramPacket packet = new DatagramPacket(buf,buf.length,ip,port);
-                clientSocket.send(packet);
-            //}
+            byte[] buf = new byte[256];
+            DatagramPacket packet = new DatagramPacket(buf,buf.length,ip,port);
+            clientSocket.send(packet);
 
             System.out.println("Waiting for other Player...");
             byte[] start = new byte[bufMax];
@@ -280,8 +273,6 @@ public class GameCanvas extends JComponent {
                         controller2.receiveCompressedData(sDataIn);
                     } else if(sDataIn.startsWith("BBC_")){
                         bossController.receiveCompressedData(sDataIn);
-                    } else /*if(sDataIn.startsWith("RECEIVED"))*/{
-                        System.out.println("Data bad: " + sDataIn);
                     }
                     
                 }

@@ -22,28 +22,31 @@
 
 import java.awt.*;
 import java.awt.event.*;
-import javax.imageio.*;
 import java.awt.image.*;
 import java.io.*;
+import javax.imageio.*;
 
 public class ClassSelection extends MouseAdapter {
     
     public boolean active;
+    public boolean readyState;
+    private Game game;
+    private String sDataOut;
+
+    //Fonts
     private Font font;
     private Font font2;
     private Font titleFont;
-    private Game game;
-    public boolean readyState;
-    private String sDataOut;
+    
+
+    //Pictures of objects
     private BufferedImage ship1Image;
     private BufferedImage ship2Image;
     private BufferedImage ship3Image;
     private BufferedImage bg;
 
+    //title
     private String title = "Choose Your Ship";
-
-    private TextField ipField;
-    private TextField portField;
 
     //Ship 1: Offensive
     private Rectangle ofsBtn;
@@ -117,11 +120,6 @@ public class ClassSelection extends MouseAdapter {
 
         x = GameUtils.get().getWidth() * 3 / 4 - 200; 
         rdyBtn = new Rectangle(x, y, w, h);
-
-        ipField = new TextField("Server IP: ");
-        portField = new TextField("Server Port: ");
-        ipField.setBounds(x - 200, y, 150, 25);
-        portField.setBounds(x - 200, y + 30, 150, 25);
 
         titleFont = new Font("SansSerif", Font.PLAIN, 100);
         font = new Font("SansSerif", Font.PLAIN, 35);

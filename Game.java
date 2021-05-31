@@ -31,18 +31,31 @@ import java.util.concurrent.CopyOnWriteArrayList;
      */ 
     public class Game implements Runnable{
 
-    private Background bg1;
-    private Background bg2;
-    private Thread logicLoop;
-    public Player p1, p2;
-    public Boss Yalin;
-    public int pNum;
-    private boolean isRunning, isMaster, isBossFight, isServerSelection, isClassSelection;
+    //BulletControllers for the 3 characters in the game
     private BulletController controller1,controller2;
     private BulletController bosscontroller;
+
+    //Images of the background
+    private Background bg1;
+    private Background bg2;
+
+    //Logic Thread
+    private Thread logicLoop;
+
+    //Instance of characters
+    public Player p1, p2;
+    public Boss Yalin;
+
+    //player number
+    public int pNum;
+
+    //booleans
+    private boolean isRunning, isMaster, isBossFight;
+    
+    //music
     private AudioPlayer ap;
 
-    public CopyOnWriteArrayList<ShipBullet> bullets;
+    //arraylist for the objects to be drawn
     private ArrayList<GameObject> bossFight;
     
 
@@ -86,7 +99,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
         bossFight.add(controller2);
         bossFight.add(bosscontroller);
 
-        bullets = new CopyOnWriteArrayList<ShipBullet>();
     }
 
     public void draw(Graphics2D g2d){
@@ -164,7 +176,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
         if(Yalin.isAlive) {
             for(ShipBullet i: controller1.getshipBulletArray()) {
                 if (Yalin.checkHitbox(i)){
-                    //System.out.println("HIT");
                     Yalin.gotHit();
                     ap.playSound("sounds/bosshit.wav",isMaster);
                     controller1.removeShipBullet(i);
@@ -173,7 +184,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
             for(ShipBullet i: controller2.getshipBulletArray()) {
                 if (Yalin.checkHitbox(i)){
-                    //System.out.println("HIT");
                     Yalin.gotHit();
                     ap.playSound("sounds/bosshit.wav", isMaster);
                     controller2.removeShipBullet(i);
@@ -184,7 +194,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
         if(p1.isAlive) {
             for(BossBullet i: bosscontroller.getbossBulletArray()) {
                 if (p1.checkHitbox(i)){
-                    //System.out.println("HIT");
                     p1.gotHit();
                     ap.playSound("sounds/shiphit.wav", isMaster);
                     bosscontroller.removeBossBullet(i);
@@ -195,7 +204,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
         if(p2.isAlive) {
             for(BossBullet i: bosscontroller.getbossBulletArray()) {
                 if (p2.checkHitbox(i)){
-                    //System.out.println("HIT");
                     p2.gotHit();
                     ap.playSound("sounds/shiphit.wav", isMaster);
                     bosscontroller.removeBossBullet(i);

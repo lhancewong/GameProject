@@ -30,10 +30,15 @@ import java.io.*;
  */
 public class BossBullet implements GameObject{
 
+    //Dimensions
     private double xPos, yPos; 
     private double width, height;
     private double speed;
+
+    //To determine attack
     private int attackType;
+
+    //appearance
     private BufferedImage bullet1, bullet2;
 
     /**
@@ -67,9 +72,6 @@ public class BossBullet implements GameObject{
             width = 150;
             height = 60;
             bullet1(g2d);
-            /* width = 20;
-            height = 10;
-            bullet2(g2d); */
         }
     }
 

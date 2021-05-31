@@ -1,6 +1,4 @@
 /**
-	This is a template for a Java file.
-	
 	@author Wilbert Meinard L. Chen (201153)
     @author Lhance Christian S. Wong (205467)
 	@version May 31, 2021
@@ -31,15 +29,22 @@ import java.io.*;
  */
 public class Boss implements GameObject{
 
+
     private double xPos, yPos;
+    private double hitPoints;
+    
+    //movement
     private int randomDistance;
     private double moveSpeed;
-    public boolean isAlive;
-    private boolean mUp, mDown, movingLeft, movingRight;
+    private boolean mUp, mDown;
+
+    //Appearance of boss
     private BufferedImage boss1, boss2;
     private Hitbox box;
+
+    //server related
     private String sDataOut, sDataIn;
-    private double hitPoints;
+    public boolean isAlive;
 
 
     public Boss(){
@@ -98,7 +103,6 @@ public class Boss implements GameObject{
             }
         }
 
-        //mUp_mDown_randomDistance_hitPoints_
         sDataOut = String.format("Yalin_%.1f_%.1f_%b_%b_%d_%.1f_",xPos,yPos,mUp,mDown,randomDistance,hitPoints);
         readStringData(sDataIn);
         }

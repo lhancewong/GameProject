@@ -25,15 +25,29 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class BulletController implements GameObject{
+
+    //arrays for bullets
     private CopyOnWriteArrayList<ShipBullet> shipBulletArray;
     private CopyOnWriteArrayList<BossBullet> bossBulletArray;
+
+    //server stuff
     private String sDataOut, sDataIn;
+
+    //sounds for shooting
     private AudioPlayer ap;
-    private int max;
+
+    //instance of characters
     private Player player;
     private Boss boss;
-    private boolean isPlayer;
+
+    //speed of boss attack
     private double bossTimer;
+
+    //checks if boss or player
+    private boolean isPlayer;
+    
+    //max number of shots
+    private int max;
 
     /**
      * Instantiates variables if a Player is given  
@@ -160,8 +174,6 @@ public class BulletController implements GameObject{
     @Override
     public void readStringData(String s) {
         String[] data = s.split("_");
-        /* if(!s.equals("") && !s.equals("p1BC_") && 
-           !s.equals("p2BC_") && !s.equals("BBC_") ) { */
         if (data.length > 2){
             if(isPlayer) {
                 max = Integer.parseInt(data[1]);

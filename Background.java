@@ -1,6 +1,4 @@
 /**
-	This is a template for a Java file.
-	
 	@author Wilbert Meinard L. Chen (201153)
     @author Lhance Christian S. Wong (205467)
 	@version May 31, 2021
@@ -21,16 +19,20 @@
 */
 
 import java.awt.*;
-import java.awt.geom.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
 public class Background implements GameObject {
 
-    private int number;
+    //Images to be used
     private BufferedImage back1;
     private BufferedImage back2;
+
+    //Number for 1st or 2nd to be used
+    private int number;
+    
+    //Dimensions
     private double width;
     private double xPos;
     private double yPos;
@@ -75,17 +77,14 @@ public class Background implements GameObject {
     
     @Override
     public void readStringData(String s) {
-        // TODO Auto-generated method stub
         
     }
     @Override
     public String getCompressedData() {
-        // TODO Auto-generated method stub
         return null;
     }
     @Override
     public void receiveCompressedData(String sDataIn) {
-        // TODO Auto-generated method stub
         
     }
     
