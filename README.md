@@ -3,6 +3,10 @@ by Chen, Wilbert and Wong, Lhance
 
 Shoot n' Scoot is a boss-battle multiplayer game. As the player, your goal is to beat the boss. Dodge its attacks while trying to shoot it down!
 
+
+https://github.com/lhancewong/GameProject/assets/83807098/ccf6de6d-8aa0-4dd0-9f31-c4106a3ecdf4
+
+
 ## Gameplay Mechanics
 
 ### Bosses
